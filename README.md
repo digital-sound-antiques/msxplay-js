@@ -19,7 +19,12 @@ TL;DR. See the following brief example.
   </script>
 </head>
 <body>
-  <div class="msxplay" data-title="Song Title" data-url="http://www.example.com/example.kss" data-duration="90"></div>
+  <div class="msxplay" 
+       data-title="Song Title" 
+       data-url="http://www.example.com/example.kss"
+       data-song="0"
+       data-duration="90s">
+  </div>
 </body>
 </html>
 ```
