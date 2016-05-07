@@ -2,6 +2,28 @@
 
 See [MSXplay.js Homepage](http://digital-sound-antiques.github.io/msxplay-js/) for demo and more details.
 
+# How to embed the MSXplay to your site
+
+TL;DR. See the following brief example. 
+
+```html
+<html>
+<head>
+  <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="msxplay.css" type="text/css">
+  <script src="msxplay-bundle.js"></script>
+  <script>
+    window.addEventListener("DOMContentLoaded",function(){
+      MSXPlay.install(document.body);
+    });
+  </script>
+</head>
+<body>
+  <div class="msxplay" data-title="Song Title" data-url="http://www.example.com/example.kss"></div>
+</body>
+</html>
+```
+
 # How to build
 
 node, webpack and Emscripten are required.
