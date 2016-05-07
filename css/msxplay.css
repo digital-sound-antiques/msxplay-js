@@ -95,6 +95,15 @@
 	background-position: center center;
 	float:right;
 	cursor:pointer;
+	border-radius:2px;
+}
+
+.msxplay .spinner .button:hover {
+	background-color:#eee;
+}
+
+.msxplay .spinner .button:active {
+	background-color:#ccc;
 }
 
 .msxplay .spinner .button.next {
