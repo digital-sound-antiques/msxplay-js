@@ -2,11 +2,26 @@
 	position:relative;
 	margin:16px 0;
 	width:400px;
-	height:64px;
+	height:84px;
 	border-radius:2px;
 	background-color:#ffffff;
+	border:1px solid #eee;
 	box-shadow:0 0 2px 0 rgba(0,0,0,.12);
 	transition:box-shadow 0.5s linear;
+	overflow:hidden;
+}
+
+.msxplay .footer {
+	position:absolute;
+	color:#999;
+	width:100%;
+	height:20px;
+	font-size:10px;
+	line-height:20px;
+	bottom:0;
+	padding:0 8px;
+	background-color:#f0f0f0;
+	text-align:right;
 }
 
 .msxplay.bottom-fixed {
@@ -16,6 +31,11 @@
 	bottom:0;
 	width:auto;
 	border-radius:0px;	
+	height:64px;
+}
+
+.msxplay.bottom-fixed .footer {
+	display:none;
 }
 
 .msxplay .leftbox {

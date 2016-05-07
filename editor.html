@@ -15,9 +15,9 @@
 
 	<script src="dist/msxplay-bundle.js"></script>
 	<link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
-	<link href='css/style.css' rel='stylesheet' type='text/css'>
 	<link href='css/msxplay.css' rel='stylesheet' type='text/css'>
-
+	<link href='css/style.css' rel='stylesheet' type='text/css'>
+	<link href="css/editor.css" rel='stylesheet' type='text/css'>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/ace.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/theme-xcode.js"></script>
 
@@ -36,7 +36,8 @@
 	<script>
 		"use strict"
 
-		function loadTextFromUrl(url,complete) {
+		function loadTextFromUrl(url, complete) {
+
 			var xhr = new XMLHttpRequest();
 			xhr.open("GET",url,true);
 			xhr.responseType = "text";
@@ -56,6 +57,7 @@
 				if(complete) complete(null, url, err);
 			});
 			xhr.send();
+
 		}
 
 		// Prevent unexpected location change.
@@ -76,7 +78,7 @@
 			  	editor.$blockScrolling = Infinity;
     			editor.getSession().setUseWrapMode(true);
     			editor.setShowPrintMargin(false);
-    			editor.resize(true);
+    			//editor.resize(true);
     			editor.on('change',function() {
     				contentChanged = true;
     			});
@@ -182,16 +184,23 @@
 			});
 		}
 
+		var AUTOBACKUP_KEY = 'mgsc.editor.autobackup'; 
+
 		function clearLocalStorage() {
-			localStorage.removeItem('mgsc.editor.autobackup');
+			localStorage.removeItem(AUTOBACKUP_KEY);
 		}
 
 		function storeToLocalStorage() {
-			localStorage.setItem('mgsc.editor.autobackup', editor.getValue());
+			var text = editor.getValue();
+			if(/^\s*$/.test(text)) {
+				localStorage.removeItem(AUTOBACKUP_KEY);
+			} else {
+				localStorage.setItem(AUTOBACKUP_KEY, editor.getValue());
+			}
 		}
 
 		function restoreFromLocalStorage() {
-			editor.setValue(localStorage.getItem('mgsc.editor.autobackup'),-1);
+			editor.setValue(localStorage.getItem(AUTOBACKUP_KEY),-1);
 			editor.focus();
 			contentChanged = false;
 		}
@@ -284,6 +293,14 @@
 			}
   		}
 
+  		function selectSample() {
+  			showDialog('select-sample', function(value) {
+  				if(value != "cancel") {
+  					loadFromUrl(value);
+  				}
+  			});
+  		}
+
 		window.addEventListener('DOMContentLoaded', function() {
 
 			var elem = document.body;
@@ -295,20 +312,12 @@
 			MSXPlayUI.install(document.body);
 			createAceEditor();
 
-			if(localStorage.getItem('mgsc.editor.autobackup')) {
-				showDialog('confirm-restore',function(value){
-					if(value=="yes") {
-						restoreFromLocalStorage();
-					} else {
-						loadFromUrl('demo/grider.mml');
-					}
-				});
+			if(localStorage.getItem(AUTOBACKUP_KEY)) {
+				restoreFromLocalStorage();
 			} else {
-				loadFromUrl('demo/grider.mml');
+				selectSample();
 			}
 
-			document.getElementById('action-compile').addEventListener('click',compile);
-			document.getElementById('action-clear').addEventListener('click',clearFile);
 			document.getElementById('open-file').addEventListener('change',openFile);
 
 			var mbox = document.getElementById('message');
@@ -323,202 +332,7 @@
 			},true);
 
 		});
-
-
-
 	</script>
-	<style>
-	#editor {
-		border:1px solid #ccc;
-		position:absolute;
-		left:72px;
-		top:112px;
-		bottom:100px;
-		right:72px;
-		border-radius:2px 2px 0 0;
-	}
-
-	#editor-foot {
-		border:1px solid #ccc;
-		border-top:none;
-		font-size:10px;
-		background-color:#444;
-		color:white;
-		left:72px;right:72px;
-		position:absolute;
-		height:24px;
-		line-height:24px;
-		bottom:76px;
-		border-radius:0 0 2px 2px;
-	}
-
-	#editor-foot div {
-		margin:0 10px;
-	}
-
-	#editor-foot a {
-		color:#ddd;
-		cursor:pointer;
-	}
-
-	#editor-foot a:hover {
-		color:white;
-		text-decoration: underline;
-	}
-
-	.actions {
-		height:56px;
-		padding:12px 72px;
-		font-size:12px;
-	}
-	.actions button {
-		color:#007aff;
-		border-radius:2px;
-		height:32px;
-		padding:0 8px;
-		margin:0px 8px 0px 0;
-		line-height:32px;
-		font-size:14px;
-		background-color:#ffffff;
-		box-shadow:0 0px 2px 0 rgba(0,0,0,.25);
-		border:none;
-		cursor:pointer;
-	}
-
-	.actions button:focus {
-		outline:0;
-	}
-	
-	.actions button:hover {
-		box-shadow:0 0 4px 0 rgba(0,0,0,.25);
-	}
-	
-	.actions button:active {
-		background-color:#007af4;
-		color:white;
-	}
-
-	#message {
-		position:absolute;
-		right:72px;
-		top:64px;
-		width:320px;
-		height:200px;
-		border:1px solid #ccc;
-		color:white;
-		background-color:#0070f0;
-		border-radius:2px;
-		z-index:100;
-		overflow:hidden;
-		transition:transform 0.25s ease, background-color 0.25s ease;
-		transform-origin:top right;
-		transform:translate(-24px,56px);
-		box-shadow:0 2px 8px 0 rgba(0,0,0,.25);
-	}
-
-	#message.minimized {
-		transform:scale(0.2,0.2);
-		overflow-y:hidden;
-		box-shadow:none;
-	}
-
-	#message .title {
-		width:100%;
-		height:24px;
-		line-height:24px;
-		font-size:11px;
-		color:rgba(0,0,0,0.87);
-		background-color:#f0f0f0;
-		border-bottom:1px solid #ccc;
-		padding:0 10px;
-		cursor:pointer;
-	}
-
-	#message pre {
-		font-size:10px;
-		color:white;
-		width:100%;
-		height:176px;
-		white-space:pre-wrap;
-		overflow-y:auto;
-		padding:12px;
-	}
-
-	#message.minimized pre {
-		cursor:pointer;
-		overflow:hidden;
-	}
-
-	.mml-error {
-		background: rgba(255, 50, 50, 0.4);
-		position: absolute;
-		width: 100% !important;
-		left: 0 !important;
-	}
-
-	.msxplay {
-		transition:bottom 0.5s ease;
-	}
-	.msxplay:not([data-hash]) {
-		bottom:-56px;
-	}
-
-	#modal-stage {
-		position:absolute;
-		top:0;left:0;bottom:0;right:0;
-		background-color: rgba(0,0,0,.5);
-		display:none;
-		z-index:101;
-	}
-
-	.dialog {
-		top:0;left:0;bottom:0;right:0;
-		display:none;
-		background-color:#fafafa;
-		border-radius:2px;
-		box-shadow:0 0 20px 0 rgba(0,0,0,.5);
-		font-size:14px;
-		margin:auto auto;
-	}
-
-	.dialog .content {
-		padding:20px 20px 0px 20px;
-	}
-
-	.dialog .content p {
-		margin-bottom:12px;
-		font-size:14px;
-	}
-
-	.dialog .button-area {
-		width:100%;
-		height:44px;
-		padding:0px 8px 8px 0;
-	}
-
-	.dialog .button-area:after {
-		content:'';
-		clear:both;
-	}
-
-	.dialog .button {
-		text-align:center;
-		font-size:14px;
-		height:36px;
-		line-height:36px;
-		border-radius:2px;
-		padding:0 8px;
-		margin-left:8px;
-		min-width:64px;
-		float:right;
-		cursor:pointer;
-	  	color:#3a76ff;
-	}
-	.dialog .button:hover {
-		background-color:#ddd;
-	}
-
-	</style>
 </head>
 <body>
 
@@ -530,12 +344,13 @@
 			</ul>
 		</nav>
 	</section>
+
 	<section class="actions">
 		<input id="open-file" type="file" accept=".mml,.mus,.txt" style="display:none;" />
-		<button id="action-open" onclick="document.getElementById('open-file').click();">Open</button>
-		<button id="action-clear">Clear</button>
+		<button onclick="document.getElementById('open-file').click();">Open File</button>
+		<button onclick="selectSample()">Open Sample</button>
 		<div style="display:inline-block;width:64px;"></div>
-		<button id="action-compile">Compile</button>
+		<button onclick="compile()">Compile</button>
 		<input id="autoplay" type="checkbox" checked> <label for="autoplay">play after compile</label>		
 		&nbsp;
 	</section>
@@ -562,6 +377,21 @@
 		<div class="button-area">
 			<div class="button" data-value="yes">YES</div>
 			<div class="button" data-value="no">NO</div>
+		</div>
+	</div>
+
+	<div id="select-sample" class="dialog" style="width:280px">
+		<div class="content">
+			<p lang="ja">編集したいMMLを選んでください。</p>
+			<p lang="en">Choose a MML file to open.</p>
+		</div>
+		<ul class="item-list">
+			<li class="button" data-value="demo/grider.mml">YM2413 Demo</li>
+			<li class="button" data-value="demo/p52_arbl.mml">SCC Demo</li>
+			<li class="button" data-value="demo/blank.mml">Blank MML</li>
+		</ul>
+		<div class="button-area">
+			<div class="button" data-value="cancel">Cancel</div>
 		</div>
 	</div>
 

@@ -143,6 +143,7 @@ module.exports = (function(){
 	};
 
 	MSXPlayUI.prototype.initPlayer = function (playerElement) {
+
 		playerElement.innerHTML = '';
 		playerElement.insertAdjacentHTML('afterbegin',
 			'<div class="leftbox"></div>' +
@@ -161,11 +162,16 @@ module.exports = (function(){
 			' 		    <div class="progress"></div>' +
 			'		</div>' +
 			'	 </div>' + 
-			'</div>');
+			'</div>' +
+			'<div class="footer"></div>');
 
 		if(playerElement.dataset.url) {
 			playerElement.querySelector('.title').textContent = "Loading...";
 			this.loadKSS(playerElement);
+		}
+		
+		if(playerElement.dataset.footnote) {
+			playerElement.querySelector('.footer').textContent = playerElement.dataset.footnote;
 		}
 
 		if(!playerElement.dataset.song) {

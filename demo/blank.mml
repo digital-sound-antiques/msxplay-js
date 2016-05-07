@@ -1,0 +1,11 @@
+#opll_mode 1
+#tempo 120
+#title { "No Title"}
+
+@v15 = { ; Brass
+;       TL FB
+        24, 7,
+; AR DR SL RR KL MT AM VB EG KR DT
+   7, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0,
+  10, 7, 1, 1, 0, 1, 0, 1, 0, 0, 0 }
+

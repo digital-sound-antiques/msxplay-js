@@ -1,0 +1,390 @@
+#opll_mode 1
+#machine_id 2		; Panasonic machine
+
+#title {"Arabiyaan (Long version)"
+        " / Original composed by. Wiz."
+        " / MGSDRV version by. Wiz."}
+
+#alloc { 0=2048,
+	 1=2048,
+	 2=1890,
+	 3=1450,
+	 4=1610,
+	 5= 880,
+	 6=1760,
+	 7=1536,
+	 8=1536,
+	 9=1,
+	 a=1,
+	 b=1,
+	 c=1,
+	 d=1,
+	 e=1,
+	 f=1 }
+
+;============================================================================
+;Instruments Setting
+;============================================================================
+
+;Voice ======================================================================
+
+;----- Bass
+; Bass1 (Saw1)
+@s00 = {  00070F17 1F272F37 3F474F57 5F676F77
+          81889098 A0A8B0B8 C0C8D0D8 E0E8F0F8 }
+; Bass2 (Hammering)
+@s01 = { 17284278 4B281700 E9D8B588 B5D8E900
+         1E641E00 E29CE200 3C00C400 4600BA00 }
+
+;----- Melody
+; Squ1+3+4
+@s02 = { 7F7F7F7F 2A2AD6D6 2929297F 2A2A2A2A 
+         D6D6D6D6 8181D7D7 2A2A2AD6 81818181 }
+; Saw2+3
+@s03 = { 172F475F 78EE0925 A4C1DAF4 0C263FB6 
+         CEE6FF16 2E465E76 F10B819B B4CEE700 }
+; Morph  1
+@s04 = { 1A35405B 59EB0919 B2D1EC07 03102EC1 
+         DCF8021D 1936525E F410A0BC B8C6E300 }
+; Morph  2
+@s05 = { 1D3C3958 3AE80A0D BFE1FE1B FBFC1DCC 
+         EA080624 05264746 F615BFDD BCBDDF00 }
+; Morph  3
+@s06 = { 20433255 1BE50B01 CCF10F2F F3E70CD6 
+         F819092B F2173C2F F81ADDFD C0B5DB00 }
+; Morph  4
+@s07 = { 24492C51 FEE20CF5 D9002143 EAD2FDE1 
+         042A0D32 DE073017 FA1FFC1D C4ACD700 }
+; Morph  5
+@s08 = { 2750254E DFDF0DE9 E60F3357 E2BDECEB 
+         123B1039 CAF92500 FC24193D C8A4D300 }
+; Morph  6
+@s09 = { 2A571E4B C0DC0EDD F31F456B D9A8DBF6 
+         204C1440 B6E91AE9 FE29385E CC9BCF00 }
+; Saw4+6-
+@s10 = { 2E5E1848 A1D90FD1 002F577F D092CA00 
+         2E5E1848 A1D90FD1 002F577F D092CA00 }
+
+;----- Backing
+; Melody 1 (Square 1+4+Sine)
+@s11 = {  54697370 2A1C171F 677A7F75 2A150D0E
+          E0EFF2E7 9D898185 CEDFE7E2 9D8F8A96 }
+
+;Envelope ===================================================================
+
+;----- Bass
+; Bass1(SCC,PSG/Normal)
+@e00 = { 1, 0, @0 \-10 d, \3 e, \3 f, @1 \2 f, \2 e, d, c, b, a, 9:2, 8 }
+; Bass2(SCC,PSG/Accent)
+@e01 = { 1, 0, @1 \-10 d, \3 f, \3 f, \2 f, \2 e, d, c, b:2, a:3, 9 }
+
+;----- Melody
+; Melody1 (SCC)
+@e02 = { 1, 0, \-1 @2 a, \1 d, b, 9, 8, 7, 6:3, 5:4, \-3 8, 7, 6:2, 5:3, 4:4, 3 }
+; Melody2 (SCC)
+@e03 = { 1, 0, @3 8, d=5, e:5, @4 e:11, @5 d:10, @6 c:10, @7 b:10, @8 a:10, @9 9:10, @10 9 }
+
+;----- Arpeggio
+@e04 = { 1, 0, @11 f, f, e, c, a, 8, 7, 6, \-2 c, b, a, 8, 6, 5, 4, 3:2, 2 }
+
+;----- Backing
+@e05 = { 1, 0, \-1 @3 d, \1 f, e:2, d, c, \-2 e, d, c,8:2, b:4, a }
+
+
+; SnareDrum
+@e20 = {  1,  9, /1 e, n8 /2 f, e, n7 d, c:2, b:3, n6, a:4, n5 9:5, n4 8:6, n3 7:7, n2 6:8, n1 5:9, 4:10, 3 }
+; BassDrum
+@e21 = {  3, 31, /3 n31 f, /1 \80 f, \-80 e, \-80 d, \-70 b, \-70 9, \-60 7, \-50 6, \-40 5, \-30 4, \-20 3, \-10 3 }
+
+; TomTom
+@e22 = {  1, 0, /3 \-120 e, /1 \90 f, \40 e, \-90 d, \-90 c, \-90 b, \-90 a, \-90 9, \-90 9, \-90 8, \-90 8, \-90 7, \-90 7, \-90 7, \-90 6, \-90 6, \-90 6, \-90 5, \-90 5, \-90 5, \-90 4 }
+
+; CrashCymbal
+@e23 = {  1,  3, /3, n8, e:2, /2, d:4, n7, c:5, n6, b:6, 
+                 n5, a:7, n4, 9:8, n3, 8:8, n2, 7:8, n1, 3=32 }
+
+; Hi-Hat Close
+@e24 = {  3,  1, /3 n1 d, /2 n2 a, n3 7, 5, 4, 3 }
+
+; Hi-Hat Open
+@e25 = {  3,  1, /3 n1 c, /2 n2 b:2, n3 a:3, n4 9:4, n5 8:5, n6 7:6, n7 6:7, n8 5:8 }
+
+
+; Noise (for Soft envelope)
+@e30 = { 2, 0, f }
+
+; Normal (for Soft envelope)
+@e31 = { 1, 0, f }
+
+#macro_offset { s=0, b=1, t=2, c=3, h=11, o=10 }
+; SnareDrum
+*s04 = { @e20o3e4  }
+*s08 = { @e20o3e8  }
+*s12 = { @e20o3e12 }
+*s16 = { @e20o3e16 }
+*s24 = { @e20o3e24 }
+*s32 = { @e20o3e32 }
+; Kick
+*b04 = { @e21o1g4  }
+*b08 = { @e21o1g8  }
+*b16 = { @e21o1g16 }
+*b32 = { @e21o1g32 }
+; Hi-Hat Close
+*h04 = { @e24o8c4  }
+*h08 = { @e24o8c8  }
+*h16 = { @e24o8c16 }
+*h24 = { @e24o8c24 }
+*h32 = { @e24o8c32 }
+; Hi-Hat Open
+*o04 = { @e25o8c4  }
+*o08 = { @e25o8c8  }
+*o16 = { @e25o8c16 }
+*o24 = { @e25o8c24 }
+; Crash Cymbal
+*c04 = { @e23o7b4 }
+*c08 = { @e23o7b8 }
+; TomTom
+*t00 = { @e31o4 }
+*t01 = { @e22o3 }
+
+#tempo 120
+
+;Blank ======================================================================
+12345678	v0a4
+
+;Bass =======================================================================
+43	l8o2 q8k1 h24,6,0,6 \0
+3	v14		; Panasonic machine
+4	v15		; Panasonic machine
+3	\-9
+; ----- Intro
+34	[r1]4 (4
+34	@e1<[g4a-4g4f+4)1]4
+34	[g4a-4g4f+4]4
+34	[@e0d>@e1g<@e0e->@e1a-<@e0d>@e1g<@e0e->@e1f+<]4<
+34	g_c1 r1>
+;----- A,B
+34	[
+34	[@e0d@e1g|@e0e-@e1f+]16 @e0fg
+34	[@e0g>@e1e-<@e0d@e1b]7 @e0g@e1a-@e0df+
+34	]2
+;----- C
+34	[@e0d@e1g@e0e-@e1a-@e0d@e1g@e0e-@e1f+]4
+34	[@e0d>@e1g<@e0e->@e1a-<@e0d>@e1g<@e0e->@e1f+<]4
+;----- A'
+34	[@e0d@e1>g16<g16|@e0e-@e1>f+16<f+16]16 @e0fg16>g16<
+;----- D
+34	[@e0g>@e1>e-16<e-16<@e0d@e1>b16<b16]2
+34	@e0d>@e1g16<g16@e0e-@e1>f+16<f+16 @e0g@e1a-16>e-16<@e0dg16>f+16<
+34	[@e0d>@e1g16<g16@e0e-@e1>f+16<f+16]3 @e0g@e1a-16>a-16<@e0d>f+16>f+16<<
+;----- Outro
+34	[@e0d>@e1g<@e0e->@e1a-<@e0d>@e1g<@e0e->@e1f+<]4
+34	[@e0d@e1g@e0e-@e1a-@e0d@e1g@e0e-@e1f+]4<
+34	[@e0g>@e1d<@e0a->@e1e-<@e0g>@e1d<@e0f+>@e1c<]4
+34	[g4a-4(g4f+4(]4
+
+; Melody, Backing ===========================================================
+786	l8o4@e3q8k1 h20,3,0,5
+786	v14		; Panasonic machine
+;----- Intro
+76	\0
+6	(
+8	\-2
+6	\-4(11
+7	\-8(13 r
+6	@e4[d(c)e-|(c))]4 (c.))2
+6	@e4[d(c)e-|(c)]4 (c&c32))2
+6	[d(c)e-|(c)]8 (c16.)
+7	@e4[d(c)e-|(c))]4 (c)
+7	@e4[d(c)e-|(c)]8 (c.))2
+7	[d(c)e-(c)]4
+6	[dce-cdd24e-24d24<a->c]8 (3
+7	[dce-cdd24e-24d24<a->c]8
+6	[d|(c)e-(c]4 (c16))6
+7	[d(c)e-(c)]3 d16)8 \0
+8	[r1]17 r2.
+;----- A
+;	cde-f+ga-b>c
+786	v14
+76	\0
+6	(
+8	\-2
+78	[o4@e3
+78	[
+78	q8e-q6f+
+6	q8c q6e-
+6	[
+6	[
+78	q8g4q7gq6a-q8gg24a-24g24e- q6f+
+6	q8d4q7dq6e-q8d4        <a->q6c
+78	q8g4.q6f+q8gf+24g24f+24e- q6f+
+6	q8d4.q6d q8d4         <a->q6c
+78	q8g4.q6a-q8b>q6c q8d q6e-
+6	q8d4.q6e-q8g q6a-q8b>q6c<
+78	q8dc 24d24c 24<ba-24b24a-24q6g4
+6	q8ba-24b24a-24 ge-24g24e-24q6d4|
+6	<q8a->q6c
+786	]2
+78	q8a-q6b >
+6	q8e-q6g  
+;----- B
+78	q8c <b24>c 24<b24a-b>q6c 4q8d q6f+
+6	q8a- g24 a-24 g24e-g q6a-4q8b>q6d
+78	q8g f+24g 24f+24 e-c q6d4q8dq6c<
+6	q8e-d 24e-24d 24<b e-q6g4q8gq6e-
+78	q8b>q7c q8e-q6f+q8gg24a-24g24a->c<
+6	q8d q7e-q8a-q6b>q8cc24d 24c24c  e-
+78	 q8e-q6c<q8b a-24b 24a-24 |q6g4
+6	<q8b q6g q8e-c 24e-24c 24<|q6b4
+6	@e3q8b>q6e-
+786	]2
+78	q7g2
+6	q7b2
+;----- C
+6	l8o4@e4q8\-4(3r16.
+7	l8o4@e4q8\-8(6r.
+67	[d(c)e-(c)]8
+67	[dce-c|dd24e-24d24<a->c]4 
+6	dd32
+7	d16(3
+8	[r1]7 r2.
+;----- A''
+;	cde-f+ga-b>c
+786	v14
+76	\0
+6	(
+8	\-2
+786	o4@e3
+78	[
+78	q8e-q6f+
+6	q8c q6e-
+6	[
+6	[
+78	q8g4q7gq6a-q8gg24a-24g24e- q6f+
+6	q8d4q7dq6e-q8d4        <a->q6c
+78	q8g4.q6f+q8gf+24g24f+24e- q6f+
+6	q8d4.q6d q8d4         <a->q6c
+78	q8g4.q6a-q8b>q6c q8d q6e-
+6	q8d4.q6e-q8g q6a-q8b>q6c<
+78	q8dc 24d24c 24<ba-24b24a-24q6g4
+6	q8ba-24b24a-24 ge-24g24e-24q6d4|
+6	<q8a->q6c
+786	]2
+78	q8a-q6b >
+6	q8e-q6g  
+;----- D
+;	cde-f+ga-b>c
+78	q8c <b24>c 24<b24a-b>c q6d q8e-q6c
+6	q8a- g24 a-24 g24e-g a-q6b>q8c<q6a->
+78	q8gg24a-24g24 e-f+gq6a-q8b>q6d <<
+6	q8dd24e-24d24<b>c dq6e-q8g q6b<
+78	q8gq7a->q8c q6e-q8gg24a-24g24a->c <
+6	q8dq7e- q8a-q6b>q8cc24d 24c24c  e-<
+78	q8e-q6cq8g a-24b 24a-24 gq6f+q8e-q6c
+6	q8b q6gq8b>c 24e-24c 24<bq6a-q8g q6e-
+;----- Outro
+78	q8d 1& d 2.& d_ <g4&(4>d _<g4(3>d _<g4(3>d _<g4(3>d _<g4 r1 )10
+6	q8f+1& f+2.& f+_<b4
+6	r16. o4@e4\-4(8
+7	r.   o4@e4\-8(8
+6	[d(c)e-(c)dd24(e-24d24)<a->(c))]6
+7	[d(c)e-(c)dd24(e-24d24)<a->(c)]4
+67	[d(c)e-(c)]8
+67	[d(c)e-(c]8
+
+
+; Arpeggio ==================================================================
+5	l8o4 q8k1 @e4 \1
+5	v8		; Panasonic machine
+;----- Intro
+5	[d(c)e-(c))]8
+5	[d(c)e-(c)]8
+5	[d(c)e-(c)dd24(e-24d24)<a->(c)]8
+5	[d(c)e-(c)]4
+;----- A,A'
+5	[
+5	[d(c)e-(c)dd24(e-24d24<)a->|(c)]8 (e-)
+;----- B,B'
+5	[dd24(e-24d24)<a->(c)|d(e-)d(c)]4 dd24(e-24d24)<a->(c)
+5	]2
+;----- C
+5	[d(c)e-(c)]8
+5	[d(c)e-(c)dd24(e-24d24)<a->(c)]4
+;----- A''
+5	[d(c)e-(c)dd24(e-24d24)<a->|(c)]8 (e-)
+;----- D
+5	[dd24(e-24d24)<a->(c)|d(e-)d(c)]4 dd24(e-24d24)<a->(c)
+;----- Outro
+5	[d(c)e-(c)dd24(e-24d24)<a->(c)]8
+5	[d(c)e-(c)]8
+5	[d(c)e-(c]8
+
+
+; Backing(PSG) ==============================================================
+2	l8o4q8@e5k2 h32,4,0,2 \0
+2	v14		; Panasonic machine
+;----- Intro
+2	[r1]8 (4
+2	[g(f+)a-(f+gg24)a-24(g24)d-(f+))]4
+2	[g(f+)a-(f+gg24)a-24(g24)d-(f+)]4
+2	[g(f+)a-(f+]4
+;----- A,B
+2	[r1]24
+;----- C
+2	[r1]4
+2	o4v14
+2	[g(f+)a-(f+gg24)a-24(g24)|d-(f+)]4
+2	[
+2	q8a->q6c <
+;----- A'
+2	q8b4q7b>q6c<q8bb24>c24<b24fq6a-
+2	q8b4.q6bq8bb24>c24<b24fq6a-
+2	q8b4.>q6cq8dq6e-q8gq6a-
+2	q8gf+24g24f+24e-c24d24c24<q6b4
+2	]2 >
+2	q8cq6e-
+;----- D
+;	cde-f+ga-b>c
+2	q8e-d24e-24d24cde-q6gq8a-q6d<
+2	q8bb24>c24<b24gbb>q6cq8dq6g<<
+2	q8b>q7cq8e-q6f+q8bb24>c24<b24>e-a-<
+2	q8gq6d>q8ce-24f+24e-24dq6c<q8bq6f+
+;----- Outro
+2	q8a-1& a-2.& a-_d4(4a-_d4(3a-_d4(3a-_d4(3a-_d4 r1 )10
+
+;Drums ======================================================================
+1	l16o3 q8k5 \0
+1	v15		; Panasonic machine
+1	[r1]2
+1	@e30v1n0cn1cn2c)n3cn4cn5c)n6cn7c
+1	n8c)n9cn10cn11c)n12cn13cn14c)n15c
+1	n16cn17c)n18cn19c)n20cn21c)n22cn23c)
+1	n24cn25c)n26cn27c)n28cn29c)n30cn31c v15
+1	[[*h8*o8]6|*h8*o8((*h24)*h24)*h24*o8]2
+1	*h16*o16*h16*h16((*h24)*h24)*h24*o8
+1	[*b16*h16|*o8]16 *o16*h16
+1	[*b16*h16*o8*s8|*h16*o16]8 *s16*s16
+1	*c4[*h16*h16*o8]3[*h8*o8]2 *h16*o16*h16*h16*h24*h24*h24*o8
+;----- A
+1	[*b16*h16*o8]32
+1	[*b16*h16|*o16*h16]16 *o8
+;----- B
+1	[*b16*h16*o8]32
+1	[*b16*h16|*o16*h16*s8*h16*o16]8 *h16*o16*s16*s16*t1bf
+;----- C
+1	[*b16*h16|*o8]16 *h24*h24*o24
+1	[*b16*h16|*o16*h16*s8*h16*o16]8 *h24*h24*o24*s16*s16*t1bf
+;----- A'
+1	[[*b16*h16|*o16*h16*s16*h16*h16*o16]8 *h16*o16*s16|*b16*s16*s16]2
+1	*s16*t1bf
+;----- D
+1	[*b16*o16*h24*h24*o24*s16*h16*o16*h16
+1	 *b16*h16*b16*o16*s16*h16|*b16*o16]2 *s16*s16
+1	[*b16*h16*b16*o16*s16*o16*h24*h24*o24|
+1	 *b16*h16*o16*h16*s16*h16*b16*o16]2
+1	*s16*b16*s16*b16*s16*s16*t1b24f24<b24
+;----- Outro
+1	[*b16*h16*o16*h16*b16*h16*h16*o16]8
+1	[*b16*h16*o8]16
+1	[*h16*h16*o8]16
+1	[*h8*o8]8
