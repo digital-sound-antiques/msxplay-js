@@ -137,7 +137,15 @@
 
 		MSXPlayUI.prototype.onClickPlayer = function(event) {
 
-			var playerElement = event.target.closest('.msxplay');
+			var playerElement = event.target;
+			while(playerElement){
+				if(playerElement.classList.contains('msxplay')) break;
+				playerElement = playerElement.parentNode;
+			}
+
+			if(!playerElement) {
+				return;
+			}
 
 			if(event.target == playerElement.querySelector('.leftbox')) {
 				if(playerElement == this.currentPlayerElement) {
