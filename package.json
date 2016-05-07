@@ -1,0 +1,19 @@
+{
+  "name": "msxplay-js",
+  "version": "0.1.0",
+  "description": "",
+  "main": "webpack.config.js",
+  "dependencies": {
+    "encoding-japanese": "^1.0.24",
+    "exports-loader": "^0.6.3",
+    "expose-loader": "^0.7.1",
+    "imports-loader": "^0.6.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

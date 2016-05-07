@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta content="text/html" charset="utf-8">
+	<script src="dist/msxplay-bundle.js"></script>
+	<link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+	<link href='css/style.css' rel='stylesheet' type='text/css'>
+	<link href='css/msxplay.css' rel='stylesheet' type='text/css'>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/ace.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/theme-xcode.js"></script>
+
+	<script>
+  	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  	ga('create', 'UA-77432401-1', 'auto');
+  	ga('send', 'pageview');
+	</script>
+
+	<script src="js/lang-switcher.js"></script>
+
+	<script>
+		"use strict"
+
+		function loadTextFromUrl(url,complete) {
+			var xhr = new XMLHttpRequest();
+			xhr.open("GET",url,true);
+			xhr.responseType = "text";
+			xhr.addEventListener('load',function(){
+				if(xhr.status == 200 || xhr.status == 304 || xhr.status == 0) {
+					if(complete) complete(xhr.response, url, null);
+				} else if(xhr.status == 404) {
+					var err = new Error("File Not Found: " + url);
+					if(complete) complete(null, url, err);
+				} else {
+					var err = new Error(xhr.statusText);
+					if(complete) complete(null, url, err);
+				} 
+			});
+			xhr.addEventListener('error',function(e){
+				var err = new Error("Load Error: Check 'Access-Control-Allow-Origin' header is present for the target resource. See browser's development panel for detail. If you run this script local Chrome, `--allow-file-access-from-files` option is required.");
+				if(complete) complete(null, url, err);
+			});
+			xhr.send();
+		}
+
+		// Prevent unexpected location change.
+		var contentChanged = false;
+		window.addEventListener('beforeunload',function(event) {
+			if(contentChanged) {
+				storeToLocalStorage();
+			}
+		});
+
+		var editor;
+		function createAceEditor() {
+			try {
+				editor = ace.edit("editor");
+			  	editor.setTheme("ace/theme/xcode");
+			  	//editor.getSession().setMode("ace/mode/text");
+			  	editor.commands.bindKey("Ctrl-P", "golineup");
+			  	editor.$blockScrolling = Infinity;
+    			editor.getSession().setUseWrapMode(true);
+    			editor.setShowPrintMargin(false);
+    			editor.resize(true);
+    			editor.on('change',function() {
+    				contentChanged = true;
+    			});
+    		} catch(e) {
+    			window.alert('Failed to create the Ace editor instance. Please check your network connection.');
+    		}
+    	}
+
+    	var marker = null;
+    	function addErrorMarker(line) {
+    		var range = ace.require('ace/range');
+    		marker = editor.getSession().addMarker(new range.Range(line, 0, line, 2000), "mml-error", "line", true);
+    	}
+
+    	function removeErrorMarker() {
+    		if(marker) {
+    			editor.getSession().removeMarker(marker);
+    			marker = null;
+    		}
+    	}
+
+    	function highlightError(message) {
+    		var m = message.match(/(?:bad mml|syntax error|missing parameter) in ([0-9]+)/i);
+    		if(m) {
+    			var line = parseInt(m[1]);
+    			addErrorMarker(line);
+    			editor.gotoLine(line+1, 0, true); 
+    		}
+    		document.getElementById('message').classList.remove('minimized');
+    	}
+
+
+		function compile() {
+			if(contentChanged) {
+				storeToLocalStorage();
+				contentChanged = false;
+			}
+
+			MSXPlayUI.stop();
+			removeErrorMarker();
+			var mml = editor.getValue();
+			var result = MGSC.compile(mml);
+
+			document.querySelector('#message pre').textContent = result.message;
+
+			if(result.mgs.length==0) {
+				highlightError(result.message);
+			} else {
+				var player = document.getElementById('player');
+				player.dataset.duration = null;				
+				MSXPlayUI.setDataToPlayer(player, result.mgs, "mml.mgs");
+				if(document.getElementById('autoplay').checked) {
+					MSXPlayUI.play(player);
+				}
+			}
+			editor.focus();
+		}
+
+		function loadFromUrl(url) {
+			loadTextFromUrl(url, function(mml,url,err) {
+				if(mml) {
+					editor.setValue(mml,-1);
+					editor.focus();
+					contentChanged = false;
+					clearLocalStorage();
+				} else {
+					window.alert(err);
+				}
+			});
+		}
+
+		function openFile(e) {
+			var files = e.target.files;
+			console.log(files);
+			if(!files||!files[0]) return;
+		    var reader = new FileReader();
+    		reader.onloadend = function() {
+      			editor.setValue(reader.result,-1);
+      			editor.focus();
+      			contentChanged = false;
+      			clearLocalStorage();
+    		}
+    		reader.readAsText(files[0]);
+		}
+
+		function clearFile(e) {
+			showDialog('confirm-clear',function(value){
+				if(value=="ok") {
+					editor.setValue('',-1);
+					clearLocalStorage();
+					contentChanged = false;
+				}
+			});
+		}
+
+		function clearLocalStorage() {
+			localStorage.removeItem('mgsc.editor.autobackup');
+		}
+
+		function storeToLocalStorage() {
+			localStorage.setItem('mgsc.editor.autobackup', editor.getValue());
+		}
+
+		function restoreFromLocalStorage() {
+			editor.setValue(localStorage.getItem('mgsc.editor.autobackup'),-1);
+			editor.focus();
+			contentChanged = false;
+		}
+
+		document.addEventListener('keydown', function(e) {
+			if( e.keyCode == 83 && (e.metaKey || e.ctrlKey) ) {
+				e.preventDefault();
+				storeToLocalStorage();
+			}
+
+			if (e.keyCode == 8) {
+				if(e.target == document.body) {
+					e.preventDefault();
+				}
+			}
+		});
+
+		function showDialog(id, complete) {
+			var dialog = document.getElementById(id);
+			var stage = document.getElementById('modal-stage');
+			var listener = function(e) {
+				if(e.target.classList.contains('button')) {
+					dialog.style.display = 'none';
+					stage.style.display = 'none';
+					dialog.removeEventListener('click',listener);
+					if(complete) complete(e.target.dataset.value);
+				}
+			};
+			dialog.addEventListener('click', listener);
+			stage.style.display = 'block';
+			dialog.style.display = 'block';
+			dialog.style.width = dialog.offsetWidth + 'px';
+			dialog.style.height = dialog.offsetHeight + 'px';
+			dialog.style.position = 'absolute';
+		}
+
+		window.addEventListener('DOMContentLoaded', function() {
+
+			MSXPlayUI.install(document.body);
+			createAceEditor();
+
+			if(localStorage.getItem('mgsc.editor.autobackup')) {
+				showDialog('confirm-restore',function(value){
+					if(value=="yes") {
+						restoreFromLocalStorage();
+					} else {
+						loadFromUrl('demo/grider.mus');
+					}
+				});
+			} else {
+				loadFromUrl('demo/grider.mus');
+			}
+
+			document.getElementById('action-compile').addEventListener('click',compile);
+			document.getElementById('action-clear').addEventListener('click',clearFile);
+			document.getElementById('open-file').addEventListener('change',openFile);
+
+			var mbox = document.getElementById('message');
+			mbox.addEventListener('click',function(e) {				
+				if(mbox.classList.contains('minimized')) {
+					mbox.classList.remove('minimized');
+				} else {
+					if(e.target == document.querySelector('#message .title')) {
+						mbox.classList.add('minimized');
+					}
+				}
+			},true);
+
+		});
+
+
+
+	</script>
+	<style>
+
+	#editor {
+		border:1px solid #ccc;
+		position:absolute;
+		left:72px;
+		top:112px;
+		bottom:76px;
+		right:72px;
+		border-radius:2px;
+	}
+
+	.actions {
+		height:56px;
+		padding:10px 72px;
+		font-size:12px;
+	}
+	.actions button {
+		color:#007aff;
+		border-radius:2px;
+		height:36px;
+		padding:0 8px;
+		margin:0px 8px 0px 0;
+		line-height:36px;
+		font-size:14px;
+		background-color:#ffffff;
+		box-shadow:0 0px 2px 0 rgba(0,0,0,.25);
+		border:none;
+		cursor:pointer;
+	}
+
+	.actions button:focus {
+		outline:0;
+	}
+	
+	.actions button:hover {
+		box-shadow:0 0 4px 0 rgba(0,0,0,.25);
+	}
+	
+	.actions button:active {
+		background-color:#007af4;
+		color:white;
+	}
+
+	#message {
+		position:absolute;
+		right:72px;
+		top:64px;
+		width:320px;
+		height:200px;
+		border:1px solid #ccc;
+		color:white;
+		background-color:#0070f0;
+		border-radius:2px;
+		z-index:100;
+		overflow:hidden;
+		transition:transform 0.25s ease, background-color 0.25s ease;
+		transform-origin:top right;
+		transform:translate(-24px,56px);
+		box-shadow:0 2px 8px 0 rgba(0,0,0,.25);
+	}
+
+	#message.minimized {
+		transform:scale(0.2,0.2);
+		overflow-y:hidden;
+		box-shadow:none;
+	}
+
+	#message .title {
+		width:100%;
+		height:24px;
+		line-height:24px;
+		font-size:11px;
+		color:rgba(0,0,0,0.87);
+		background-color:#f0f0f0;
+		border-bottom:1px solid #ccc;
+		padding:0 10px;
+		cursor:pointer;
+	}
+
+	#message pre {
+		font-size:10px;
+		color:white;
+		width:100%;
+		height:176px;
+		white-space:pre-wrap;
+		overflow-y:auto;
+		padding:12px;
+	}
+
+	#message.minimized pre {
+		cursor:pointer;
+		overflow:hidden;
+	}
+
+	.mml-error {
+		background: rgba(255, 50, 50, 0.4);
+		position: absolute;
+		width: 100% !important;
+		left: 0 !important;
+	}
+
+	.msxplay {
+		transition:bottom 0.5s ease;
+	}
+	.msxplay:not([data-hash]) {
+		bottom:-56px;
+	}
+
+	#modal-stage {
+		position:absolute;
+		top:0;left:0;bottom:0;right:0;
+		background-color: rgba(0,0,0,.5);
+		display:none;
+		z-index:101;
+	}
+
+	.dialog {
+		top:0;left:0;bottom:0;right:0;
+		display:none;
+		background-color:#fafafa;
+		border-radius:2px;
+		box-shadow:0 0 20px 0 rgba(0,0,0,.5);
+		font-size:14px;
+		margin:auto auto;
+	}
+
+	.dialog .content {
+		padding:20px 20px 0px 20px;
+	}
+
+	.dialog .content p {
+		margin-bottom:12px;
+		font-size:14px;
+	}
+
+	.dialog .button-area {
+		width:100%;
+		height:44px;
+		padding:0px 8px 8px 0;
+	}
+
+	.dialog .button-area:after {
+		content:'';
+		clear:both;
+	}
+
+	.dialog .button {
+		text-align:center;
+		font-size:14px;
+		height:36px;
+		line-height:36px;
+		border-radius:2px;
+		padding:0 8px;
+		margin-left:8px;
+		min-width:64px;
+		float:right;
+		cursor:pointer;
+	  	color:#3a76ff;
+	}
+	.dialog .button:hover {
+		background-color:#ddd;
+	}
+
+	</style>
+</head>
+<body>
+
+	<section class="page-header short">
+		<nav class="root-nav">
+			<ul>
+			<li><a href="index.html">Home</a></li>
+			<li class="selected">MML Editor</li>
+			</ul>
+		</nav>
+	</section>
+	<section class="actions">
+		<input id="open-file" type="file" accept=".mml,.mus,.txt" style="display:none;" />
+		<button id="action-open" onclick="document.getElementById('open-file').click();">Open</button>
+		<button id="action-clear">Clear</button>
+		<div style="display:inline-block;width:64px;"></div>
+		<button id="action-compile">Compile</button>
+		<input id="autoplay" type="checkbox" checked> <label for="autoplay">play after compile</label>
+		&nbsp;
+	</section>
+
+	<div id="editor"></div>
+
+	<div id="message" class="minimized">
+		<div class="title">Console</div>
+		<pre></pre>
+	</div>
+	<div id="player" class="msxplay bottom-fixed"></div>
+
+	<div id="modal-stage">
+	<div id="confirm-restore" class="dialog" style="width:280px">
+		<div class="content">
+			<p lang="ja">前回、編集していた内容が残っています。読み込みますか？</p>
+			<p lang="en">The last text you were editing is found. Recover it?</p>
+		</div>
+		<div class="button-area">
+			<div class="button" data-value="yes">YES</div>
+			<div class="button" data-value="no">NO</div>
+		</div>
+	</div>
+
+	<div id="confirm-clear" class="dialog" style="width:280px">
+		<div class="content">
+			<p lang="ja">テキストを消去します。よろしいですか？</p>
+			<p lang="en">Are you sure to clear all the text?</p>
+		</div>
+		<div class="button-area">
+			<div class="button" data-value="ok">OK</div>
+			<div class="button" data-value="cancel">Cancel</div>
+		</div>
+	</div>
+	</div>
+
+
+</body>
+</html>
