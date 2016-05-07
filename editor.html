@@ -130,31 +130,35 @@
 			editor.focus();
 		}
 
+		function loadText(text) {
+			editor.setValue(text,-1);
+			editor.focus();
+			contentChanged = false;
+			clearLocalStorage();
+		}
+
 		function loadFromUrl(url) {
 			loadTextFromUrl(url, function(mml,url,err) {
 				if(mml) {
-					editor.setValue(mml,-1);
-					editor.focus();
-					contentChanged = false;
-					clearLocalStorage();
+					loadText(mml);
 				} else {
 					window.alert(err);
 				}
 			});
 		}
 
-		function openFile(e) {
-			var files = e.target.files;
-			console.log(files);
-			if(!files||!files[0]) return;
+		function loadFromFile(file) {
 		    var reader = new FileReader();
     		reader.onloadend = function() {
-      			editor.setValue(reader.result,-1);
-      			editor.focus();
-      			contentChanged = false;
-      			clearLocalStorage();
+      			loadText(reader.result);
     		}
-    		reader.readAsText(files[0]);
+    		reader.readAsText(file);
+		}
+
+		function openFile(e) {
+			if(0<e.target.files.length) {
+				loadFromFile(e.target.files[0]);
+			}
 		}
 
 		function clearFile(e) {
@@ -194,12 +198,12 @@
 			}
 		});
 
-		var saveAs = function (data, fileName) {
+		var saveAs = function (data, fileName, type) {
 			var a = document.createElement("a");
 			a.style = "display: none";
     		document.body.appendChild(a);
 
-            var blob = new Blob([data], {type: "application/octet-stream"}),
+            var blob = new Blob([data], {type: type}),
             url = window.URL.createObjectURL(blob);
         	a.href = url;
         	a.download = fileName;
@@ -208,9 +212,13 @@
         	document.body.removeChild(a);
 		};
 
+		function downloadMML() {
+			saveAs(editor.getValue(), Date.now() + ".mml", "text/plain");
+		};
+
 		function downloadMGS() {
 			if(lastCompiledMGS) {
-				saveAs(lastCompiledMGS, Date.now() + ".mgs");
+				saveAs(lastCompiledMGS, Date.now() + ".mgs", "application/octet-stream");
 			} else {
 				showDialog('no-mgs');
 			}
@@ -235,7 +243,43 @@
 			dialog.style.position = 'absolute';
 		}
 
+		var dragCounter = 0;
+
+		function onDragOver(e) {
+  			e.preventDefault();
+		}
+
+		function onDragEnter(e) {
+			e.preventDefault();
+			if(dragCounter==0) {
+				document.getElementById('editor').style.borderColor = 'red';
+			}
+			dragCounter++;
+		}
+
+		function onDragLeave(e) {
+			dragCounter--;
+			if(dragCounter==0) {
+				document.getElementById('editor').style.borderColor = null;
+			}
+		}
+
+		function onDrop(e) {
+			dragCounter = 0;
+			document.getElementById('editor').style.borderColor = null;
+			e.preventDefault();
+  			if(0<e.dataTransfer.files.length) {
+				loadFromFile(e.dataTransfer.files[0]);
+			}
+  		}
+
 		window.addEventListener('DOMContentLoaded', function() {
+
+			var elem = document.body;
+  			elem.addEventListener("dragover", onDragOver);
+			elem.addEventListener("dragenter", onDragEnter);
+			elem.addEventListener("dragleave", onDragLeave);
+  			elem.addEventListener("drop", onDrop);
 
 			MSXPlayUI.install(document.body);
 			createAceEditor();
@@ -273,15 +317,42 @@
 
 	</script>
 	<style>
-
 	#editor {
 		border:1px solid #ccc;
 		position:absolute;
 		left:72px;
 		top:112px;
-		bottom:76px;
+		bottom:100px;
 		right:72px;
-		border-radius:2px;
+		border-radius:2px 2px 0 0;
+	}
+
+	#editor-foot {
+		border:1px solid #ccc;
+		border-top:none;
+		font-size:10px;
+		background-color:#444;
+		color:white;
+		left:72px;right:72px;
+		position:absolute;
+		height:24px;
+		line-height:24px;
+		bottom:76px;
+		border-radius:0 0 2px 2px;
+	}
+
+	#editor-foot div {
+		margin:0 10px;
+	}
+
+	#editor-foot a {
+		color:#ddd;
+		cursor:pointer;
+	}
+
+	#editor-foot a:hover {
+		color:white;
+		text-decoration: underline;
 	}
 
 	.actions {
@@ -456,10 +527,14 @@
 		<button id="action-compile">Compile</button>
 		<input id="autoplay" type="checkbox" checked> <label for="autoplay">play after compile</label>		
 		&nbsp;
-		<button id="action-download" onclick="downloadMGS()">Download</button>
 	</section>
 
 	<div id="editor"></div>
+	<div id="editor-foot">
+		<div style="float:left;">MML file can be dropped to the editor.</div>
+		<div style="float:right;"><a target="_blank" href="http://www.gigamix.jp/mgsdrv/MGSC111.TXT">MML reference</a></div>
+		<div style="float:right;">Download as <a onclick="downloadMML()">MML</a> or <a onclick="downloadMGS()">MGS</a></div>
+	</div>
 
 	<div id="message" class="minimized">
 		<div class="title">Console</div>
