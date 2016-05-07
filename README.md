@@ -14,7 +14,7 @@ TL;DR. See the following brief example.
   <script src="msxplay-bundle.js"></script>
   <script>
     window.addEventListener("DOMContentLoaded",function(){
-      MSXPlay.install(document.body);
+      MSXPlayUI.install(document.body);
     });
   </script>
 </head>
