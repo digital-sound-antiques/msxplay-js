@@ -160,10 +160,11 @@
 			});
 		}
 
-		function loadFromFile(file) {
+		function loadFromFile(file, complete) {
 		    var reader = new FileReader();
     		reader.onloadend = function() {
       			loadText(reader.result);
+      			if(complete) complete();
     		}
     		reader.readAsText(file);
 		}
@@ -289,7 +290,7 @@
 			document.getElementById('editor').style.borderColor = null;
 			e.preventDefault();
   			if(0<e.dataTransfer.files.length) {
-				loadFromFile(e.dataTransfer.files[0]);
+				loadFromFile(e.dataTransfer.files[0], compile);
 			}
   		}
 
