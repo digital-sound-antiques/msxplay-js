@@ -118,6 +118,10 @@ nav.root-nav {
 	margin:8px 0;
 }
 
+.content .note {
+	font-size:10px;	
+}
+
 .content h2 {
 	margin:32px 0 18px 0;
 	font-size:16px;

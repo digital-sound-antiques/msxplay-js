@@ -86,14 +86,14 @@
 	<section class="content">
 		<p lang="ja">
 			MSXplay.js はブラウザ内で MSX の音楽 (PSG,SCC,OPLL) をエミュレーション再生する実験的なサウンドプレイヤーです。
-			C言語版の <a href="https://github.com/digital-sound-antiques/libkss">libkss</a> を Emscripten で JavaScript に変換して利用しています。
+			C言語版の <a href="https://github.com/digital-sound-antiques/libkss">libkss</a> を <a href="http://kripken.github.io/emscripten-site/">Emscripten</a> で JavaScript に変換して利用しています。
 		</p>
 		<p lang="ja">
 			音声の再生にはブラウザの <a href="https://developer.mozilla.org/docs/Web/API/Web_Audio_API">Web Audio API</a> を使用しています。<br>
 		</p>
 		<p lang="en">
 		MSXplay.js is an experimental MSX sound player which emulates PSG, SCC and OPLL on the 
-		JavaScript engine in the browser. The emulation core is based on <a href="https://github.com/digital-sound-antiques/libkss">libkss</a> in C. Emscripten is used to build JavaScript version of libkss.
+		JavaScript engine in the browser. The emulation core is based on <a href="https://github.com/digital-sound-antiques/libkss">libkss</a> in C. <a href="http://kripken.github.io/emscripten-site/">Emscripten</a> is used to build JavaScript version of libkss.
 		</p>
 		<p lang="en">
 			To play audio stream directly on the browser, we use <a href="https://developer.mozilla.org/docs/Web/API/Web_Audio_API">Web Audio API</a> interface.
@@ -106,9 +106,29 @@
 		<p lang="en">We recommend Chrome or FireFox. We have no plan to support any version of IE since they do not 
 			provide Web Audio API interface.</p>
 			<table>
-				<tr><th>Chrome</th><th>FireFox</th><th>Safari</th><th>IE(7 to 11)</th><th>Edge</th></tr>
-				<tr><td>◎</td><td>◎</td><td>◯</td><td>☓</td><td>?</td></tr>
+				<style>th{width:80px;}</style>
+				<tr>
+					<th>Chrome</th>
+					<th>FireFox</th>
+					<th>Safari</th>
+					<th>IE</th>
+					<th>Edge</th>
+				</tr>
+				<tr>
+					<td><img src="img/chrome_32x32.png"></td>
+					<td><img src="img/firefox_32x32.png"></td>
+					<td><img src="img/safari_32x32.png"></td>
+					<td><img src="img/internet-explorer_32x32.png"></td>
+					<td><img src="img/edge_32x32.png"></td></tr>
+				<tr>
+					<td>50+</td>
+					<td>42+</td>
+					<td>9.1+</td>
+					<td>x</td>
+					<td>Not checked</td>
+				</tr>
 			</table>
+			<p class="note x-small">The browser icons by <a href="https://github.com/alrra/browser-logos">alrra/browser-logos</a></p>
 
 		<h2>Demo Player</h2>
 		<p lang="ja">次のプレーヤーパネルの左側にある再生ボタンを押してください。演奏が始まります。</p>
