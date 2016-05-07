@@ -19,7 +19,7 @@ TL;DR. See the following brief example.
   </script>
 </head>
 <body>
-  <div class="msxplay" data-title="Song Title" data-url="http://www.example.com/example.kss"></div>
+  <div class="msxplay" data-title="Song Title" data-url="http://www.example.com/example.kss" data-duration="90"></div>
 </body>
 </html>
 ```
