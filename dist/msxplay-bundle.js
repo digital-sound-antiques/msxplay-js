@@ -334,6 +334,17 @@
 
 		};
 
+		MSXPlayUI.prototype.releaseKSS = function(kss) {
+			if(typeof kss == 'string') {
+				kss = KSS.hashMap[kss];
+			}
+
+			if(kss instanceof KSS) {
+				console.log("release " + kss.hash);
+				kss.release();
+			}
+		};
+
 		return new MSXPlayUI();
 
 	})();
@@ -370,6 +381,12 @@
 		};
 
 		KSS.hashMap = {};
+
+		KSS.releaseAll = function() {
+			for(var key in KSS.hashMap) {
+				KSS.hashMap[key].release();
+			}
+		};
 
 		KSS.createObject = function(data,fileName) {
 

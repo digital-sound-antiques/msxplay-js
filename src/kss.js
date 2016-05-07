@@ -27,6 +27,12 @@ module.exports = (function() {
 
 	KSS.hashMap = {};
 
+	KSS.releaseAll = function() {
+		for(var key in KSS.hashMap) {
+			KSS.hashMap[key].release();
+		}
+	};
+
 	KSS.createObject = function(data,fileName) {
 
 		var hash = crypto.createHash(alg);

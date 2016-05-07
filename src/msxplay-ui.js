@@ -272,6 +272,17 @@ module.exports = (function(){
 
 	};
 
+	MSXPlayUI.prototype.releaseKSS = function(kss) {
+		if(typeof kss == 'string') {
+			kss = KSS.hashMap[kss];
+		}
+
+		if(kss instanceof KSS) {
+			console.log("release " + kss.hash);
+			kss.release();
+		}
+	};
+
 	return new MSXPlayUI();
 
 })();

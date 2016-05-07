@@ -104,7 +104,11 @@
 				contentChanged = false;
 			}
 
+			var player = document.getElementById('player');
+
 			MSXPlayUI.stop();
+			MSXPlayUI.releaseKSS(player.dataset.hash);
+
 			removeErrorMarker();
 			var mml = editor.getValue();
 			var result = MGSC.compile(mml);
@@ -114,7 +118,6 @@
 			if(result.mgs.length==0) {
 				highlightError(result.message);
 			} else {
-				var player = document.getElementById('player');
 				player.dataset.duration = null;				
 				MSXPlayUI.setDataToPlayer(player, result.mgs, "mml.mgs");
 				if(document.getElementById('autoplay').checked) {
