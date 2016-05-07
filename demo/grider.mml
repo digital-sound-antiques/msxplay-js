@@ -2,6 +2,13 @@
 #tempo 165
 #title { "YM2413 Demo - Gun Rider" }
 
+@v20 = { ; Brass
+;       TL FB
+        24, 7,
+; AR DR SL RR KL MT AM VB EG KR DT
+   7, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0,
+  10, 7, 1, 1, 0, 1, 0, 1, 0, 0, 0 }
+
 9ABCDE r1r1
 
 F l16 v13r1h4h4h8b:b:hs:h:c8
@@ -51,7 +58,7 @@ E <a4v-3a8v+3a2> d+8&d+1&d+1
 F cb8h:hb: hs8hb:hs: h:hs:cb8 hs8hs:h: c8h:h: hb8h:h: hb:h:c8 hb:h:c8 cb8h:hs: cb:m:hm:hm: cs:m:hm:cb: s:hs:cs:hs:
 
 ;12,13
-9 v13@9o5q8
+9 v13@20o5q8
 9 l16 a1&a8b.v-3a32v+3>c.v-3<b32>v+3d.v-3c32v+3e.v-3d32v+3c.v-3e32v+3e.v-3c32v+3g.v-3e32v+3
 AB a8a8>a8.<aa8>de<aa>c<b a8a8>a8<aaf>c8c<g>d8d<
 CDE @9o5

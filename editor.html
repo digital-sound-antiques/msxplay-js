@@ -88,7 +88,7 @@
     	}
 
     	function highlightError(message) {
-    		var m = message.match(/(?:bad mml|syntax error|missing parameter) in ([0-9]+)/i);
+    		var m = message.match(/.* in ([0-9]+)/i);
     		if(m) {
     			var line = parseInt(m[1]);
     			addErrorMarker(line);
@@ -289,11 +289,11 @@
 					if(value=="yes") {
 						restoreFromLocalStorage();
 					} else {
-						loadFromUrl('demo/grider.mus');
+						loadFromUrl('demo/grider.mml');
 					}
 				});
 			} else {
-				loadFromUrl('demo/grider.mus');
+				loadFromUrl('demo/grider.mml');
 			}
 
 			document.getElementById('action-compile').addEventListener('click',compile);
@@ -357,16 +357,16 @@
 
 	.actions {
 		height:56px;
-		padding:10px 72px;
+		padding:12px 72px;
 		font-size:12px;
 	}
 	.actions button {
 		color:#007aff;
 		border-radius:2px;
-		height:36px;
+		height:32px;
 		padding:0 8px;
 		margin:0px 8px 0px 0;
-		line-height:36px;
+		line-height:32px;
 		font-size:14px;
 		background-color:#ffffff;
 		box-shadow:0 0px 2px 0 rgba(0,0,0,.25);
@@ -532,7 +532,7 @@
 	<div id="editor"></div>
 	<div id="editor-foot">
 		<div style="float:left;">MML file can be dropped to the editor.</div>
-		<div style="float:right;"><a target="_blank" href="http://www.gigamix.jp/mgsdrv/MGSC111.TXT">MML reference</a></div>
+		<div style="float:right;">[<a target="_blank" href="http://www.gigamix.jp/mgsdrv/MGSC111.TXT">MML?</a>]</div>
 		<div style="float:right;">Download as <a onclick="downloadMML()">MML</a> or <a onclick="downloadMGS()">MGS</a></div>
 	</div>
 
