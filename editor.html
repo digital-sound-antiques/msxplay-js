@@ -97,6 +97,7 @@
     		document.getElementById('message').classList.remove('minimized');
     	}
 
+    	var lastCompiledMGS = null;
 
 		function compile() {
 			if(contentChanged) {
@@ -117,7 +118,9 @@
 
 			if(result.mgs.length==0) {
 				highlightError(result.message);
+				lastCompiledMGS = null
 			} else {
+				lastCompiledMGS = result.mgs;
 				player.dataset.duration = null;				
 				MSXPlayUI.setDataToPlayer(player, result.mgs, "mml.mgs");
 				if(document.getElementById('autoplay').checked) {
@@ -190,6 +193,28 @@
 				}
 			}
 		});
+
+		var saveAs = function (data, fileName) {
+			var a = document.createElement("a");
+			a.style = "display: none";
+    		document.body.appendChild(a);
+
+            var blob = new Blob([data], {type: "application/octet-stream"}),
+            url = window.URL.createObjectURL(blob);
+        	a.href = url;
+        	a.download = fileName;
+        	a.click();
+        	window.URL.revokeObjectURL(url);
+        	document.body.removeChild(a);
+		};
+
+		function downloadMGS() {
+			if(lastCompiledMGS) {
+				saveAs(lastCompiledMGS, Date.now() + ".mgs");
+			} else {
+				showDialog('no-mgs');
+			}
+		};
 
 		function showDialog(id, complete) {
 			var dialog = document.getElementById(id);
@@ -429,8 +454,9 @@
 		<button id="action-clear">Clear</button>
 		<div style="display:inline-block;width:64px;"></div>
 		<button id="action-compile">Compile</button>
-		<input id="autoplay" type="checkbox" checked> <label for="autoplay">play after compile</label>
+		<input id="autoplay" type="checkbox" checked> <label for="autoplay">play after compile</label>		
 		&nbsp;
+		<button id="action-download" onclick="downloadMGS()">Download</button>
 	</section>
 
 	<div id="editor"></div>
@@ -463,8 +489,17 @@
 			<div class="button" data-value="cancel">Cancel</div>
 		</div>
 	</div>
-	</div>
 
+	<div id="no-mgs" class="dialog" style="width:280px">
+		<div class="content">
+			<p lang="ja">MGSデータがありません。先にMMLをコンパイルしてください。</p>
+			<p lang="en">No MGS data. Please compile the MML first.</p>
+		</div>
+		<div class="button-area">
+			<div class="button" data-value="ok">OK</div>
+		</div>
+	</div>
+	</div>
 
 </body>
 </html>
