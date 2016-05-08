@@ -6,16 +6,17 @@ module.exports = (function(){
 	return {
 		compile:function(mml) {
 			
-			if(!/\n\s*$/.test(mml)) { mml = mml + "\n";	}
+			mml = mml.replace(/\s*$/,'') + "\n";
 
 			var mmlbuf = encoding.convert(mml,{from:'UNICODE',to:'SJIS',type:'arraybuffer'});
 
-			if(32768 < mmlbuf.length) {
+			if(16384 * 3 < mmlbuf.length) {
 				throw new Error("MML source is too long.");
 			}
 
-			var inp = Module._malloc(32768);
+			var inp = Module._malloc(mmlbuf.length+1);
 			Module.HEAPU8.set(mmlbuf,inp,mmlbuf.length);
+			Module.HEAPU8[inp+mmlbuf.length] = 0;
 
 			var ptr = Module._malloc(32768);
 			var log = Module._malloc(32768);
