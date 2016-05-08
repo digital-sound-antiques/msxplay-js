@@ -5,6 +5,8 @@ module.exports = (function(){
 
 	return {
 		compile:function(mml) {
+			
+			if(!/\n\s*$/.test(mml)) { mml = mml + "\n";	}
 
 			var mmlbuf = encoding.convert(mml,{from:'UNICODE',to:'SJIS',type:'arraybuffer'});
 
