@@ -203,22 +203,71 @@ body {
 	background-color:#ddd;
 }
 
-.dialog ul.item-list {
+ul.item-list {
 	display:block;
 	width:100%;
 	padding:0;
 	margin:0;
+	border-top:1px solid #eee;
+	border-bottom:1px solid #eee;
+	overflow-y:auto;
+	overflow-x:hidden;
+	max-height:400px;
+	margin-bottom:8px;
 }
 
-.dialog ul.item-list li {
+ul.item-list li {
 	background-color:white;
 	display:block;
 	width:100%;
-	height:48px;
-	padding:0 20px;
+	height:56px;
+	padding:8px 20px;
 	margin:0;
-	line-height:48px;
+	line-height:56px;
 	font-size:16px;
 	float:none;
 	text-align:left;
+	cursor:pointer;
+}
+
+ul.item-list li:nth-child(2n) {
+	background-color:#fafafa;
+}
+
+ul.item-list li:hover {
+	background-color:#f0f0f0;
+}
+
+ul.item-list li .title {
+	font-size:14px;
+	height:22px;
+	line-height:22px;
+	color:rgba(0,0,0,.87);
+}
+
+ul.item-list li i {
+	border-radius:2px;
+	background-color:#bbb;
+	color:#fff;
+	padding:0px 3px;
+	margin:2px 0px 2px 4px;
+	font-style:normal;
+	vertical-align: middle;
+	display: inline-block;
+	font-size:8px;
+	line-height:14px;
+	height:14px;
+}
+
+ul.item-list li div.chips {
+	display: inline-block;
+	margin-left:8px;
+	float:right;
+}
+
+ul.item-list li .subtext {
+	font-size:12px;
+	height:18px;
+	line-height:18px;
+	color:rgba(0,0,0,.4);
 }

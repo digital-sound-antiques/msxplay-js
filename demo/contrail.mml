@@ -1,0 +1,219 @@
+#opll_mode 1
+#tempo 224
+#title { "[MSX Rock] Contrail : composed by DRM 2004" }
+
+#alloc	0=1500
+#macro_offset {o = 0, i = 20, s = 40}
+
+; ============== Voice Definition ==============
+; FM VOICE
+
+; === Brass
+@v15 = {							
+   ;       TL FB
+           18, 6,
+   ;       AR DR SL RR KL MT AM VB EG KR DT
+           15, 2,15, 0, 0, 0, 0, 1, 0, 1, 0,
+           15,15, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+; === Pad
+@v16 = {							
+   ;       TL FB
+           21, 6,
+   ;       AR DR SL RR KL MT AM VB EG KR DT
+            8,  5,10,10, 0, 5, 1, 0, 1, 0, 1,
+           15,  4, 2,10, 0, 1, 0, 0, 1, 0, 0 }
+; === Guitar
+@v17 = {							
+   ;       TL FB
+           10, 6,
+   ;       AR DR SL RR KL MT AM VB EG KR DT
+           15, 1,15, 0, 0, 3, 0, 0, 0, 0, 0,
+           15,15, 0, 0, 0, 1, 0, 0, 0, 0, 0 }
+
+; === SE
+@v18 = {							
+   ;       TL FB
+            3, 1,
+   ;       AR DR SL RR KL MT AM VB EG KR DT
+            1, 2, 5, 0, 0, 3, 0, 0, 1, 0, 0,
+            5,15, 0, 0, 0, 0, 0, 0, 0, 1, 0 }
+
+; PSG VOICE
+
+; === Snare Drum
+@e31 = { 2,0, n30.F.n25.E.n17C.n7.A.0=12 } 
+; === High Hat
+@e30 = { 2,0, n3.D.0 }
+; === Tom
+@e29 = { 1,0, F=2.0=12 } 
+; === Melody
+@e28 = { 1,0, f:2.e:2.d:60}
+
+
+; SCC VOICE
+; === Bass
+@s00 = { 1F5F3F1F00E0C0E01F5F3F1F00E0C0E0 56B782456A3B6415B645B62457B6B455 }
+@e25 = { 1,0, F:2.7}
+
+; === Guitar
+@s20 = { 003050607060503000D0B0A090A0B0D0 00406070604000C0A090A0C000700090 }
+@e27 = { 1,0, F:4.C}
+
+
+
+; ============== Pattern Definition ==============
+; == Instrument
+; --- FM ---
+*20 = { @15 } ; Brass
+*21 = { @13 } ; Bass
+*22 = { @16 } ; Pad
+*23 = { @17 } ; Guitar
+*24 = { @18 } ; SE
+
+; --- SCC ---
+*25 = { @0 @e25 k1 } ; bass
+*27 = { @20 @e27 k0 } ; guitar
+
+; --- PSG ---
+*29 = { @31 }
+*30 = { @28 }
+
+; ============== Initial Definition ==============
+; --- OPLL ---
+; ETC
+9ACD v13l8o6  h10,2,1,-3 hf
+AD @\20 r4 v-2
+
+; Bass
+B *i01 v15l8o2 q6
+
+; Drums
+F  y39,5 y41,34 y23,80 y24,60 v15vc13
+
+; --- PSG ---
+; Melody
+12 *i10 o4 l8 v13  h20,2,1,-2 ho q8
+2 v-1@\20r8
+
+; Drums
+3 *i9 o4 l8 v15  p100
+
+; --- SCC ---
+; Bass
+4 *i05 o1v10 l8@\30
+; Guitar
+5678 *i07 v9 l8o3
+68 @\10
+6 r8 v-2
+
+; ============== Sequence Definition ==============
+
+; Intro
+
+12456789ABCD [r1]4
+F [b4bm8b8b8b8bm4]3 b4bm8b8b8b8bm8bm8
+3 [@30 cc@31c4]7@30 cc@31cc
+
+; [A]
+
+123456789ABCDF [
+
+
+12 r4.l24dd-<b>drerg-rfrg-rar l12br>d-rdrd-r<br>e6l8e4.e-&e-2 <a4.b&b4>a_b4 [a_b4>q4dq8<]5a l16abag-fg-fee-<bab>d<bag- l8q4ba>ee-gg->c<q8b&
+12 bra_b2.&b2.>e-_e4 e4.e-4.&e-_d4&dcr<b4.&b_b-4 v+1[>q4eq8e-<q4b]4l12q8>ee-c<bag-q4 l8>eq8e-q4<abfg-ag-q8fg-fg-q4ab-q8b&b_av-1
+
+12 v-1 [>b-_b&ba4g-ag-edeq4ded<aq8b-_b&b]>b-_b&ba4g-ag-edeq4ded<abg-q8 l16d<b>d<b>e-<b>e-<b>e<b>e<b>f<b>f<b> g-8>d<bg-8>d<bg-8>d<b>ee-<ba v+1
+12 l8bag-fed-<aa&a2.&a_g-2.r2r1 r1r1 dde-e-eeffg-g-abfed<b>
+
+
+
+9A *i02 v-1 [e4.e-4.<a4a4.b4.g-4>e4.e-4.<a4a4.g-4.&g-4>]4
+9A *i00 v+1 [r4g-2fg-a-erg-&g-2 r4g-2fg-a-erg-re4.]
+9A [>v+1q6brq8b2v-1<fg-a-erg-&g-2 >v+1q6brq8b2v-1<fg-a-erg-re4.]
+CD *i02 v-1 <[b4.b4.g-4g-4.g-4.e-4 b4.b4.g-4g-4.e-4.&e-4]4>
+CD *i00 v+1 [r4e-2de-ed-re-&e-2 r4e-2de-ed-re-rd-4.]
+CD [>v+1q6g-rq8g-2v-1<de-ed-re-&e-2 >v+1q6g-rq8g-2v-1<de-ed-re-rd-4.]
+
+
+56 [q8g-4q4gg-d<bb>dq8g-4q4gg-d<br>g-]16
+78 [<q8b4>q4d<baeeaq8b4q4>d<baera>]16
+
+4B [
+4B <[q8b>br q4ag-feq8d4e-4e4f4q4g- b-<b>q8b<q4b>>q8d<<q4b>>q8e-e <<b>q4g-fed<bafq8]>
+4B [[q8a+_b16b.q4g-]9 q8bq4fedd_<a>]
+4B ]
+4B [[q8a+_b16b.q4g-]9 q8bq4fedd_<a>]
+
+F [[b4bm8b8b8b8bm4]3 b4bm8b8b8b8bm8bm8]8
+3 [[@30 cc@31c4]7@30 cc@31cc]8
+
+; [B]
+
+12 v-1>d-_d&dr<b&b2&b_b-1r>[e-&eq4aq8]4e-<ara1&a_g1r1r1v+1
+12 [r1]16
+5678CD [r1]8
+9A <<<[r1]6*i04b1&b1>>>
+
+
+9A *i03v-1 < e-eaa-4<b>a-g-4<b>g-e4<b>de e-eaa-4<b>>c<b4<b>g-e4gg-e
+9A g-q4d-d-q8eq4d-d-q8eg-4g-q4d-d-q8eq4d-d-d- q8eq4d-d-d-q8<b>d-<bb&b_b-1>
+9A e-eaa-4<b>a-g-4<b>g-e4<b>de e-eaa-4<b>>c<b4<b>g-e4gg-e
+9A g-q4ccq8eq4ccq8g-q4cq8e4.g4.b4 gq4ddq8g-q4ddq8aq4dq4dv+1q8d4d4d4d
+
+CD *i03v-1 <<b-b>ee4<e>ed4<e>d<b4eab b-b>ee4<e>aa-4<e>d<b4>dd-<b>
+CD d-<q4a-a-q8bq4a-a-q8b>d-4d-<q4a-a-q8bq4a-a-a- q8bq4a-a-a-q8g-a-g-g-&g-_f1>
+CD <b-b>ee4<e>ed4<e>d<b4eab b-b>ee4<e>aa-4<e>d<b4>dd-<b>
+CD c<q4gg>q8c<q4gg>q8c<q4c>q8c4.e4.g4 d<q4aa>q8d<q4aa>q8d<q4aq4aq8v+1a4a4a4a>
+
+F3 [r1]4
+F [bm4b8]4 bm4bm8 b8bm4 [b8bm8bm8] bm4bm8bm4bm16bm16bm16bm16bm16bm16
+3 [@31c4@30c]4 @31c4c @30c@31c4 [@30c@31cc] @31c@30c@31cc4l16ccccccl8
+
+56 q8 a4ra-&a-2q4deeeeeee q8de4<q4b>q8e4>d4<q4deeeeeee
+56 q8 e4q4d-q8e4q4d-q8g-4q4<b>d-d-d-d-d-d-d- q8b>d-<q4d-d-d-d-d-d-q8d-gg-ee-d-<ba->
+56 q8 g-4q4<b>q8g-4q4<b>q8a-4q4deeeeeee >q8de<q4eeeeeeq8eeq4eeeeee
+56 q8ggq4cccccc ccccccq8g4aaq4dddddd dq8d4d4d4d
+
+78 q8 d4rd&d2< q4abbbbbbb q8ab4q4eq8b4>a4< q4abbbbbbb> 
+78 q8 <b4q4a-q8b4q4a->q8d-4<q4g-a-a-a-a-a-a-a- q8>g-a-<q4a-a-a-a-a-a- q8a->dd-<bb-a-d-d->
+78 q8 d4q4<e>q8d4q4<e>q8d4q4<abbbbbbb >q8ab<q4bbbbbbq8bbq4bbbbbb>
+78 q8ccq4<gggggg gggggg>q8c4ddq4<aaaaaa aq8a4a4a4a>
+
+4B [q4eea-a-bb>d-d-ddd-d-<bba-e]
+4B [q4<b>d-d-d-d-d-d-d- d-d-d-d-d-<bbb>]
+4B [q4eea-a-bb>d-d-ddd-d-<bba-e]
+4B >[cccccccc] dddddddd <ddrdrdrd
+
+F [cb4cbm8b8cb8b8cbm4]3 cb4cbm8b8cb8b8cbm8bm8
+3 [@30 cc@31c4]7@30 cc@31cc
+F [cb4cbm8b8cb8b8cbm4]3 cb8bm8cbm8bm8cbm8bm8cbm8bm8
+3 [@30 cc@31c4]6@30 c@31ccc cccc
+F [cb4cbm8b8cb8b8cbm4]3 cb4cbm8b8cb8b8cbm8bm8
+3 [@30 cc@31c4]7@30 cc@31cc
+F [cb4cbm8b8cb8b8cbm4]3 bm8bm4bm4bm4bm16bm16
+3 [@30 cc@31c4]6@31 cc4c4c4c16c16
+
+; [A']
+
+12 >>[a+_b16&b16]32<<[r1]12
+
+9A <[q8ababb-b>ee-4q4d<bbaabb q8ababb-b>ee-4q4e-v+1eeffg-g-q8v-1<]>> [r1]8
+CD <[q8eg-eg-fgbb4q4ag-g-eeg-g- q8eg-eg-fgbb4q4bv+1bb>ccd-d-q8v-1<]>> [r1]8
+
+56 [q8g-4q4gg-d<bb>dq8g-4q4gg-d<br>g-]8
+78 [<q8b4>q4d<baeeaq8b4q4>d<baera>]8
+
+4B <[q8b>br q4ag-feq8d4e-4e4f4q4g- b-<b>q8b<q4b>>q8d<<q4b>>q8e-e <<b>q4g-fed<bafq8]4>
+
+F [[b4bm8b8b8b8bm4]3 b4bm8b8b8b8bm8bm8]3
+3 [[@30 cc@31c4]7@30 cc@31cc]3
+F [b4bm8b8b8b8bm4]3 b8bm8bm8bm8bm8bm8bm8bm8
+3 [@30 cc@31c4]6@30c@31ccc cccc
+
+
+
+123456789ABCDF ]0
+
+
+#end
+

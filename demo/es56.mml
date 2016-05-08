@@ -1,0 +1,154 @@
+;[gain=2.0 duration=auto]
+#opll_mode 0
+#tempo 128
+#title { "Evil Sword-Wilderness-" }
+
+@v15 = {						
+   ;       TL FB
+           20, 6,
+   ;       AR DR SL RR KL MT AM VB EG KR DT
+           15, 6,15, 0, 0,12, 0, 1, 1, 0, 1,
+           15, 7,14, 8, 1, 1, 0, 1, 1, 1, 1 }
+
+@v16 = {						
+   ;       TL FB
+            7, 0,
+   ;       AR DR SL RR KL MT AM VB EG KR DT
+            4,15, 0, 1, 0, 0, 0, 0, 0, 1, 0,
+            5,15, 0, 2, 0, 2, 0, 0, 0, 0, 0 }
+
+#macro_offset b = 0
+#macro_offset s = 1
+#macro_offset p = 2
+
+*0 = { @e3<g16> }
+*1 = { @e2c16 }
+*2 = { @e6c16 }
+*9 = { @e2c8 }
+*10 = { @e6c8 }
+
+@e00 = { 2,0, n5.Fn3.CA9 }      
+@e01 = { 2,0, n11.F.E:2.D3=48 } 
+@e02 = { 0,0, @9.FED0=80 }      
+@e03 = { 0,0, @2.FC80 }         
+@e04 = { 2,0, n3.D0=128 }       
+@e05 = { 0,0, @7.0@3.A0=4 }     
+@e06 = { 0,0, @11.F:6.E0=80 } 
+@e10 = { 0,0, CDEFEA=128 }
+@e11 = { 0,0, @9.0@0.F@9.F }    
+@e12 = { 0,0, @7.0@3.FC=8 } 
+@e13 = { 0,0, @4.CF=4 } 
+@e14 = { 0,0, @5.0@6.F }
+
+A R8
+E R12
+
+1239ABCDEFGH [
+
+DE V13L16o4@10@e11
+E V11\-1
+DE [
+DE [A4Q2AARAQ8B-Q2B-B-Q8B-RB-B-8]2
+DE E4Q2EEREQ8FQ2FFQ8FRFF8
+DE E4Q2EERQ8EQ4>E-EV+1FFQ2V+1A-AV-1B>CQ8V-2<<
+DE ]2
+
+DE V+2
+DE [E8.Q2EDDRQ8E8EFFA-A-AA]4
+DE [A8.Q2AGGRQ8A8AB-B->D-D-DD<]4
+DE [E8.Q2EDDRQ8E8EFFA-A-AA]2
+DE [F8.Q2FEERQ8F8FA-A-AABB]2
+DE E8.Q2EDDRQ8E8EFFA-A-AA
+DE F8.Q2FEERQ8F8FA-A-AABB
+DE EE8<B8.>D8V-2EE8<B8.>D8V-2EE8<B8.>D8V-2EE8<B8.>D8
+
+H V13L16o4@10@e11
+H [
+H [E4Q2EEREQ8FQ2FFQ8FRFF8]2
+H < B4Q2BBRB>Q8CQ2CCQ8CRCC8<B4Q2BBRQ8BQ4>E-EV+1FFQ2V+1A-AV-1BQ8>C <V-2
+H ]2
+H V+2
+H <[B8.Q2BAARQ8B8B>CCE-E-EE<]4 >
+H [E8.Q2EDDRQ8E8EFFA-A-AA]4
+H <[B8.Q2BAARQ8B8B>CCE-E-EE<]2 >
+H [C8.Q2CCCRQ8C8CEEFFA-A-]2
+H <B8.Q2BAARQ8B8B>CCE-E-EE
+H C8.Q2CCCRQ8C8CEEFFA-A-
+H <BB8G-8.A8V-1BB8G-8.A8V-1BB8G-8.A8V-1BB8G-8.A8
+
+F @13o2V13
+G @15o2V14q2
+
+FG l16
+FG [
+FG [A8.>E8.A8<B-8.>F8.B-8<]2
+FG [E8.A-8.B8F8.A8.>C8<]2
+FG ]
+
+FG [ER>E<ERE>E<ERE>E<E>DDEE<]4
+FG [AR>A<ARA>A<ARA>A<A>GGAA<]4
+FG [ER>E<ERE>E<ERE>E<E>DDEE<]2
+FG [FR>F<FRF>F<FRF>F<F>EEFF<]2
+FG ER>E<ERE>E<ERE>E<E>DDEE<
+FG FR>F<FRF>F<FRF>F<F>EEFF<
+FG @16>V-1Q8 E1&E1
+
+9A O5@7 H8,1,0,1
+9 V12
+A V11\1
+
+9A A-32&A-_A32&A4..&A8.R16 L12AB->D-DEA-A2&A_G4A-AA-FA-FEFEE-C<B>C<B>C<B>CE-Q4L16E-EFFA-AB>CQ8<
+9A L12A>E<B&B2BA&A_A-A>E<B&B_B-8&B-16&B-_B8&B16&B4 L32AA-FE AA-AA-AA-AA-AA-AA-AA-AA->AA-AA-AA-AA-AA-AA-AA-AA-L16BAA-FEE-C<B
+
+9 Q6H8,4,0,2
+A Q8\2H8,4,0,2V-1
+9A @6@e14
+
+9A C<BAA-Q6AB>CE-
+
+9A E-_E16&E8.&E2&E_D4 L12E-EFA-A>CD32&D_E-32&E-8.E-4&E8&E_E-8.&E-_E8.&E2Q6L16RAA-F A-FEF EE-EE- C<BQ8A-8
+9A A-_A16&A4..&A2&A_E8.R>A-32&A-_A32&A8.&A4<L12AA-FE_F16&F_E16&E8&E2&E_D-4L16Q4<AB->D-D<B->D-DED-DEFEFA-AQ8
+9A L32B>C<BAA-FEE-B>C<BAA-FEE-B>C<BAA-FEE-B>C<BAA-FEE-L16>E-32&E-_E32&ERE-RCR<BRARA-RFREA-32&A-_A32&A8.&A2&A_G4>REREREDC E-32&E-_E32&E8 E-32&E-_E32&E8 E-32&E-_E32&E
+9A [ E-32&E-_E32&E8.&E2 A-32&A-_A32&A8. ]
+9A E8&E_E-16&E-8&E-_E16&E8&E1&E_<B4. R8
+
+BC l16
+B V15O2\48
+C V15O2\-32
+B [ [*Brr*Brr*P8]7 *B*P*P*P*P*P<AA ]2
+B [[*Br*P*P*Br*P8]7 *Br*P*P[c32]8 ]3
+B [*Br*P*P*Br*P8]3 *B[*P]7
+B *P8r2.. R2.R16*P*P8
+
+C [ [*Brr*Brr*S8]7 *B*S*S*S*S*S<AA ]2
+C [[*Br*S*S*Br*S8]7 *Br*S*S[c32]8 ]3
+C [*Br*S*S*Br*S8]3 *B[*S]7
+C *S8r2.. R2.R16*S*S8
+
+1 l16V10
+1 [ [@4c@0cc@4c@0cc@1c@0c]7 @4c@1ccccccc ]2
+1 [ [@4c8@1cc@4c8@1c8]7 @4c8@1cc [c32]8 ]3
+1 [@4c@0cc@4c@0cc@1c@0c]3 @4c@1ccccccc
+1 @1c8r2.. r2.@0cc@1c8
+
+23 @10V9H0,4,2,1
+
+23 [R1]8 
+2 [E1]4 [A1]4 [E1]2 [F1]2 E1F1    E1&E1
+3 [A-1]4>[D-1]4<[A-1]2[A1]2 A-1A1 A-1&A-1
+
+1239ABCDEFGH ]0
+
+
+
+
+
+
+
+
+
+
+
+
+
+

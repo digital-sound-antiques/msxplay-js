@@ -1,0 +1,153 @@
+;[gain=2.0 duration=auto]
+#opll_mode 0
+#title { "Evil Sword-Fire master-" }
+#tempo 170
+
+@v15 = {							
+   ;       TL FB
+           12, 7,
+   ;       AR DR SL RR KL MT AM VB EG KR DT
+           15,10, 4, 0, 0,11, 0, 1, 1, 0, 1,
+           15, 7, 1, 8, 0, 1, 0, 1, 1, 0, 1 }
+
+#macro_offset b = 0
+#macro_offset s = 1
+#macro_offset p = 2
+
+*0 = { @e3V+2<g>V-2 }
+*1 = { @e2d }
+*2 = { @e6d }
+
+@e0 = { 2,0, n5.Fn3.EA9 }     
+@e1 = { 2,0, n10F.n8.ED0=24 } 
+@e2 = { 0,0, @10.FE:3D0=24 }
+@e3 = { 0,0, @2.FC0 }
+@e4 = { 2,0, n5.D0=64 }
+@e5 = { 0,0, CDEF }
+@e6 = { 0,0, @13.FE:3D0=24 }
+@e8 = { 0,0, DEF }
+@e10 = { 0,0, FC=8 }
+@e11 = { 0,0, DFC=12 } 
+@e12 = { 0,0, @11F@13F }
+E R6
+A R6
+
+1239ABCDEFGH [
+
+9A @ 6O7L12 Q7
+H  @15O6L12 Q7
+9 V11 H10,2,2,1
+A V10
+H V11 H10,2,2,1\1
+
+9AH C4RCCC6<F6>C6D6<B-6>D6D2F4RFFF6D-6F6G-6D-6G-6B-4&B-_A-4
+9A @15 H20,1,2,1V+1
+H  @7  H20,1,2,1V+1
+9AH F2.&F_C4Q4F6C6Q7FGA-4B-6&B-_G&G2.Q4FE-CQ7E-32&E-_F32&F4..&F2
+9AH V-1 > [ Q4 FCE-FA-E- ]4 < V+1
+9AH <Q6 E-FA-FA-B-A-B->C<B->CE-CE-F Q4E-E-E-Q6B&B-A-B-4
+9AH G-2.RA-B-G-2G-6E-&E-_D-D-6E-6&E-_D&D&D_E-&E-&E-4&E-2D-D-D-CCCE-G-A-G3&G_G-6&G-6&G-_G6&G6&G2.R4
+9A O7@1V-1
+H  O6@15V-1 
+9AH Q4 [ F>F<FF>F<F ]16
+
+B @15q2V14O3
+C @13q6V13O2
+
+BC L12
+
+B [FA-F>E-F<F]7 
+B >E-F<FB->C<F
+B [ F>F<FA-FFA-B-FA-A-A- ]8
+B [ E->E-<E-G-E-E-G-A-E-G-G-G- ]4
+B [ F>F<FA-FFA-B-FA-A-A- ]2
+B FF>F<F>E-<FF>C<B-FA-F
+B E-F>F<E-F>F<FA-FB-FA-
+B FF>F<F>E-<FF>C<B-FA-F
+B FR>C<F>E-R<F>>E-D<<F>>E-D<<
+B FF>F<F>E-<FF>C<B-FA-F
+B F>>C<<F>>E-<<F>>F<<F>>E-<<F>>C<<F>A-<
+B FF>F<F>E-<FF>C<B-FA-F
+B [ >>E-F<B->C<A-B-< ]2
+
+C [FA-F>E-&F<F]7 
+C >E-&F<FB-&>C<F
+C [ F>F<FA-FFA-&B-FA-A-A- ]8
+C [ E->E-<E-G-E-E-G-&A-E-G-G-G- ]4
+C [ F>F<FA-FFA-&B-FA-A-A- ]2
+C FF>F<F>E-<FF>C<B-FA-F
+C E-&F>F<E-&F>F<FA-FB-FA-
+C FF>F<F>E-<FF>C<B-FA-F
+C FR>C<F>E-R<F>>E-&D<<F>>E-&D<<
+C FF>F<F>E-<FF>C<B-FA-F
+C F>>C<<F>>E-<<F>>F<<F>>E-<<F>>C<<F>A-<
+C FF>F<F>E-<FF>C<B-FA-F
+C [ >>E-&F<B-&>C<A-&B-< ]2
+
+DE @6O6L12 H10,2,2,1
+D V11
+E V10\-1
+DE A-4RA-A-A-6C6A-6B-6G6B-6B-2>D-4RD-D-D-6<A-6>D-6D-6<B-6>D-6G-4&G-_E4
+DE O5Q4@6[ FA->CE-A-E-FD<B->E-C<A- ]8
+DE [ E-G-B->D-G-D-E-C<A->D-<B-G- ]4
+DE [ FA->CE-A-E-FD<B->E-C<A- ]2
+DE V+4Q8O3@9@e8 F1&F1&F1&F1&F1&F1&F1&F1
+
+F V13O2\0
+G V13O2\-48
+
+FG L12Q6
+
+FG [*S*B*S*P*S*B]7
+FG V+1L24*S*SL12*S*S*P*P*PV-1
+FG [L4*BL6*SL12*S L4*BL6*SL12*S]7
+FG [*BV+1*SV-1*S]4
+FG [L4*BL6*SL12*S L4*BL6*SL12*S]5
+FG [*BV+1*SV-1*S]4
+FG [*B*S*B*S*P*S]7
+FG V+1L24*S*SL12*S*S*P*P*PV-1
+FG [*B*S*B*S*P*S]6
+FG *S*B*S*S*S*B
+FG V+1L24*S*SL12*S*S*P*P*PV-1
+
+1 V10L12O4
+1 [@1c@0c@1ccc@0c]7
+1 @1c24c24[c]5
+1 [ @4c4@1c6c ]14
+1 [@0c@1cc]4
+1 [ @4c4@1c6c ]10
+1 [@0c@1cc]4
+1 [@0c@1c@0c@1ccc]7
+1 @1c24c24[c]5
+1 [@0c@1c@0c@1ccc]6
+1 @1c@0c@1ccc@0c
+1 @1c24c24[c]5
+
+23 V8@10
+3 \1
+23 L24 O5[F>C<A-FCF]4
+23 [F>D<B-FDF]4
+23 [F>D-<A-FD-F]4
+23 [G->D-<B-G-D-G-]4
+2 O5L12@11\0 
+3 O4L12@11\0
+2 [C2D4C4]8
+3 [A-2B-4A-4]8
+2 < [B-2>C4<B-4]4 >
+3 [G-2A-4G-4]4
+2 [C2D4C4]2
+3 [A-2B-4A-4]2
+23 R1R1R1R1
+3 \1
+23 L24 O5[F>C<A-FCF]16
+
+1239ABCDEFGH ]0
+
+#end
+
+
+
+
+
+
+

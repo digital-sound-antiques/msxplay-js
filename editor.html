@@ -78,7 +78,10 @@
 			  	editor.$blockScrolling = Infinity;
     			editor.getSession().setUseWrapMode(true);
     			editor.setShowPrintMargin(false);
-    			//editor.resize(true);
+    			editor.resize(true);
+    			editor.setOptions({
+    				indentedSoftWrap: false
+    			});
     			editor.on('change',function() {
     				contentChanged = true;
     			});
@@ -112,6 +115,23 @@
 
     	var lastCompiledMGS = null;
 
+    	function getMetaMMLInfo(mml) {
+    		var result = {};
+    		var m;
+    		m = mml.match(/^;\[.*duration=(auto|[0-9a-z]+).*\]/im);
+    		if(m) {
+    			if(m[1]!='auto') {
+    				result.duration = m[1];
+    			}
+    		}
+
+    		m = mml.match(/^;\[.*gain=([0-9]+(?:\.[0-9]+)).*\]/im);
+    		if(m) {
+    			result.gain = m[1];
+    		}
+    		return result;
+    	}
+
 		function compile() {
 			if(contentChanged) {
 				storeToLocalStorage();
@@ -134,8 +154,14 @@
 				lastCompiledMGS = null
 			} else {
 				lastCompiledMGS = result.mgs;
-				player.dataset.duration = null;				
+				player.dataset.duration = null;
+				player.dataset.gain = 1.0;			
 				MSXPlayUI.setDataToPlayer(player, result.mgs, "mml.mgs");
+
+				var info = getMetaMMLInfo(mml);
+				if(info.duration) player.dataset.duration = info.duration;
+				if(info.gain) player.dataset.gain = info.gain;
+
 				if(document.getElementById('autoplay').checked) {
 					MSXPlayUI.play(player);
 				}
@@ -156,7 +182,8 @@
 				if(mml) {
 					loadText(mml);
 				} else {
-					window.alert(err);
+					editor.setValue(err.toString(),-1);
+					contentChanged = false;
 				}
 			});
 		}
@@ -257,11 +284,16 @@
 			var dialog = document.getElementById(id);
 			var stage = document.getElementById('modal-stage');
 			var listener = function(e) {
-				if(e.target.classList.contains('button')) {
-					dialog.style.display = 'none';
-					stage.style.display = 'none';
-					dialog.removeEventListener('click',listener);
-					if(complete) complete(e.target.dataset.value);
+
+				var target = e.target;
+				while(target) {
+					if(target.dataset && target.dataset.value) {
+						dialog.style.display = 'none';
+						stage.style.display = 'none';
+						dialog.removeEventListener('click',listener);
+						if(complete) complete(target.dataset.value);
+					}
+					target = target.parentNode;
 				}
 			};
 			dialog.addEventListener('click', listener);
@@ -390,15 +422,38 @@
 		</div>
 	</div>
 
-	<div id="select-sample" class="dialog" style="width:280px">
+	<div id="select-sample" class="dialog" style="width:392px">
 		<div class="content">
 			<p lang="ja">編集したいMMLを選んでください。</p>
 			<p lang="en">Choose a sample MML file to open.</p>
 		</div>
 		<ul class="item-list">
-			<li class="button" data-value="demo/grider.mml">YM2413 Demo</li>
-			<li class="button" data-value="demo/p52_arbl.mml">SCC Demo</li>
-			<li class="button" data-value="demo/blank.mml">Blank MML</li>
+			<li data-value="demo/blank.mml">
+				<div class="title" lang="ja">新しいMML</div>
+				<div class="title" lang="en">New MML</div>
+				<div class="subtext" lang="ja">テンプレートから新規作成</div>
+				<div class="subtext" lang="en">a new MML template</div>				
+			</li>
+			<li data-value="demo/grider.mml">
+				<div class="title">Gun Rider <div class="chips"><i>OPLL</i></div></div>
+				<div class="subtext">by J. arranged by Brezza</div>
+			</li>
+			<li data-value="demo/p52_arbl.mml">
+				<div class="title">Arabiyaan (Long Version)<div class="chips"><i>PSG</i><i>SCC</i></div></div>
+				<div class="subtext">by Wiz.</div>
+			</li>
+			<li data-value="demo/contrail.mml">
+				<div class="title">[MSX Rock] Contrail<div class="chips"><i>PSG</i><i>SCC</i><i>OPLL</i></div></div>
+				<div class="subtext">by DRM</div>
+			</li>
+			<li data-value="demo/es56.mml">
+				<div class="title">Evil Swrod -Wilderness- <div class="chips"><i>PSG</i><i>OPLL</i></div></div>
+				<div class="subtext">by DRM, arranged by Brezza</div>
+			</li>
+			<li data-value="demo/es59.mml">
+				<div class="title">Evil Swrod -Fire master- <div class="chips"><i>PSG</i><i>OPLL</i></div></div>
+				<div class="subtext">by DRM, arranged by Brezza</div>
+			</li>
 		</ul>
 		<div class="button-area">
 			<div class="button" data-value="cancel">Close</div>
