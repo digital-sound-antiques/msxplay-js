@@ -53,7 +53,7 @@
 				} 
 			});
 			xhr.addEventListener('error',function(e){
-				var err = new Error("Load Error: Check 'Access-Control-Allow-Origin' header is present for the target resource. See browser's development panel for detail. If you run this script local Chrome, `--allow-file-access-from-files` option is required.");
+				var err = new Error("Load Error: Check 'Access-Control-Allow-Origin' header is present for the target resource. See browser's development panel for detail. If you run this script local browser, `--allow-file-access-from-files` or the equivalent option is required.");
 				if(complete) complete(null, url, err);
 			});
 			xhr.send();
@@ -221,17 +221,24 @@
 		});
 
 		var saveAs = function (data, fileName, type) {
-			var a = document.createElement("a");
-			a.style = "display: none";
-    		document.body.appendChild(a);
+			var a = document.getElementById("download-helper");
+			var url = a.href;
+			if(url) { 
+				window.URL.revokeObjectURL(url);
+			}
 
-            var blob = new Blob([data], {type: type}),
-            url = window.URL.createObjectURL(blob);
-        	a.href = url;
-        	a.download = fileName;
-        	a.click();
-        	window.URL.revokeObjectURL(url);
-        	document.body.removeChild(a);
+            var blob = new Blob([data], {type: type});
+
+            if(navigator.msSaveOrOpenBlob) {
+
+            	navigator.msSaveOrOpenBlob(blob,fileName);
+
+            } else {
+            	a.href = window.URL.createObjectURL(blob);
+            	a.download = fileName;
+            	a.click();
+            }
+        	
 		};
 
 		function downloadMML() {
@@ -337,6 +344,7 @@
 	</script>
 </head>
 <body>
+	<a id="download-helper" style="display:none"></a>
 
 	<section class="page-header short">
 		<nav class="root-nav">
