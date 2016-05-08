@@ -10877,6 +10877,10 @@
 			Module.ccall('KSSPLAY_reset',null,['number','number','number'],[this.kssplay,song||0,0]);
 
 			if(this.scriptNode) {
+				if(this.dummyNode) {
+					this.dummyNode.disconnect();
+					this.dummyNode = null;
+				}
 				this.scriptNode.disconnect();
 				this.scriptNode = null;
 			}
@@ -10907,9 +10911,16 @@
 		};
 
 		MSXPlay.prototype.play = function() {
-			this.scriptNode = this.audioCtx.createScriptProcessor(8192,0,1);
+
+			this.scriptNode = this.audioCtx.createScriptProcessor(8192,1,1);
 			this.scriptNode.onaudioprocess = this._onAudioProcess.bind(this);
 			this.scriptNode.connect(this.scriptNodeDestination);
+
+			this.dummyNode = this.audioCtx.createOscillator();
+			this.dummyNode.frequency.value = 0;
+			this.dummyNode.start(0);
+			this.dummyNode.connect(this.scriptNode);
+
 			this._changeState("playing");
 		};
 
