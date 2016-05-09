@@ -148,6 +148,16 @@ nav.root-nav {
 	padding:4px;
 }
 
+.content ul {
+	font-size:12px;
+	line-height:160%;
+	max-width:800px;
+	margin:8px 0;
+}
+
+.content ul li {
+	margin-left:20px;	
+}
 
 hr {
   border:none;
