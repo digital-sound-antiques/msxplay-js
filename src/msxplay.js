@@ -13,10 +13,6 @@ module.exports = (function() {
 
 		this.sampleRate = this.audioCtx.sampleRate;
 
-		this.loopCount = 2;
-		this.fadeTime = 5000;
-		this.waveBufferMax = this.sampleRate * 60 * 5;
-
 		// Note: BiquadFilterNode will hungs up if its input audio buffer contains `undefined` value.
 		// (`null` value is acceptable but `undefined` makes the problem.)
 		//this.filterNode = this.audioCtx.createBiquadFilter();
@@ -117,7 +113,7 @@ module.exports = (function() {
 			if(KSSPLAY_get_fade_flag(this.kssplay) == 0) {
 				var loop = KSSPLAY_get_loop_count(this.kssplay);
 				var remains = 1000 * (this.waveTotalSize - this.waveWritePos) / this.sampleRate;
-				if (this.loopCount <= loop /*|| (this.fadeTime && remains <= this.fadeTime)*/) {
+				if (this.loopCount <= loop || (this.fadeTime && remains <= this.fadeTime)) {
 					KSSPLAY_fade_start(this.kssplay, this.fadeTime);
 				}
 			}
@@ -194,10 +190,15 @@ module.exports = (function() {
 		return this.kss?this.kss.getTitle():"";
 	};
 
-	MSXPlay.prototype.setData = function(kss,song,duration,gain) {
+	MSXPlay.prototype.setData = function(kss,song,options) {
+
+		options = options || {};
 
 		this.kss = kss;
 		this.song = song;
+
+		this.loopCount = options.loopCount || 2;
+		this.fadeTime = options.fadeTime || 5000;
 
 		Module.ccall('KSSPLAY_set_data',null,['number','number'],[this.kssplay,kss.obj]);
 		Module.ccall('KSSPLAY_reset',null,['number','number','number'],[this.kssplay,song||0,0]);
@@ -216,16 +217,13 @@ module.exports = (function() {
 		this.waveWritePos = 0;
 		this.waveReadPos = 0;
 		this._state = "standby";
-		this.waveBuffer = new Float32Array(this.waveBufferMax);
 
-		if(duration) {
-			this.waveTotalSize = Math.min(this.waveBuffer.length, Math.round(this.sampleRate * duration / 1000));
-		} else {
-			this.waveTotalSize = this.waveBuffer.length;
-		}
+		var duration = Math.min(20 * 60 * 1000, options.duration || 5 * 60 * 1000);
+		this.waveBuffer = new Float32Array(Math.round(this.sampleRate * duration / 1000));
+		this.waveTotalSize = this.waveBuffer.length;
 
-		if(gain) {
-			this.gainNode.gain.value = gain;
+		if(options.gain) {
+			this.gainNode.gain.value = options.gain;
 		}
 
 		this.renderSpeed = 0.0;

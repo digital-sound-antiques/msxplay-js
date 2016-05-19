@@ -125,6 +125,11 @@
     			}
     		}
 
+    		m = mml.match(/^;\[.*fade=([0-9a-z]+).*\]/im);
+    		if(m) {
+    			result.fade = m[1];
+    		}
+
     		m = mml.match(/^;\[.*gain=([0-9]+(?:\.[0-9]+)).*\]/im);
     		if(m) {
     			result.gain = m[1];
@@ -160,6 +165,7 @@
 
 				var info = getMetaMMLInfo(mml);
 				if(info.duration) player.dataset.duration = info.duration;
+				if(info.fade) player.dataset.fade = info.fade;
 				if(info.gain) player.dataset.gain = info.gain;
 
 				if(document.getElementById('autoplay').checked) {
@@ -410,76 +416,80 @@
 	</div>
 	<div id="player" class="msxplay bottom-fixed"></div>
 
+	<!-- Dialogs -->
+
 	<div id="modal-stage">
-	<div id="confirm-restore" class="dialog" style="width:280px">
-		<div class="content">
-			<p lang="ja">前回、編集していた内容が残っています。読み込みますか？</p>
-			<p lang="en">The last text you were editing is found. Recover it?</p>
-		</div>
-		<div class="button-area">
-			<div class="button" data-value="yes">YES</div>
-			<div class="button" data-value="no">NO</div>
-		</div>
-	</div>
 
-	<div id="select-sample" class="dialog" style="width:392px">
-		<div class="content">
-			<p lang="ja">編集したいMMLを選んでください。</p>
-			<p lang="en">Choose a sample MML file to open.</p>
+		<div id="confirm-restore" class="dialog" style="width:280px">
+			<div class="content">
+				<p lang="ja">前回、編集していた内容が残っています。読み込みますか？</p>
+				<p lang="en">The last text you were editing is found. Recover it?</p>
+			</div>
+			<div class="button-area">
+				<div class="button" data-value="yes">YES</div>
+				<div class="button" data-value="no">NO</div>
+			</div>
 		</div>
-		<ul class="item-list">
-			<li data-value="demo/blank.mml">
-				<div class="title" lang="ja">新しいMML</div>
-				<div class="title" lang="en">New MML</div>
-				<div class="subtext" lang="ja">テンプレートから新規作成</div>
-				<div class="subtext" lang="en">a new MML template</div>				
-			</li>
-			<li data-value="demo/grider.mml">
-				<div class="title">Gun Rider <div class="chips"><i>OPLL</i></div></div>
-				<div class="subtext">by J. arranged by Brezza</div>
-			</li>
-			<li data-value="demo/p52_arbl.mml">
-				<div class="title">Arabiyaan (Long Version)<div class="chips"><i>PSG</i><i>SCC</i></div></div>
-				<div class="subtext">by Wiz.</div>
-			</li>
-			<li data-value="demo/contrail.mml">
-				<div class="title">[MSX Rock] Contrail<div class="chips"><i>PSG</i><i>SCC</i><i>OPLL</i></div></div>
-				<div class="subtext">by DRM</div>
-			</li>
-			<li data-value="demo/es56.mml">
-				<div class="title">Evil Swrod -Wilderness- <div class="chips"><i>PSG</i><i>OPLL</i></div></div>
-				<div class="subtext">by DRM, arranged by Brezza</div>
-			</li>
-			<li data-value="demo/es59.mml">
-				<div class="title">Evil Swrod -Fire master- <div class="chips"><i>PSG</i><i>OPLL</i></div></div>
-				<div class="subtext">by DRM, arranged by Brezza</div>
-			</li>
-		</ul>
-		<div class="button-area">
-			<div class="button" data-value="cancel">Close</div>
-		</div>
-	</div>
 
-	<div id="confirm-clear" class="dialog" style="width:280px">
-		<div class="content">
-			<p lang="ja">テキストを消去します。よろしいですか？</p>
-			<p lang="en">Are you sure to clear all the text?</p>
+		<div id="select-sample" class="dialog" style="width:392px">
+			<div class="content">
+				<p lang="ja">編集したいMMLを選んでください。</p>
+				<p lang="en">Choose a sample MML file to open.</p>
+			</div>
+			<ul class="item-list">
+				<li data-value="demo/blank.mml">
+					<div class="title" lang="ja">新しいMML</div>
+					<div class="title" lang="en">New MML</div>
+					<div class="subtext" lang="ja">テンプレートから新規作成</div>
+					<div class="subtext" lang="en">a new MML template</div>				
+				</li>
+				<li data-value="demo/grider.mml">
+					<div class="title">Gun Rider <div class="chips"><i>OPLL</i></div></div>
+					<div class="subtext">by J. arranged by Brezza</div>
+				</li>
+				<li data-value="demo/p52_arbl.mml">
+					<div class="title">Arabiyaan (Long Version)<div class="chips"><i>PSG</i><i>SCC</i></div></div>
+					<div class="subtext">by Wiz.</div>
+				</li>
+				<li data-value="demo/contrail.mml">
+					<div class="title">[MSX Rock] Contrail<div class="chips"><i>PSG</i><i>SCC</i><i>OPLL</i></div></div>
+					<div class="subtext">by DRM</div>
+				</li>
+				<li data-value="demo/es56.mml">
+					<div class="title">Evil Swrod -Wilderness- <div class="chips"><i>PSG</i><i>OPLL</i></div></div>
+					<div class="subtext">by DRM, arranged by Brezza</div>
+				</li>
+				<li data-value="demo/es59.mml">
+					<div class="title">Evil Swrod -Fire master- <div class="chips"><i>PSG</i><i>OPLL</i></div></div>
+					<div class="subtext">by DRM, arranged by Brezza</div>
+				</li>
+			</ul>
+			<div class="button-area">
+				<div class="button" data-value="cancel">Close</div>
+			</div>
 		</div>
-		<div class="button-area">
-			<div class="button" data-value="ok">OK</div>
-			<div class="button" data-value="cancel">Cancel</div>
-		</div>
-	</div>
 
-	<div id="no-mgs" class="dialog" style="width:280px">
-		<div class="content">
-			<p lang="ja">MGSデータがありません。先にMMLをコンパイルしてください。</p>
-			<p lang="en">No MGS data. Please compile the MML first.</p>
+		<div id="confirm-clear" class="dialog" style="width:280px">
+			<div class="content">
+				<p lang="ja">テキストを消去します。よろしいですか？</p>
+				<p lang="en">Are you sure to clear all the text?</p>
+			</div>
+			<div class="button-area">
+				<div class="button" data-value="ok">OK</div>
+				<div class="button" data-value="cancel">Cancel</div>
+			</div>
 		</div>
-		<div class="button-area">
-			<div class="button" data-value="ok">OK</div>
+
+		<div id="no-mgs" class="dialog" style="width:280px">
+			<div class="content">
+				<p lang="ja">MGSデータがありません。先にMMLをコンパイルしてください。</p>
+				<p lang="en">No MGS data. Please compile the MML first.</p>
+			</div>
+			<div class="button-area">
+				<div class="button" data-value="ok">OK</div>
+			</div>
 		</div>
-	</div>
+
 	</div>
 
 </body>

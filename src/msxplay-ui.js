@@ -232,12 +232,17 @@ module.exports = (function(){
 
 		var hash = playerElement.dataset.hash;
 		var song = parseInt(playerElement.dataset.song);
-		var gain = parseFloat(playerElement.dataset.gain);
 		var duration = parseTime(playerElement.dataset.duration);
+		var fade = parseFloat(playerElement.dataset.fade);
+		var gain = parseFloat(playerElement.dataset.gain);
 
 		var kss = KSS.hashMap[hash];
 		if(kss) {
-			this.msxplay.setData(kss,song,duration,gain);
+			this.msxplay.setData(kss,song,{
+				duration:duration,
+				fade:fade,
+				gain:gain
+			});
 			this.msxplay.play();
 			this.currentPlayerElement = playerElement;
 			playerElement.classList.add('active');
