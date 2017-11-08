@@ -65,7 +65,7 @@ module.exports = (function() {
 
 		this.intervalTime = (Date.now() - this.lastGenerateWaveAt);
 
-		var samples = this.sampleRate * this.intervalTime / 1000;
+		var samples = this.sampleRate * this.intervalTime / 1000 * 2;
 
 		if(1.0 < this.renderSpeed) {
 			samples = Math.floor(samples * this.renderSpeed);
