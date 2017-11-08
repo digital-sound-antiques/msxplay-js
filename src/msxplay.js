@@ -65,7 +65,7 @@ module.exports = (function() {
 
 		this.intervalTime = (Date.now() - this.lastGenerateWaveAt);
 
-		var samples = this.sampleRate * this.intervalTime / 1000 * 2;
+		var samples = this.sampleRate * this.intervalTime / 1000;
 
 		if(1.0 < this.renderSpeed) {
 			samples = Math.floor(samples * this.renderSpeed);
@@ -73,14 +73,7 @@ module.exports = (function() {
 
 		samples = Math.min(samples,this.maxCalcSamples);
 
-		var start = Date.now();
-		var renderedSamples = this._generateWave(samples);
-
-		if(0<renderedSamples) {
-			this.renderedTime += renderedSamples / this.sampleRate * 1000;
-			this.requiredTime += (Date.now() - start);
-			this.renderSpeed = this.renderedTime / this.requiredTime;
-		}
+		this._generateWave(samples);
 
 		this.lastGenerateWaveAt = Date.now();
 
@@ -93,7 +86,7 @@ module.exports = (function() {
 	var KSSPLAY_get_stop_flag = Module.cwrap('KSSPLAY_get_stop_flag','number',['number']);
 
 	MSXPlay.prototype._generateWave = function(samples) {
-
+	
 		if(this.maxCalcSamples<samples) {
 			throw new Error();
 		}
@@ -105,6 +98,9 @@ module.exports = (function() {
 		var samples = Math.min(this.waveTotalSize - this.waveWritePos, samples);
 
 		if(0<samples) {
+
+			var start = Date.now();
+	
 			KSSPLAY_calc(this.kssplay,this.calcBuffer,samples);
 			for(var i=0;i<samples;i++) {
 				this.waveBuffer[this.waveWritePos++] = this.calcBufferArray[i] / 32768;
@@ -118,6 +114,10 @@ module.exports = (function() {
 				}
 			}
 			
+			this.renderedTime += samples / this.sampleRate * 1000;
+			this.requiredTime += (Date.now() - start);
+			this.renderSpeed = this.renderedTime / this.requiredTime;
+
 			return samples;
 		}
 		
