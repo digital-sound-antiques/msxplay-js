@@ -4,7 +4,7 @@ module.exports = (function() {
 
 	var KSS = require('./kss');
 	
-	var Module = require('exports?Module!../build/libkss');
+	var Module = require('exports-loader?Module!../build/libkss');
 
 	var MSXPlay = function(audioCtx, destination) {
 

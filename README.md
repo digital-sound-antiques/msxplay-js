@@ -51,5 +51,5 @@ cd ..
 
 ## make msxplay-bundle.js
 ```
-webpack
+npm run biuld
 ```

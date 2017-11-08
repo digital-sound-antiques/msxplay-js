@@ -1,6 +1,6 @@
 module.exports = (function(){
 	"use strict"
-	var Module = require('exports?Module!./libmgsc');
+	var Module = require('exports-loader?Module!./libmgsc');
 	var encoding = require('encoding-japanese');
 
 	return {

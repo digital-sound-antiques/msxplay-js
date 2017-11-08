@@ -2,7 +2,7 @@ module.exports = (function() {
 	
 	"use strict"
 
-	var Module = require('exports?Module!../build/libkss');
+	var Module = require('exports-loader?Module!../build/libkss');
 
 	var encoding = require('encoding-japanese');
 	var crypto = require('crypto');
