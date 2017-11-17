@@ -114,6 +114,7 @@
     	}
 
     	var lastCompiledMGS = null;
+    	var lastCompiledName = null;
 
     	function getMetaMMLInfo(mml) {
     		var result = {};
@@ -134,10 +135,21 @@
     		if(m) {
     			result.gain = m[1];
     		}
+
+    		m = mml.match(/^;\[.*name=([0-9A-Z_\-\.]+).*\]/im);
+    		if(m) {
+    			result.name = m[1];
+    		}
+
     		return result;
     	}
 
-		function compile() {
+		function compile(autoplay) {
+
+			if(autoplay === undefined) {
+				autoplay = document.getElementById('autoplay').checked;
+			}
+
 			if(contentChanged) {
 				storeToLocalStorage();
 				contentChanged = false;
@@ -157,22 +169,29 @@
 			if(result.mgs.length==0) {
 				highlightError(result.message);
 				lastCompiledMGS = null
-			} else {
-				lastCompiledMGS = result.mgs;
-				player.dataset.duration = null;
-				player.dataset.gain = 1.0;			
-				MSXPlayUI.setDataToPlayer(player, result.mgs, "mml.mgs");
+				lastCompiledName = null;
+				editor.focus();
+				return false;
+			}
 
-				var info = getMetaMMLInfo(mml);
-				if(info.duration) player.dataset.duration = info.duration;
-				if(info.fade) player.dataset.fade = info.fade;
-				if(info.gain) player.dataset.gain = info.gain;
+			var info = getMetaMMLInfo(mml);
 
-				if(document.getElementById('autoplay').checked) {
-					MSXPlayUI.play(player);
-				}
+			lastCompiledMGS = result.mgs;
+			lastCompiledName = info.name || Date.now();
+
+			player.dataset.duration = null;
+			player.dataset.gain = 1.0;			
+			MSXPlayUI.setDataToPlayer(player, result.mgs, "mml.mgs");
+
+			if(info.duration) player.dataset.duration = info.duration;
+			if(info.fade) player.dataset.fade = info.fade;
+			if(info.gain) player.dataset.gain = info.gain;
+
+			if (autoplay) {
+				MSXPlayUI.play(player);
 			}
 			editor.focus();
+			return true;
 		}
 
 		function loadText(text) {
@@ -254,6 +273,7 @@
 		});
 
 		var saveAs = function (data, fileName, type) {
+
 			var a = document.getElementById("download-helper");
 			var url = a.href;
 			if(url) { 
@@ -279,8 +299,8 @@
 		};
 
 		function downloadMGS() {
-			if(lastCompiledMGS) {
-				saveAs(lastCompiledMGS, Date.now() + ".mgs", "application/octet-stream");
+			if (compile(false)) {
+				saveAs(lastCompiledMGS, lastCompiledName + ".mgs", "application/octet-stream");
 			} else {
 				showDialog('no-mgs');
 			}
