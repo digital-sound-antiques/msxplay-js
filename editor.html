@@ -162,12 +162,12 @@
 
 			removeErrorMarker();
 			var mml = editor.getValue();
-			var result = MGSC.compile(mml);
+			var result = MSXPlayUI.compile(mml);
 
-			document.querySelector('#message pre').textContent = result.message;
+			document.querySelector('#message pre').textContent = result.rawMessage;
 
 			if(result.mgs.length==0) {
-				highlightError(result.message);
+				highlightError(result.rawMessage);
 				lastCompiledMGS = null
 				lastCompiledName = null;
 				editor.focus();

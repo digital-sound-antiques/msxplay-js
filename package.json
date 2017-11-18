@@ -1,12 +1,11 @@
 {
   "name": "msxplay-js",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "description": "",
-  "main": "webpack.config.js",
+  "main": "src/entry.js",
   "dependencies": {
-    "encoding-japanese": "^1.0.24",
-    "exports-loader": "^0.6.3",
-    "expose-loader": "^0.7.1"
+    "libkss-js": "^0.9.0",
+    "mgsc-js": "^1.0.1"
   },
   "devDependencies": {
     "http-server": "^0.10.0",
@@ -14,10 +13,10 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack",
+    "build": "webpack --optimize-minimize",
     "start": "http-server -c-1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Mitsutaka Okazaki",
   "license": "ISC"
 }

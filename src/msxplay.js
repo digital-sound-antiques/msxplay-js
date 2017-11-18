@@ -1,10 +1,9 @@
 module.exports = (function() {
 
-	"use strict"
+	'use strict';
 
-	var KSS = require('./kss');
-	
-	var Module = require('exports-loader?Module!../build/libkss');
+	var KSS = require('libkss-js').KSS;
+	var KSSPlay = require('libkss-js').KSSPlay;
 
 	var MSXPlay = function(audioCtx, destination) {
 
@@ -32,16 +31,12 @@ module.exports = (function() {
 
 		this.scriptNodeDestination = this.gainNode;
 
-		this.kssplay = Module.ccall('KSSPLAY_new','number',['number','number','number'],[this.sampleRate,1,16]);
-		Module.ccall('KSSPLAY_set_silent_limit',null,['number','number'],[this.kssplay,3000]);
-		// Set opll quality high
-		Module.ccall('KSSPLAY_set_device_quality',null,['number','number','number'],[this.kssplay,2,1]);
-
+		this.kssplay = new KSSPlay(this.sampleRate);
+		this.kssplay.setSilentLimit(3000);
+		this.kssplay.setDeviceQuality({'psg':1,'scc':0,'opll':1,'opl':1});
 		this.kss = null;
 
 		this.maxCalcSamples = this.sampleRate;
-		this.calcBuffer = Module._malloc(this.maxCalcSamples * 2);
-		this.calcBufferArray = new Int16Array(Module.HEAPU8.buffer, this.calcBuffer, this.sampleRate);
 
 		setInterval(this._generateWaveBackground.bind(this),50);
 
@@ -79,19 +74,13 @@ module.exports = (function() {
 
 	};
 
-	var KSSPLAY_calc = Module.cwrap('KSSPLAY_calc',null,['number','number','number']);
-	var KSSPLAY_get_loop_count = Module.cwrap('KSSPLAY_get_loop_count','number',['number']);
-	var KSSPLAY_get_fade_flag = Module.cwrap('KSSPLAY_get_fade_flag','number',['number']);
-	var KSSPLAY_fade_start = Module.cwrap('KSSPLAY_fade_start',null,['number','number']);
-	var KSSPLAY_get_stop_flag = Module.cwrap('KSSPLAY_get_stop_flag','number',['number']);
-
 	MSXPlay.prototype._generateWave = function(samples) {
 	
 		if(this.maxCalcSamples<samples) {
 			throw new Error();
 		}
 
-		if (KSSPLAY_get_stop_flag(this.kssplay) || KSSPLAY_get_fade_flag(this.kssplay) == 2/*KSSPLAY_FADE_END*/) {
+		if (this.kssplay.getStopFlag() || this.kssplay.getFadeFlag() == 2/*KSSPLAY_FADE_END*/) {
 			this.waveTotalSize = this.waveWritePos;
 		}
 
@@ -101,16 +90,17 @@ module.exports = (function() {
 
 			var start = Date.now();
 	
-			KSSPLAY_calc(this.kssplay,this.calcBuffer,samples);
+			var waves = this.kssplay.calc(samples);
+
 			for(var i=0;i<samples;i++) {
-				this.waveBuffer[this.waveWritePos++] = this.calcBufferArray[i] / 32768;
+				this.waveBuffer[this.waveWritePos++] = waves[i] / 32768;
 			}
 
-			if(KSSPLAY_get_fade_flag(this.kssplay) == 0) {
-				var loop = KSSPLAY_get_loop_count(this.kssplay);
+			if(this.kssplay.getFadeFlag() == 0) {
+				var loop = this.kssplay.getLoopCount();
 				var remains = 1000 * (this.waveTotalSize - this.waveWritePos) / this.sampleRate;
 				if (this.loopCount <= loop || (this.fadeTime && remains <= this.fadeTime)) {
-					KSSPLAY_fade_start(this.kssplay, this.fadeTime);
+					this.kssplay.fadeStart(this.fadeTime);
 				}
 			}
 			
@@ -200,8 +190,8 @@ module.exports = (function() {
 		this.loopCount = options.loopCount || 2;
 		this.fadeTime = options.fadeTime || 5000;
 
-		Module.ccall('KSSPLAY_set_data',null,['number','number'],[this.kssplay,kss.obj]);
-		Module.ccall('KSSPLAY_reset',null,['number','number','number'],[this.kssplay,song||0,0]);
+		this.kssplay.setData(kss);
+		this.kssplay.reset(song,0);
 
 		if(this.scriptNode) {
 			if(this.dummyNode) {
@@ -286,10 +276,9 @@ module.exports = (function() {
 	};
 
 	MSXPlay.prototype.release = function() {
-		Module.ccall('KSSPLAY_delete',null,['number'],[this.kssplay]);
+		this.kssplay.release();
 		this.kssplay = null;
 		this.audioCtx.close();
-		Module._free(this.calcBuffer);
 	};
 
 	return MSXPlay;

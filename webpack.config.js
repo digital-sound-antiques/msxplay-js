@@ -1,13 +1,16 @@
 module.exports = {
-	entry: "./src/entry",
-    output: {
-        path: __dirname + "/dist",
-        filename: "msxplay-bundle.js"
-    },
-    module: {
-    	noParse:[
-    		/build\/libkss\.js$/,
-    		/src\/libmgsc\.js$/
-    	]
-    }
+  context: __dirname + '/src',
+	entry: {
+    "msxplay-bundle": "./entry.js"
+  },
+  // devtool: 'source-map',
+  output: {
+    path: __dirname + "/dist",
+    filename: "[name].js",
+    library: "MSXPlayUI",
+    libraryTarget: "var"
+  },
+  node: {
+    fs: 'empty'
+  }
 };

@@ -1,7 +1,7 @@
 module.exports = (function(){
 	"use strict";
 
-	var KSS = require('./kss');
+	var KSS = require('libkss-js').KSS;
 	var MSXPlay = require('./msxplay');
 
 	function zeroPadding(num) {
@@ -32,8 +32,14 @@ module.exports = (function(){
 	var MSXPlayUI = function() {
 		this.msxplay = new MSXPlay();
 		this.playerElements = [];
-
 		setInterval(this.updateDisplay.bind(this),100);
+	};
+
+	MSXPlayUI.prototype.compile = function(mml) {
+		if (this.compiler == null) {
+			this.compiler = require('mgsc-js');
+		}
+		return this.compiler.compile(mml);
 	};
 
 	MSXPlayUI.prototype.install = function(rootElement) {
@@ -58,7 +64,7 @@ module.exports = (function(){
 
 	MSXPlayUI.prototype.createPlayer = function(data, url) {
 
-		var kss = KSS.createObject(new Uint8Array(data));
+		var kss = KSS.createUniqueInstance(new Uint8Array(data));
 		var playerElement = document.createElement('div');
 		playerElement.classList.add('msxplay');
 		playerElement.dataset.url = url;
@@ -124,7 +130,7 @@ module.exports = (function(){
 	};
 
 	MSXPlayUI.prototype.setDataToPlayer = function(playerElement, data, name) {
-		var kss = KSS.createObject(data,name);
+		var kss = KSS.createUniqueInstance(data,name);
 		setKSSToPlayerElement(playerElement, kss, name);
 	};
 
@@ -297,7 +303,6 @@ module.exports = (function(){
 		}
 
 		if(kss instanceof KSS) {
-			console.log("release " + kss.hash);
 			kss.release();
 		}
 	};
