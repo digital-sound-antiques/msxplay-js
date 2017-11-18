@@ -32,6 +32,7 @@ module.exports = (function() {
 		this.scriptNodeDestination = this.gainNode;
 
 		this.kssplay = new KSSPlay(this.sampleRate);
+		this.kssplay.setRCF(0,0);
 		this.kssplay.setSilentLimit(3000);
 		this.kssplay.setDeviceQuality({'psg':1,'scc':0,'opll':1,'opl':1});
 		this.kss = null;
