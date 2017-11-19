@@ -283,7 +283,7 @@ module.exports = (function(){
 		var played = this.msxplay.getPlayedTime();
 		var buffered = this.msxplay.getBufferedTime();
 		var total = this.msxplay.getTotalTime();
-		var renderSpeed = this.msxplay.renderSpeed.toFixed(1);
+		var renderSpeed = this.msxplay.getRenderSpeed().toFixed(1);
 
 		playerElement.querySelector('.playtime').textContent = timeToString(played);
 
