@@ -66,8 +66,17 @@ module.exports = (function() {
 				this.dummyNode.disconnect();
 				this.dummyNode = null;
 			}
+			// Since Firefox 57 seems to call onaudioprocess after disconnect() if multiple 
+			// ScriptNodes are instanceated, onaudioprocess property should be cleared before 
+			// release the ScriptNode.			
+			this.scriptNode.onaudioprocess = null;
 			this.scriptNode.disconnect();
 			this.scriptNode = null;
+		}
+
+		if (this.timerId) {
+			clearInterval(this.timerId);
+			this.timerId = null;
 		}
 
 		this.renderedTime = 0;
@@ -181,16 +190,8 @@ module.exports = (function() {
 		this._changeState("playing");
 	};
 
-	AudioPlayer.prototype.stop = function() {		
-		if (this.scriptNode) {
-			this.scriptNode.disconnect();
-			this.scriptNode = null;
-		}
-		if (this.timerId) {
-			clearInterval(this.timerId);
-			this.timerId = null;
-		}
-		this._changeState("standby");
+	AudioPlayer.prototype.stop = function() {	
+		this._recycle();	
 	};
 
 	AudioPlayer.prototype.pause = function() {
