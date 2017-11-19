@@ -77,10 +77,10 @@ module.exports = (function() {
 	KSS2MP3.prototype.processEncode = function() {
 
 		var samples = this.kssplay.calc(this.sampleRate);
-		var gain = this.opts.gain;
+		var gain = this.opts.gain * 2.0;
 		if (gain !== 1.0) {
 			for ( var i = 0; i < samples.length; i++ ) {
-				samples[i] = samples[i] * gain * 2;
+				samples[i] = Math.max(-32768, Math.min(samples[i] * gain, 32767));
 			}
 		}
 
