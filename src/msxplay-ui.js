@@ -35,6 +35,10 @@ module.exports = (function(){
 		setInterval(this.updateDisplay.bind(this),100);
 	};
 
+	MSXPlayUI.prototype.mp3encode = function(data, song, callback, opts) {
+		this.msxplay.mp3encode(data, song, callback, opts);
+	};
+
 	MSXPlayUI.prototype.compile = function(mml) {
 		if (this.compiler == null) {
 			this.compiler = require('mgsc-js');

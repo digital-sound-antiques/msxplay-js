@@ -4,6 +4,7 @@ module.exports = (function() {
 
 	var KSS = require('libkss-js').KSS;
 	var KSSPlay = require('libkss-js').KSSPlay;
+	var KSS2MP3 = require('./kss2mp3');
 
 	var MSXPlay = function(audioCtx, destination) {
 
@@ -27,7 +28,7 @@ module.exports = (function() {
 		this.masterVolumeNode.gain.value = 3.0;
 
 		this.gainNode.connect(this.masterVolumeNode);
-		this.masterVolumeNode.connect(this.destination);		
+		this.masterVolumeNode.connect(this.destination);    
 
 		this.scriptNodeDestination = this.gainNode;
 
@@ -41,6 +42,21 @@ module.exports = (function() {
 
 		setInterval(this._generateWaveBackground.bind(this),50);
 
+	};
+
+	MSXPlay.prototype.mp3encode = function(data, song, callback, opts) {
+		opts = opts || {};
+
+		if (this.kss2mp3 != null) {
+			this.kss2mp3.release();
+		}
+		if (this.tempkss != null) {
+			this.tempkss.release();
+		}
+
+		this.tempkss = new KSS(data);
+		this.kss2mp3 = new KSS2MP3(opts.sampleRate || 44100, opts.bitRate || 192);
+		this.kss2mp3.encode(this.tempkss, song, callback, opts);
 	};
 
 	MSXPlay.prototype.getTotalTime = function() {
@@ -277,6 +293,14 @@ module.exports = (function() {
 	};
 
 	MSXPlay.prototype.release = function() {
+		if (this.kss2mp3 != null) {
+			this.kss2mp3.release();
+			this.kss2mp3 = null;
+		}
+		if (this.tempkss != null) {
+			this.tempkss.release();
+			this.tempkss = null;
+		}
 		this.kssplay.release();
 		this.kssplay = null;
 		this.audioCtx.close();

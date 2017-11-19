@@ -50,24 +50,33 @@ body {
 .actions {
 	height:48px;
 	margin:32px 72px 0 72px;
-	padding:10px 12px;
-	font-size:12px;
+	padding:7px 12px;
 	background-color:white;
 	border:1px solid #ccc;
+	font-size:12px;
+	color:#007aff;
 }
 
 .actions button {
 	color:#007aff;
 	border-radius:2px;
-	height:24px;
 	padding:0 8px;
 	margin:0px 8px 0px 0;
-	line-height:24px;
-	font-size:12px;
 	background-color:#ffffff;
-	box-shadow:0 0px 2px 0 rgba(0,0,0,.25);
-	border:none;
+	border:1px solid #f0f0f0;
 	cursor:pointer;
+	transition:background-color 0.5s linear;
+}
+
+.actions button p {
+	font-size:12px;
+	line-height:28px;
+	vertical-align: middle;
+}
+
+.actions button .material-icons {
+	font-size:20px;
+	vertical-align: -6px;
 }
 
 .actions button:focus {
@@ -75,7 +84,7 @@ body {
 }
 
 .actions button:hover {
-	box-shadow:0 0 4px 0 rgba(0,0,0,.25);
+	background-color:#f0f0f0;
 }
 
 .actions button:active {
@@ -271,3 +280,4 @@ ul.item-list li .subtext {
 	line-height:18px;
 	color:rgba(0,0,0,.4);
 }
+
