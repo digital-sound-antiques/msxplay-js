@@ -34308,6 +34308,7 @@ module.exports = (function(){
 		var kss = KSS.createUniqueInstance(new Uint8Array(data));
 		var playerElement = document.createElement('div');
 		playerElement.classList.add('msxplay');
+		playerElement.dataset.gain = '2.0';
 		playerElement.dataset.url = url;
 		playerElement.dataset.hash = kss.hash;
 		if(kss.hasMultiSongs) {
@@ -60948,6 +60949,10 @@ module.exports = (function() {
 		return this.audioPlayer.getOutputGain();
 	};
 
+	MSXPlay.prototype.setOutputGain = function(gain) {
+		return this.audioPlayer.setOutputGain(gain);
+	};
+
 	MSXPlay.prototype.getTitle = function() {
 		return this.kss?this.kss.getTitle():"";
 	};
@@ -60966,8 +60971,8 @@ module.exports = (function() {
 		this.kssplay.reset(song,0);
 
 		this.maxPlayTime = Math.min(20 * 60 * 1000, options.duration || 5 * 60 * 1000);
-		if(options.gain != null) {
-			this.audioPlayer.setOutputGain(options.gain);
+		if(options.gain != null) {			
+			this.audioPlayer.setOutputGain(Number.isNaN(options.gain) ? 1.0 : options.gain);
 		}
 
 	};
