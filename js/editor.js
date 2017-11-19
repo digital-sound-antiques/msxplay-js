@@ -141,7 +141,7 @@ function compile(autoplay) {
 	var info = getMetaMMLInfo(mml);
 
 	lastCompiledMGS = result.mgs;
-	lastCompiledName = info.name || Date.now();
+	lastCompiledName = info.name || ("" + Date.now());
 
 	player.dataset.duration = null;
 	player.dataset.gain = 1.0;			
