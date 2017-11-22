@@ -1,4 +1,9 @@
-;[duration=300s fade=5s]
+;[gain=1.0 name=blank duration=300s fade=5s]
+; The line above defines the extra options for MSXplay.js. 
+; gain    : specify the volume gain of the playback. It is just linear multiplier, not dB.
+; name    : specify the name of the mml, use as the base download filename.
+; duration: specify the length of the song.
+; fade    : specify the fade time.
 #opll_mode 1
 #tempo 120
 #title { "No Title"}
