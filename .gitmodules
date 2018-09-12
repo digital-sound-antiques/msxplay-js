@@ -1,6 +1,0 @@
-[submodule "modules/libkss"]
-	path = modules/libkss
-	url = https://github.com/digital-sound-antiques/libkss.git
-[submodule "modules/mgsc"]
-	path = modules/mgsc
-	url = https://github.com/digital-sound-antiques/mgsc.git
