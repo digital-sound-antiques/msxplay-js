@@ -19277,7 +19277,7 @@ module.exports = (function(){
 
 	MSXPlayUI.prototype.createPlayer = function(data, url) {
 
-		var kss = KSS.createUniqueInstance(new Uint8Array(data));
+		var kss = KSS.createUniqueInstance(new Uint8Array(data), url);
 		var playerElement = document.createElement('div');
 		playerElement.classList.add('msxplay');
 		playerElement.dataset.gain = '2.0';
