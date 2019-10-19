@@ -1,6 +1,6 @@
 {
   "name": "msxplay-js",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "",
   "main": "src/entry.js",
   "engines": {
@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "lamejs": "^1.2.0",
-    "libkss-js": "^0.9.7",
+    "libkss-js": "^0.9.8",
     "mgsc-js": "^1.0.1",
     "object-assign": "^4.1.1"
   },
