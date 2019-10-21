@@ -75,7 +75,7 @@ module.exports = (function() {
     var kss = KSS.createUniqueInstance(new Uint8Array(data), name);
     var playerElement = document.createElement("div");
     playerElement.classList.add("msxplay");
-    playerElement.dataset.gain = "2.0";
+    playerElement.dataset.gain = "1.0";
     playerElement.dataset.url = url;
     playerElement.dataset.hash = kss.hash;
     if (kss.hasMultiSongs) {

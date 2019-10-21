@@ -20235,8 +20235,6 @@ module.exports = QuantizePVT;
 module.exports = __webpack_require__(96);
 
 
-
-
 /***/ }),
 /* 96 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -35522,166 +35520,172 @@ exports.ZENKANA_TABLE = [
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = (function() {
+  "use strict";
 
-	'use strict';
+  var KSS = __webpack_require__(15).KSS;
+  var KSSPlay = __webpack_require__(15).KSSPlay;
+  var KSS2MP3 = __webpack_require__(194);
+  var AudioPlayer = __webpack_require__(217);
 
-	var KSS = __webpack_require__(15).KSS;
-	var KSSPlay = __webpack_require__(15).KSSPlay;
-	var KSS2MP3 = __webpack_require__(194);
-	var AudioPlayer = __webpack_require__(217);
+  var MSXPlay = function(audioCtx, destination) {
+    this.audioPlayer = new AudioPlayer(
+      audioCtx,
+      destination,
+      this._generateWave.bind(this)
+    );
+    this.sampleRate = this.audioPlayer.sampleRate;
 
-	var MSXPlay = function(audioCtx, destination) {
+    this.kssplay = new KSSPlay(this.sampleRate);
+    this.kssplay.setRCF(0, 0);
+    this.kssplay.setSilentLimit(3000);
+    this.kssplay.setDeviceQuality({ psg: 1, scc: 0, opll: 1, opl: 1 });
+    this.kss = null;
 
-		this.audioPlayer = new AudioPlayer(audioCtx, destination, this._generateWave.bind(this));
-		this.sampleRate = this.audioPlayer.sampleRate;
+    this.maxCalcSamples = this.sampleRate;
+  };
 
-		this.kssplay = new KSSPlay(this.sampleRate);
-		this.kssplay.setRCF(0,0);
-		this.kssplay.setSilentLimit(3000);
-		this.kssplay.setDeviceQuality({'psg':1,'scc':0,'opll':1,'opl':1});
-		this.kss = null;
+  MSXPlay.prototype.mp3encode = function(data, song, callback, opts) {
+    opts = opts || {};
 
-		this.maxCalcSamples = this.sampleRate;
-	};
+    if (this.kss2mp3 != null) {
+      this.kss2mp3.release();
+    }
+    if (this.tempkss != null) {
+      this.tempkss.release();
+    }
 
-	MSXPlay.prototype.mp3encode = function(data, song, callback, opts) {
-		opts = opts || {};
+    this.tempkss = new KSS(data);
+    this.kss2mp3 = new KSS2MP3(opts.sampleRate || 44100, opts.bitRate || 192);
+    this.kss2mp3.encode(this.tempkss, song, callback, opts);
+  };
 
-		if (this.kss2mp3 != null) {
-			this.kss2mp3.release();
-		}
-		if (this.tempkss != null) {
-			this.tempkss.release();
-		}
+  MSXPlay.prototype._generateWave = function(currentTime, samples) {
+    if (this.kssplay.getStopFlag() || this.kssplay.getFadeFlag() == 2) {
+      return null;
+    }
 
-		this.tempkss = new KSS(data);
-		this.kss2mp3 = new KSS2MP3(opts.sampleRate || 44100, opts.bitRate || 192);
-		this.kss2mp3.encode(this.tempkss, song, callback, opts);
-	};
+    if (this.kssplay.getFadeFlag() == 0) {
+      var loop = this.kssplay.getLoopCount();
+      var remains = this.maxPlayTime - currentTime;
+      if (
+        this.loopCount <= loop ||
+        (this.fadeTime && remains <= this.fadeTime)
+      ) {
+        this.kssplay.fadeStart(this.fadeTime);
+      }
+    }
 
-	MSXPlay.prototype._generateWave = function(currentTime, samples) {
+    return this.kssplay.calc(samples);
+  };
 
-		if (this.kssplay.getStopFlag() || this.kssplay.getFadeFlag() == 2) {
-			return null;
-		}
+  MSXPlay.prototype.getState = function() {
+    return this.audioPlayer.getState();
+  };
 
-		if(this.kssplay.getFadeFlag() == 0) {
-			var loop = this.kssplay.getLoopCount();
-			var remains = this.maxPlayTime - currentTime;
-			if (this.loopCount <= loop || (this.fadeTime && remains <= this.fadeTime)) {
-				this.kssplay.fadeStart(this.fadeTime);
-			}
-		}
-			
-		return this.kssplay.calc(samples);
-	};
+  MSXPlay.prototype.getMasterVolume = function() {
+    return this.audioPlayer.getMasterVolume();
+  };
 
-	MSXPlay.prototype.getState = function() {
-		return this.audioPlayer.getState();
-	};
+  MSXPlay.prototype.setMasterVolume = function(gain) {
+    this.audioPlayer.setMasterVolume(gain);
+  };
 
-	MSXPlay.prototype.getMasterVolume = function() {
-		return this.audioPlayer.getMasterVolume();
-	};
+  MSXPlay.prototype.getOutputGain = function() {
+    return this.audioPlayer.getOutputGain();
+  };
 
-	MSXPlay.prototype.setMasterVolume = function(gain) {
-		this.audioPlayer.setMasterVolume(gain);
-	};
+  MSXPlay.prototype.setOutputGain = function(gain) {
+    return this.audioPlayer.setOutputGain(gain);
+  };
 
-	MSXPlay.prototype.getOutputGain = function() {
-		return this.audioPlayer.getOutputGain();
-	};
+  MSXPlay.prototype.getTitle = function() {
+    return this.kss ? this.kss.getTitle() : "";
+  };
 
-	MSXPlay.prototype.setOutputGain = function(gain) {
-		return this.audioPlayer.setOutputGain(gain);
-	};
+  MSXPlay.prototype.setData = function(kss, song, options) {
+    options = options || {};
 
-	MSXPlay.prototype.getTitle = function() {
-		return this.kss?this.kss.getTitle():"";
-	};
+    this.kss = kss;
+    this.song = song;
 
-	MSXPlay.prototype.setData = function(kss,song,options) {
+    this.loopCount = options.loopCount || 2;
+    this.fadeTime = options.fadeTime || 5000;
 
-		options = options || {};
+    this.kssplay.setData(kss);
+    this.kssplay.reset(song, 0);
 
-		this.kss = kss;
-		this.song = song;
+    this.maxPlayTime = Math.min(
+      20 * 60 * 1000,
+      options.duration || 5 * 60 * 1000
+    );
+    if (options.gain != null) {
+      this.audioPlayer.setOutputGain(
+        Number.isNaN(options.gain) ? 1.0 : options.gain
+      );
+    }
+  };
 
-		this.loopCount = options.loopCount || 2;
-		this.fadeTime = options.fadeTime || 5000;
+  MSXPlay.prototype.play = function() {
+    this.audioPlayer.play(this.maxPlayTime);
+  };
 
-		this.kssplay.setData(kss);
-		this.kssplay.reset(song,0);
+  MSXPlay.prototype.stop = function() {
+    this.audioPlayer.stop();
+  };
 
-		this.maxPlayTime = Math.min(20 * 60 * 1000, options.duration || 5 * 60 * 1000);
-		if(options.gain != null) {			
-			this.audioPlayer.setOutputGain(Number.isNaN(options.gain) ? 1.0 : options.gain);
-		}
+  MSXPlay.prototype.pause = function() {
+    this.audioPlayer.pause();
+  };
 
-	};
+  MSXPlay.prototype.resume = function() {
+    this.audioPlayer.resume();
+  };
 
-	MSXPlay.prototype.play = function() {
-		this.audioPlayer.play(this.maxPlayTime);
-	};
+  MSXPlay.prototype.isPlaying = function() {
+    return this.audioPlayer.isPlaying();
+  };
 
-	MSXPlay.prototype.stop = function() {
-		this.audioPlayer.stop();
-	};
+  MSXPlay.prototype.isPaused = function() {
+    return this.audioPlayer.isPaused();
+  };
 
-	MSXPlay.prototype.pause = function() {
-		this.audioPlayer.pause();
-	};
+  MSXPlay.prototype.seekTo = function(posInMs) {
+    this.audioPlayer.seekTo(posInMs);
+  };
 
-	MSXPlay.prototype.resume = function() {
-		this.audioPlayer.resume();
-	};
+  MSXPlay.prototype.getTotalTime = function() {
+    return this.audioPlayer.getTotalTime();
+  };
 
-	MSXPlay.prototype.isPlaying = function() {
-		return this.audioPlayer.isPlaying();
-	};
+  MSXPlay.prototype.getPlayedTime = function() {
+    return this.audioPlayer.getPlayedTime();
+  };
 
-	MSXPlay.prototype.isPaused = function() {
-		return this.audioPlayer.isPaused();
-	};
+  MSXPlay.prototype.getBufferedTime = function() {
+    return this.audioPlayer.getBufferedTime();
+  };
 
-	MSXPlay.prototype.seekTo = function(posInMs) {
-		this.audioPlayer.seekTo(posInMs);
-	};
+  MSXPlay.prototype.getRenderSpeed = function() {
+    return this.audioPlayer.renderSpeed;
+  };
 
-	MSXPlay.prototype.getTotalTime = function() {
-		return this.audioPlayer.getTotalTime();
-	};
+  MSXPlay.prototype.release = function() {
+    if (this.kss2mp3 != null) {
+      this.kss2mp3.release();
+      this.kss2mp3 = null;
+    }
+    if (this.tempkss != null) {
+      this.tempkss.release();
+      this.tempkss = null;
+    }
+    this.kssplay.release();
+    this.kssplay = null;
+    this.audioPlayer.release();
+    this.audioPlayer = null;
+  };
 
-	MSXPlay.prototype.getPlayedTime = function() {
-		return this.audioPlayer.getPlayedTime();
-	};
-
-	MSXPlay.prototype.getBufferedTime = function() {
-		return this.audioPlayer.getBufferedTime();
-	};
-
-	MSXPlay.prototype.getRenderSpeed = function() {
-		return this.audioPlayer.renderSpeed;
-	}
-
-	MSXPlay.prototype.release = function() {
-		if (this.kss2mp3 != null) {
-			this.kss2mp3.release();
-			this.kss2mp3 = null;
-		}
-		if (this.tempkss != null) {
-			this.tempkss.release();
-			this.tempkss = null;
-		}
-		this.kssplay.release();
-		this.kssplay = null;
-		this.audioPlayer.release();
-		this.audioPlayer = null;
-	};
-
-	return MSXPlay;
-
-}());
+  return MSXPlay;
+})();
 
 
 /***/ }),
@@ -35689,117 +35693,122 @@ module.exports = (function() {
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = (function() {
-	'use strict';
+  "use strict";
 
-	var KSS = __webpack_require__(15).KSS;
-	var KSSPlay = __webpack_require__(15).KSSPlay;
-	var Lamejs = __webpack_require__(195);
+  var KSS = __webpack_require__(15).KSS;
+  var KSSPlay = __webpack_require__(15).KSSPlay;
+  var Lamejs = __webpack_require__(195);
 
-	var KSS2MP3 = function(sampleRate, kbps) {
-		this.mp3encoder = new Lamejs.Mp3Encoder(1, sampleRate, kbps);
-		this.sampleRate = sampleRate;
-		this.bitRate = kbps;
-		this.kssplay = new KSSPlay(sampleRate);
-		this.mp3data = [];
-	};
+  var KSS2MP3 = function(sampleRate, kbps) {
+    this.mp3encoder = new Lamejs.Mp3Encoder(1, sampleRate, kbps);
+    this.sampleRate = sampleRate;
+    this.bitRate = kbps;
+    this.kssplay = new KSSPlay(sampleRate);
+    this.mp3data = [];
+  };
 
-	KSS2MP3.prototype.release = function() {
-		if (this.kssplay != null) {
-			this.kssplay.release();
-			this.kssplay = null;
-		}
-	}
+  KSS2MP3.prototype.release = function() {
+    if (this.kssplay != null) {
+      this.kssplay.release();
+      this.kssplay = null;
+    }
+  };
 
-	/**
-	 * @typedef {Object} EncodeOptions
-	 * @prop {number} [gain=1.0]
-	 * @prop {number} [silentLimit=3000]
-	 * @prop {number} [loop=2]
-	 * @prop {number} [playTime=600000]
-	 * @prop {number} [fadeTime=3000]
-	 * @prop {number} [cpuSpeed=0]
-	 * @prop {Object} [rcf]
-	 * @prop {number} [rcf.registor=0]      
-	 * @prop {number} [rcf.capacitor=0]   
-	 * @prop {Object} [quality]      
-	 * @prop {Object} [quality.psg=1]         
-	 * @prop {Object} [quality.scc=0]            
-	 * @prop {Object} [quality.opll=1]               
-	 * @prop {Object} [quality.opl=1]                  
-	 */
+  /**
+   * @typedef {Object} EncodeOptions
+   * @prop {number} [gain=1.0]
+   * @prop {number} [silentLimit=3000]
+   * @prop {number} [loop=2]
+   * @prop {number} [playTime=600000]
+   * @prop {number} [fadeTime=3000]
+   * @prop {number} [cpuSpeed=0]
+   * @prop {Object} [rcf]
+   * @prop {number} [rcf.registor=0]
+   * @prop {number} [rcf.capacitor=0]
+   * @prop {Object} [quality]
+   * @prop {Object} [quality.psg=1]
+   * @prop {Object} [quality.scc=0]
+   * @prop {Object} [quality.opll=1]
+   * @prop {Object} [quality.opl=1]
+   */
 
-	/**
-	 * @param {EncodeOptions} [opts]
-	 */
-	KSS2MP3.prototype.encode = function(kss, song, callback, opts) {
-		opts = opts || {};
-		var assign = __webpack_require__(216);
-		var rcf = assign({registor:0,capacitor:0}, opts.rcf);
-		var quality = assign({'psg':1,'scc':0,'opll':1,'opl':1}, opts.quality);
-		this.opts = assign({
-			gain: 1.0,
-			silentLimit: 3000,
-			loop: 2,
-			playTime: 600 * 1000,
-			fadeTime: 3000,
-			cpuSpeed: 0,
-		}, opts);
+  /**
+   * @param {EncodeOptions} [opts]
+   */
+  KSS2MP3.prototype.encode = function(kss, song, callback, opts) {
+    opts = opts || {};
+    var assign = __webpack_require__(216);
+    var rcf = assign({ registor: 0, capacitor: 0 }, opts.rcf);
+    var quality = assign({ psg: 1, scc: 0, opll: 1, opl: 1 }, opts.quality);
+    this.opts = assign(
+      {
+        gain: 1.0,
+        silentLimit: 3000,
+        loop: 2,
+        playTime: 600 * 1000,
+        fadeTime: 3000,
+        cpuSpeed: 0
+      },
+      opts
+    );
 
-		this.kssplay.setDeviceQuality(quality);
-		this.kssplay.setSilentLimit(this.opts.slientLimit);
-		this.kssplay.setRCF(rcf.registor, rcf.capacitor);
-		this.kssplay.setData(kss);
-		this.kssplay.reset(song, this.opts.cpuSpeed);
-		this.callbackFunc = callback || function(){};
-		this.elapsed = 0;
-		this.maxDuration = (this.opts.playTime) - this.opts.fadeTime;
-		this.mp3data = [];
-		
-		this.processEncode();
-	};
+    this.kssplay.setDeviceQuality(quality);
+    this.kssplay.setSilentLimit(this.opts.slientLimit);
+    this.kssplay.setRCF(rcf.registor, rcf.capacitor);
+    this.kssplay.setData(kss);
+    this.kssplay.reset(song, this.opts.cpuSpeed);
+    this.callbackFunc = callback || function() {};
+    this.elapsed = 0;
+    this.maxDuration = this.opts.playTime - this.opts.fadeTime;
+    this.mp3data = [];
 
-	KSS2MP3.prototype.addDataBlock = function(block) {
-		if ( 0 < block.length ) {
-			this.mp3data.push(block);
-		}
-	};
+    this.processEncode();
+  };
 
-	KSS2MP3.prototype.processEncode = function() {
+  KSS2MP3.prototype.addDataBlock = function(block) {
+    if (0 < block.length) {
+      this.mp3data.push(block);
+    }
+  };
 
-		var samples = this.kssplay.calc(this.sampleRate);
-		var gain = this.opts.gain * 2.0;
-		if (gain !== 1.0) {
-			for ( var i = 0; i < samples.length; i++ ) {
-				samples[i] = Math.max(-32768, Math.min(samples[i] * gain, 32767));
-			}
-		}
+  KSS2MP3.prototype.processEncode = function() {
+    var samples = this.kssplay.calc(this.sampleRate);
+    var gain = this.opts.gain * 2.0;
+    if (gain !== 1.0) {
+      for (var i = 0; i < samples.length; i++) {
+        samples[i] = Math.max(-32768, Math.min(samples[i] * gain, 32767));
+      }
+    }
 
-		this.addDataBlock(this.mp3encoder.encodeBuffer(samples));
-		this.elapsed += 1000;
+    this.addDataBlock(this.mp3encoder.encodeBuffer(samples));
+    this.elapsed += 1000;
 
-		if (this.kssplay.getStopFlag() || this.kssplay.getFadeFlag() === 2) {
-			this.addDataBlock(this.mp3encoder.flush());
-			this.callbackFunc(this.elapsed, this.mp3data, true);
-			return;
-		}
+    if (this.kssplay.getStopFlag() || this.kssplay.getFadeFlag() === 2) {
+      this.addDataBlock(this.mp3encoder.flush());
+      this.callbackFunc(this.elapsed, this.mp3data, true);
+      return;
+    }
 
-		if (!this.callbackFunc(this.elapsed, this.mp3data, false)) {
-			// abort the encode process
-			this.addDataBlock(this.mp3encoder.flush());
-			return;
-		}
+    if (!this.callbackFunc(this.elapsed, this.mp3data, false)) {
+      // abort the encode process
+      this.addDataBlock(this.mp3encoder.flush());
+      return;
+    }
 
-		if (this.kssplay.getFadeFlag() === 0) {
-			if (this.maxDuration - this.elapsed < this.opts.fadeTime || 
-				this.opts.loop <= this.kssplay.getLoopCount())  {
-				this.kssplay.fadeStart(this.opts.fadeTime);
-			}
-		}
+    if (this.kssplay.getFadeFlag() === 0) {
+      if (
+        this.maxDuration - this.elapsed < this.opts.fadeTime ||
+        this.opts.loop <= this.kssplay.getLoopCount()
+      ) {
+        this.kssplay.fadeStart(this.opts.fadeTime);
+      }
+    }
 
-		setTimeout(this.processEncode.bind(this), 0);
-	};
-	return KSS2MP3;
-}());
+    setTimeout(this.processEncode.bind(this), 0);
+  };
+  return KSS2MP3;
+})();
+
 
 /***/ }),
 /* 195 */
@@ -46415,238 +46424,233 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 /***/ (function(module, exports) {
 
 module.exports = (function() {
+  var AudioPlayer = function(audioCtx, destination, renderer) {
+    this.audioCtx =
+      audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    this.destination = destination || this.audioCtx.destination;
+    this.sampleRate = this.audioCtx.sampleRate;
 
-	var AudioPlayer = function(audioCtx, destination, renderer) {
+    this.gainNode = this.audioCtx.createGain();
+    this.gainNode.gain.value = 1.0;
+    this.masterVolumeNode = this.audioCtx.createGain();
+    this.masterVolumeNode.gain.value = 3.0;
 
-		this.audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-		this.destination = destination || this.audioCtx.destination;
-		this.sampleRate = this.audioCtx.sampleRate;
+    // Note: Chrome and FireFox compress overflow in GainNode. Safari does not.
+    this.gainNode.connect(this.masterVolumeNode);
+    this.masterVolumeNode.connect(this.destination);
 
-		this.gainNode = this.audioCtx.createGain();
-		this.gainNode.gain.value = 1.0;
-		this.masterVolumeNode = this.audioCtx.createGain();
-		this.masterVolumeNode.gain.value = 3.0
+    this.scriptNodeDestination = this.gainNode;
 
-		// Note: Chrome and FireFox compress overflow in GainNode. Safari does not.
-		this.gainNode.connect(this.masterVolumeNode);
-		this.masterVolumeNode.connect(this.destination);
+    this.renderer = renderer;
+  };
 
-		this.scriptNodeDestination = this.gainNode;
+  AudioPlayer.prototype.getTotalTime = function() {
+    return Math.round((this.waveTotalSize / this.sampleRate) * 1000);
+  };
 
-		this.renderer = renderer;
+  AudioPlayer.prototype.getPlayedTime = function() {
+    return Math.round((this.waveReadPos / this.sampleRate) * 1000);
+  };
 
-	};
+  AudioPlayer.prototype.getBufferedTime = function() {
+    return Math.round((this.waveWritePos / this.sampleRate) * 1000);
+  };
 
-	AudioPlayer.prototype.getTotalTime = function() {
-		return Math.round(this.waveTotalSize / this.sampleRate * 1000);
-	};
+  AudioPlayer.prototype._changeState = function(newState) {
+    if (this._state != newState) {
+      this._state = newState;
+      // TODO issue stateChanged event;
+    }
+  };
 
-	AudioPlayer.prototype.getPlayedTime = function() {
-		return Math.round(this.waveReadPos / this.sampleRate * 1000);
-	};
+  AudioPlayer.prototype.getState = function() {
+    return this._state;
+  };
 
-	AudioPlayer.prototype.getBufferedTime = function() {
-		return Math.round(this.waveWritePos / this.sampleRate * 1000);
-	};
+  AudioPlayer.prototype.getMasterVolume = function() {
+    return this.masterVolumeNode.gain.value;
+  };
 
-	AudioPlayer.prototype._changeState = function(newState) {
-		if(this._state != newState) {
-			this._state = newState;
-			// TODO issue stateChanged event;
-		}
-	};
+  AudioPlayer.prototype.setMasterVolume = function(gain) {
+    this.masterVolumeNode.gain.value = gain;
+  };
 
-	AudioPlayer.prototype.getState = function() {
-		return this._state;
-	};
+  AudioPlayer.prototype.getOutputGain = function() {
+    return this.gainNode.gain.value;
+  };
 
-	AudioPlayer.prototype.getMasterVolume = function() {
-		return this.masterVolumeNode.gain.value;
-	};
+  AudioPlayer.prototype.setOutputGain = function(gain) {
+    this.gainNode.gain.value = gain;
+  };
 
-	AudioPlayer.prototype.setMasterVolume = function(gain) {
-		this.masterVolumeNode.gain.value = gain;
-	};
+  AudioPlayer.prototype._recycle = function() {
+    if (this.scriptNode) {
+      if (this.dummyNode) {
+        this.dummyNode.disconnect();
+        this.dummyNode = null;
+      }
+      // Since Firefox 57 seems to call onaudioprocess after disconnect() if multiple
+      // ScriptNodes are instanceated, onaudioprocess property should be cleared before
+      // release the ScriptNode.
+      this.scriptNode.onaudioprocess = null;
+      this.scriptNode.disconnect();
+      this.scriptNode = null;
+    }
 
-	AudioPlayer.prototype.getOutputGain = function() {
-		return this.gainNode.gain.value;
-	};
+    if (this.timerId) {
+      clearInterval(this.timerId);
+      this.timerId = null;
+    }
 
-	AudioPlayer.prototype.setOutputGain = function(gain) {
-		this.gainNode.gain.value = gain;
-	};
+    this.renderedTime = 0;
+    this.consumedTime = 0;
+    this.waveWritePos = 0;
+    this.waveReadPos = 0;
+    this._state = "standby";
+  };
 
-	AudioPlayer.prototype._recycle = function() {
-		if (this.scriptNode) {
-			if (this.dummyNode) {
-				this.dummyNode.disconnect();
-				this.dummyNode = null;
-			}
-			// Since Firefox 57 seems to call onaudioprocess after disconnect() if multiple 
-			// ScriptNodes are instanceated, onaudioprocess property should be cleared before 
-			// release the ScriptNode.			
-			this.scriptNode.onaudioprocess = null;
-			this.scriptNode.disconnect();
-			this.scriptNode = null;
-		}
+  AudioPlayer.prototype.setMaxPlayTime = function(time) {
+    this.maxPlayTime = time;
+    this.waveBuffer = new Float32Array(
+      Math.round((this.sampleRate * time) / 1000)
+    );
+    this.waveTotalSize = this.waveBuffer.length;
+  };
 
-		if (this.timerId) {
-			clearInterval(this.timerId);
-			this.timerId = null;
-		}
+  AudioPlayer.prototype._render = function(samples) {
+    var start = Date.now();
+    var waves = this.renderer(this.renderedTime, samples);
 
-		this.renderedTime = 0;
-		this.consumedTime = 0;
-		this.waveWritePos = 0;
-		this.waveReadPos = 0;
-		this._state = "standby";
-	};
+    if (waves == null) {
+      this.waveTotalSize = this.waveWritePos;
+      return false;
+    }
 
-	AudioPlayer.prototype.setMaxPlayTime = function(time) {
-		this.maxPlayTime = time;
-		this.waveBuffer = new Float32Array(Math.round(this.sampleRate * time / 1000));
-		this.waveTotalSize = this.waveBuffer.length;
-	};
+    for (var i = 0; i < samples; i++) {
+      this.waveBuffer[this.waveWritePos++] = waves[i] / 32768;
+    }
 
-	AudioPlayer.prototype._render = function(samples) {
+    this.renderedTime = (this.waveWritePos / this.sampleRate) * 1000;
+    this.consumedTime += Date.now() - start;
+    this.renderSpeed = this.renderedTime / this.consumedTime;
 
-		var start = Date.now();
-		var waves = this.renderer(this.renderedTime, samples);
+    return true;
+  };
 
-		if (waves == null) {
-			this.waveTotalSize = this.waveWritePos;
-			return false;
-		}
+  AudioPlayer.prototype.onRender = function() {
+    var interval = Date.now() - this.lastOnRenderAt;
+    var samples = Math.round(
+      ((this.sampleRate * interval) / 1000) * Math.max(1.0, this.renderSpeed)
+    );
+    if (!this._render(samples)) {
+      if (this.timerId != null) {
+        clearInterval(this.timerId);
+        this.timerId = null;
+      }
+    }
 
-		for(var i = 0; i < samples; i++) {
-			this.waveBuffer[this.waveWritePos++] = waves[i] / 32768;
-		}
+    this.lastOnRenderAt = Date.now();
+  };
 
-		this.renderedTime = this.waveWritePos / this.sampleRate * 1000;
-		this.consumedTime += (Date.now() - start);
-		this.renderSpeed = this.renderedTime / this.consumedTime;
+  AudioPlayer.prototype._onAudioProcess = function(event) {
+    var i;
+    var samples = event.outputBuffer.length;
+    var outData = event.outputBuffer.getChannelData(0);
 
-		return true;
-	};
+    if (this._state == "playing") {
+      // Do not generate wave in this handler because if this handler consume longer time,
+      // the browser often stop to fire the `audioprocess` event. (may be a bug of the browser).
 
-	AudioPlayer.prototype.onRender = function() {
+      var bufferRemains = this.waveWritePos - this.waveReadPos;
 
-		var interval = (Date.now() - this.lastOnRenderAt);
-		var samples = Math.round(this.sampleRate * interval / 1000 * Math.max(1.0, this.renderSpeed));		
-		if (!this._render(samples)) {
-			if (this.timerId != null) {
-				clearInterval(this.timerId);
-				this.timerId = null;
-			}
-		}
+      if (this.waveWritePos < this.waveTotalSize) {
+        if (bufferRemains < this.sampleRate) {
+          // return;
+        }
+      }
 
-		this.lastOnRenderAt = Date.now();
-	};
+      for (i = 0; i < samples; i++) {
+        outData[i] = this.waveBuffer[this.waveReadPos];
+        if (this.waveReadPos < this.waveWritePos - 1) {
+          this.waveReadPos++;
+        }
+      }
 
-	AudioPlayer.prototype._onAudioProcess = function(event) {
+      if (this.waveReadPos == this.waveTotalSize - 1) {
+        this._changeState("finished");
+      }
+    } else {
+      for (i = 0; i < samples; i++) {
+        outData[i] = 0;
+      }
+    }
+  };
 
-		var i;
-		var samples = event.outputBuffer.length;
-		var outData = event.outputBuffer.getChannelData(0);
+  AudioPlayer.prototype.play = function(maxPlayTime) {
+    this.setMaxPlayTime(maxPlayTime || this.maxPlayTime || 60 * 5 * 1000);
 
-		if (this._state == "playing") {
+    this._recycle();
 
-			// Do not generate wave in this handler because if this handler consume longer time, 
-			// the browser often stop to fire the `audioprocess` event. (may be a bug of the browser).
+    this.scriptNode = this.audioCtx.createScriptProcessor(8192, 1, 1);
+    this.scriptNode.onaudioprocess = this._onAudioProcess.bind(this);
+    this.scriptNode.connect(this.scriptNodeDestination);
 
-			var bufferRemains = this.waveWritePos - this.waveReadPos;
+    this.dummyNode = this.audioCtx.createOscillator();
+    this.dummyNode.frequency.value = 0;
+    this.dummyNode.start(0);
+    this.dummyNode.connect(this.scriptNode);
 
-			if ( this.waveWritePos < this.waveTotalSize ) {
-				if( bufferRemains < this.sampleRate ) {
-					// return;
-				}
-			}
+    this.renderSpeed = 0.0;
+    this._render(this.sampleRate); // pre-buffer 1.0s
+    this.lastOnRenderAt = Date.now();
 
-			for (i = 0; i < samples; i++) {
-				outData[i] = this.waveBuffer[this.waveReadPos];
-				if(this.waveReadPos < this.waveWritePos - 1) {
-					this.waveReadPos++;
-				}
-			}
+    this.timerId = setInterval(this.onRender.bind(this), 0);
 
-			if (this.waveReadPos == this.waveTotalSize - 1) {
-				this._changeState("finished");
-			}
+    this._changeState("playing");
+  };
 
-		} else {
+  AudioPlayer.prototype.stop = function() {
+    this._recycle();
+  };
 
-			for (i = 0; i < samples; i++) {
-				outData[i] = 0;
-			}
+  AudioPlayer.prototype.pause = function() {
+    if (this._state == "playing") {
+      this.scriptNode.disconnect();
+      this._changeState("paused");
+    }
+  };
 
-		}
-	};
+  AudioPlayer.prototype.resume = function() {
+    if (this._state == "paused") {
+      this.scriptNode.connect(this.scriptNodeDestination);
+      this._changeState("playing");
+    }
+  };
 
-	AudioPlayer.prototype.play = function(maxPlayTime) {
+  AudioPlayer.prototype.isPlaying = function() {
+    return this._state == "playing";
+  };
 
-		this.setMaxPlayTime(maxPlayTime || this.maxPlayTime || 60 * 5 * 1000);
+  AudioPlayer.prototype.isPaused = function() {
+    return this._state == "paused";
+  };
 
-		this._recycle();
+  AudioPlayer.prototype.seekTo = function(posInMs) {
+    var seekPos = Math.round((this.sampleRate * posInMs) / 1000);
+    if (seekPos < this.waveWritePos) {
+      this.waveReadPos = seekPos;
+    }
+  };
 
-		this.scriptNode = this.audioCtx.createScriptProcessor(8192,1,1);
-		this.scriptNode.onaudioprocess = this._onAudioProcess.bind(this);
-		this.scriptNode.connect(this.scriptNodeDestination);
+  AudioPlayer.prototype.release = function() {
+    this._recycle();
+    this.audioCtx.close();
+    this.audioCtx = null;
+  };
 
-		this.dummyNode = this.audioCtx.createOscillator();
-		this.dummyNode.frequency.value = 0;
-		this.dummyNode.start(0);
-		this.dummyNode.connect(this.scriptNode);
+  return AudioPlayer;
+})();
 
-		this.renderSpeed = 0.0;
-		this._render(this.sampleRate); // pre-buffer 1.0s
-		this.lastOnRenderAt = Date.now();
-
-		this.timerId = setInterval(this.onRender.bind(this), 0);
-
-		this._changeState("playing");
-	};
-
-	AudioPlayer.prototype.stop = function() {	
-		this._recycle();	
-	};
-
-	AudioPlayer.prototype.pause = function() {
-		if(this._state == "playing") {
-			this.scriptNode.disconnect();
-			this._changeState("paused");
-		}
-	};
-
-	AudioPlayer.prototype.resume = function() {
-		if(this._state == "paused") {
-			this.scriptNode.connect(this.scriptNodeDestination);
-			this._changeState("playing");
-		}
-	};
-
-	AudioPlayer.prototype.isPlaying = function() {
-		return this._state == "playing";
-	};
-
-	AudioPlayer.prototype.isPaused = function() {
-		return this._state == "paused";
-	};
-
-	AudioPlayer.prototype.seekTo = function(posInMs) {
-		var seekPos = Math.round(this.sampleRate * posInMs / 1000);
-		if(seekPos < this.waveWritePos) {
-			this.waveReadPos = seekPos;
-		}
-	};
-
-	AudioPlayer.prototype.release = function() {
-		this._recycle();
-		this.audioCtx.close();
-		this.audioCtx = null;
-	};
-
-	return AudioPlayer;
-}());
 
 /***/ }),
 /* 218 */
