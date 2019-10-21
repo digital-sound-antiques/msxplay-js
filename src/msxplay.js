@@ -1,161 +1,167 @@
 module.exports = (function() {
+  "use strict";
 
-	'use strict';
+  var KSS = require("libkss-js").KSS;
+  var KSSPlay = require("libkss-js").KSSPlay;
+  var KSS2MP3 = require("./kss2mp3");
+  var AudioPlayer = require("./audio-player");
 
-	var KSS = require('libkss-js').KSS;
-	var KSSPlay = require('libkss-js').KSSPlay;
-	var KSS2MP3 = require('./kss2mp3');
-	var AudioPlayer = require('./audio-player');
+  var MSXPlay = function(audioCtx, destination) {
+    this.audioPlayer = new AudioPlayer(
+      audioCtx,
+      destination,
+      this._generateWave.bind(this)
+    );
+    this.sampleRate = this.audioPlayer.sampleRate;
 
-	var MSXPlay = function(audioCtx, destination) {
+    this.kssplay = new KSSPlay(this.sampleRate);
+    this.kssplay.setRCF(0, 0);
+    this.kssplay.setSilentLimit(3000);
+    this.kssplay.setDeviceQuality({ psg: 1, scc: 0, opll: 1, opl: 1 });
+    this.kss = null;
 
-		this.audioPlayer = new AudioPlayer(audioCtx, destination, this._generateWave.bind(this));
-		this.sampleRate = this.audioPlayer.sampleRate;
+    this.maxCalcSamples = this.sampleRate;
+  };
 
-		this.kssplay = new KSSPlay(this.sampleRate);
-		this.kssplay.setRCF(0,0);
-		this.kssplay.setSilentLimit(3000);
-		this.kssplay.setDeviceQuality({'psg':1,'scc':0,'opll':1,'opl':1});
-		this.kss = null;
+  MSXPlay.prototype.mp3encode = function(data, song, callback, opts) {
+    opts = opts || {};
 
-		this.maxCalcSamples = this.sampleRate;
-	};
+    if (this.kss2mp3 != null) {
+      this.kss2mp3.release();
+    }
+    if (this.tempkss != null) {
+      this.tempkss.release();
+    }
 
-	MSXPlay.prototype.mp3encode = function(data, song, callback, opts) {
-		opts = opts || {};
+    this.tempkss = new KSS(data);
+    this.kss2mp3 = new KSS2MP3(opts.sampleRate || 44100, opts.bitRate || 192);
+    this.kss2mp3.encode(this.tempkss, song, callback, opts);
+  };
 
-		if (this.kss2mp3 != null) {
-			this.kss2mp3.release();
-		}
-		if (this.tempkss != null) {
-			this.tempkss.release();
-		}
+  MSXPlay.prototype._generateWave = function(currentTime, samples) {
+    if (this.kssplay.getStopFlag() || this.kssplay.getFadeFlag() == 2) {
+      return null;
+    }
 
-		this.tempkss = new KSS(data);
-		this.kss2mp3 = new KSS2MP3(opts.sampleRate || 44100, opts.bitRate || 192);
-		this.kss2mp3.encode(this.tempkss, song, callback, opts);
-	};
+    if (this.kssplay.getFadeFlag() == 0) {
+      var loop = this.kssplay.getLoopCount();
+      var remains = this.maxPlayTime - currentTime;
+      if (
+        this.loopCount <= loop ||
+        (this.fadeTime && remains <= this.fadeTime)
+      ) {
+        this.kssplay.fadeStart(this.fadeTime);
+      }
+    }
 
-	MSXPlay.prototype._generateWave = function(currentTime, samples) {
+    return this.kssplay.calc(samples);
+  };
 
-		if (this.kssplay.getStopFlag() || this.kssplay.getFadeFlag() == 2) {
-			return null;
-		}
+  MSXPlay.prototype.getState = function() {
+    return this.audioPlayer.getState();
+  };
 
-		if(this.kssplay.getFadeFlag() == 0) {
-			var loop = this.kssplay.getLoopCount();
-			var remains = this.maxPlayTime - currentTime;
-			if (this.loopCount <= loop || (this.fadeTime && remains <= this.fadeTime)) {
-				this.kssplay.fadeStart(this.fadeTime);
-			}
-		}
-			
-		return this.kssplay.calc(samples);
-	};
+  MSXPlay.prototype.getMasterVolume = function() {
+    return this.audioPlayer.getMasterVolume();
+  };
 
-	MSXPlay.prototype.getState = function() {
-		return this.audioPlayer.getState();
-	};
+  MSXPlay.prototype.setMasterVolume = function(gain) {
+    this.audioPlayer.setMasterVolume(gain);
+  };
 
-	MSXPlay.prototype.getMasterVolume = function() {
-		return this.audioPlayer.getMasterVolume();
-	};
+  MSXPlay.prototype.getOutputGain = function() {
+    return this.audioPlayer.getOutputGain();
+  };
 
-	MSXPlay.prototype.setMasterVolume = function(gain) {
-		this.audioPlayer.setMasterVolume(gain);
-	};
+  MSXPlay.prototype.setOutputGain = function(gain) {
+    return this.audioPlayer.setOutputGain(gain);
+  };
 
-	MSXPlay.prototype.getOutputGain = function() {
-		return this.audioPlayer.getOutputGain();
-	};
+  MSXPlay.prototype.getTitle = function() {
+    return this.kss ? this.kss.getTitle() : "";
+  };
 
-	MSXPlay.prototype.setOutputGain = function(gain) {
-		return this.audioPlayer.setOutputGain(gain);
-	};
+  MSXPlay.prototype.setData = function(kss, song, options) {
+    options = options || {};
 
-	MSXPlay.prototype.getTitle = function() {
-		return this.kss?this.kss.getTitle():"";
-	};
+    this.kss = kss;
+    this.song = song;
 
-	MSXPlay.prototype.setData = function(kss,song,options) {
+    this.loopCount = options.loopCount || 2;
+    this.fadeTime = options.fadeTime || 5000;
 
-		options = options || {};
+    this.kssplay.setData(kss);
+    this.kssplay.reset(song, 0);
 
-		this.kss = kss;
-		this.song = song;
+    this.maxPlayTime = Math.min(
+      20 * 60 * 1000,
+      options.duration || 5 * 60 * 1000
+    );
+    if (options.gain != null) {
+      this.audioPlayer.setOutputGain(
+        Number.isNaN(options.gain) ? 1.0 : options.gain
+      );
+    }
+  };
 
-		this.loopCount = options.loopCount || 2;
-		this.fadeTime = options.fadeTime || 5000;
+  MSXPlay.prototype.play = function() {
+    this.audioPlayer.play(this.maxPlayTime);
+  };
 
-		this.kssplay.setData(kss);
-		this.kssplay.reset(song,0);
+  MSXPlay.prototype.stop = function() {
+    this.audioPlayer.stop();
+  };
 
-		this.maxPlayTime = Math.min(20 * 60 * 1000, options.duration || 5 * 60 * 1000);
-		if(options.gain != null) {			
-			this.audioPlayer.setOutputGain(Number.isNaN(options.gain) ? 1.0 : options.gain);
-		}
+  MSXPlay.prototype.pause = function() {
+    this.audioPlayer.pause();
+  };
 
-	};
+  MSXPlay.prototype.resume = function() {
+    this.audioPlayer.resume();
+  };
 
-	MSXPlay.prototype.play = function() {
-		this.audioPlayer.play(this.maxPlayTime);
-	};
+  MSXPlay.prototype.isPlaying = function() {
+    return this.audioPlayer.isPlaying();
+  };
 
-	MSXPlay.prototype.stop = function() {
-		this.audioPlayer.stop();
-	};
+  MSXPlay.prototype.isPaused = function() {
+    return this.audioPlayer.isPaused();
+  };
 
-	MSXPlay.prototype.pause = function() {
-		this.audioPlayer.pause();
-	};
+  MSXPlay.prototype.seekTo = function(posInMs) {
+    this.audioPlayer.seekTo(posInMs);
+  };
 
-	MSXPlay.prototype.resume = function() {
-		this.audioPlayer.resume();
-	};
+  MSXPlay.prototype.getTotalTime = function() {
+    return this.audioPlayer.getTotalTime();
+  };
 
-	MSXPlay.prototype.isPlaying = function() {
-		return this.audioPlayer.isPlaying();
-	};
+  MSXPlay.prototype.getPlayedTime = function() {
+    return this.audioPlayer.getPlayedTime();
+  };
 
-	MSXPlay.prototype.isPaused = function() {
-		return this.audioPlayer.isPaused();
-	};
+  MSXPlay.prototype.getBufferedTime = function() {
+    return this.audioPlayer.getBufferedTime();
+  };
 
-	MSXPlay.prototype.seekTo = function(posInMs) {
-		this.audioPlayer.seekTo(posInMs);
-	};
+  MSXPlay.prototype.getRenderSpeed = function() {
+    return this.audioPlayer.renderSpeed;
+  };
 
-	MSXPlay.prototype.getTotalTime = function() {
-		return this.audioPlayer.getTotalTime();
-	};
+  MSXPlay.prototype.release = function() {
+    if (this.kss2mp3 != null) {
+      this.kss2mp3.release();
+      this.kss2mp3 = null;
+    }
+    if (this.tempkss != null) {
+      this.tempkss.release();
+      this.tempkss = null;
+    }
+    this.kssplay.release();
+    this.kssplay = null;
+    this.audioPlayer.release();
+    this.audioPlayer = null;
+  };
 
-	MSXPlay.prototype.getPlayedTime = function() {
-		return this.audioPlayer.getPlayedTime();
-	};
-
-	MSXPlay.prototype.getBufferedTime = function() {
-		return this.audioPlayer.getBufferedTime();
-	};
-
-	MSXPlay.prototype.getRenderSpeed = function() {
-		return this.audioPlayer.renderSpeed;
-	}
-
-	MSXPlay.prototype.release = function() {
-		if (this.kss2mp3 != null) {
-			this.kss2mp3.release();
-			this.kss2mp3 = null;
-		}
-		if (this.tempkss != null) {
-			this.tempkss.release();
-			this.tempkss = null;
-		}
-		this.kssplay.release();
-		this.kssplay = null;
-		this.audioPlayer.release();
-		this.audioPlayer = null;
-	};
-
-	return MSXPlay;
-
-}());
+  return MSXPlay;
+})();

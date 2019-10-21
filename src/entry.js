@@ -1,3 +1,1 @@
-module.exports = require('./msxplay-ui');
-
-
+module.exports = require("./msxplay-ui");

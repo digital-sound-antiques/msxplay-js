@@ -1,202 +1,209 @@
 .msxplay {
-	position:relative;
-	margin:16px 0;
-	width:400px;
-	height:84px;
-	border-radius:2px;
-	background-color:#ffffff;
-	border:1px solid #eee;
-	box-shadow:0 0 2px 0 rgba(0,0,0,.12);
-	transition:box-shadow 0.5s linear;
-	overflow:hidden;
+  position: relative;
+  margin: 16px 0;
+  width: 400px;
+  height: 84px;
+  border-radius: 2px;
+  background-color: #ffffff;
+  border: 1px solid #eee;
+  box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.12);
+  transition: box-shadow 0.5s linear;
+  overflow: hidden;
 }
 
 .msxplay .footer {
-	position:absolute;
-	color:#999;
-	width:100%;
-	height:20px;
-	font-size:10px;
-	line-height:20px;
-	bottom:0;
-	padding:0 8px;
-	background-color:#f0f0f0;
-	text-align:right;
+  position: absolute;
+  color: #999;
+  width: 100%;
+  height: 20px;
+  font-size: 10px;
+  line-height: 20px;
+  bottom: 0;
+  padding: 0 8px;
+  background-color: #f0f0f0;
+  text-align: right;
 }
 
 .msxplay.bottom-fixed {
-	position:fixed;
-	margin:0;
-	left:0;right:0;
-	bottom:0;
-	width:auto;
-	border-radius:0px;	
-	height:64px;
+  position: fixed;
+  margin: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: auto;
+  border-radius: 0px;
+  height: 64px;
 }
 
 .msxplay.bottom-fixed .footer {
-	display:none;
+  display: none;
 }
 
 .msxplay .leftbox {
-	width:64px;
-	height:64px;
-	background-size:36px 36px;
-	background-position:center center;
-	background-repeat:no-repeat;
-	cursor:pointer;
-	background-image:url(../img/play.png);
+  width: 64px;
+  height: 64px;
+  background-size: 36px 36px;
+  background-position: center center;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  background-image: url(../img/play.png);
 }
 
 .msxplay.active {
-	background-image: linear-gradient(0deg, #f8f8f8, #ffffff);
-	box-shadow:0 4px 16px 0 rgba(0,0,0,.5);
+  background-image: linear-gradient(0deg, #f8f8f8, #ffffff);
+  box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.5);
 }
 
 .msxplay.playing .leftbox {
-	background-image:url(../img/pause.png);
+  background-image: url(../img/pause.png);
 }
 
 .msxplay.paused .leftbox {
-	background-image:url(../img/play.png);
+  background-image: url(../img/play.png);
 }
 
 .msxplay.finished .leftbox {
-	background-image:url(../img/replay.png);
+  background-image: url(../img/replay.png);
 }
 
 .msxplay .rightbox {
-	position:absolute;
-	left:64px;top:0;bottom:0;right:0;
+  position: absolute;
+  left: 64px;
+  top: 0;
+  bottom: 0;
+  right: 0;
 }
 
 .msxplay .title {
-	position:absolute;
-	top:12px;
-	right:16px;
-	left:0px;
-	height:32px;
-	font-size:13px;
-	text-overflow:ellipsis;
-	overflow:hidden;
-	white-space:nowrap;
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  left: 0px;
+  height: 32px;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .msxplay.multi-songs .title {
-	right:66px;
+  right: 66px;
 }
 
 .msxplay .spinner {
-	position:absolute;
-	top:10px;right:10px;
-	height:16px;
-	opacity:0.87;
-	display:none;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  height: 16px;
+  opacity: 0.87;
+  display: none;
 }
 
 .msxplay.multi-songs .spinner {
-	display:block;
+  display: block;
 }
 
 .msxplay .spinner .number {
-	font-size:11px;
-	font-weight:bold;
-	width:16px;height:14px;
-	line-height:14px;
-	margin-top:2px;
-	text-align:center;
-	float:right;
-	pointer-events: none;
+  font-size: 11px;
+  font-weight: bold;
+  width: 16px;
+  height: 14px;
+  line-height: 14px;
+  margin-top: 2px;
+  text-align: center;
+  float: right;
+  pointer-events: none;
 }
 
 .msxplay .spinner .button {
-	width:16px;height:16px;
-	background-size:16px 16px;
-	background-position: center center;
-	float:right;
-	cursor:pointer;
-	border-radius:2px;
+  width: 16px;
+  height: 16px;
+  background-size: 16px 16px;
+  background-position: center center;
+  float: right;
+  cursor: pointer;
+  border-radius: 2px;
 }
 
 .msxplay .spinner .button:hover {
-	background-color:#eee;
+  background-color: #eee;
 }
 
 .msxplay .spinner .button:active {
-	background-color:#ccc;
+  background-color: #ccc;
 }
 
 .msxplay .spinner .button.next {
-	background-image:url(../img/next.png);
+  background-image: url(../img/next.png);
 }
 
 .msxplay .spinner .button.prev {
-	background-image:url(../img/prev.png);
+  background-image: url(../img/prev.png);
 }
 
-
 .msxplay .slider {
-	position:absolute;
-	top:32px;
-	width:100%;
-	height:32px;
-	padding:0 20px 0 0;
-	user-select: none;
-	cursor:pointer;
+  position: absolute;
+  top: 32px;
+  width: 100%;
+  height: 32px;
+  padding: 0 20px 0 0;
+  user-select: none;
+  cursor: pointer;
 }
 
 .msxplay .slider .playtime {
-	display:inline-block;
-	font-size:11px;
-	height:18px;
-	line-height:18px;
-	float:left;
-	pointer-events:none;
+  display: inline-block;
+  font-size: 11px;
+  height: 18px;
+  line-height: 18px;
+  pointer-events: none;
 }
 
 .msxplay .slider .duration {
-	display:inline-block;
-	font-size:11px;
-	line-height:18px;
-	height:18px;
-	float:right;
-	pointer-events:none;
+  display: inline-block;
+  font-size: 11px;
+  line-height: 18px;
+  height: 18px;
+  pointer-events: none;
 }
 
 .msxplay .slider .track {
-	position:relative;
-	width:100%;
-	height:8px;
-	clear:both;
+  position: relative;
+  width: 100%;
+  height: 8px;
+  clear: both;
 }
 
 .msxplay .slider .track:before {
-	content:'';
-	position:absolute;
-	top:0;bottom:0;
-	margin:auto 0;
-	width:100%;
-	height:2px;
-	background-color:rgba(0,0,0,.12);
-	pointer-events:none;
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin: auto 0;
+  width: 100%;
+  height: 2px;
+  background-color: rgba(0, 0, 0, 0.12);
+  pointer-events: none;
 }
 
 .msxplay .slider .track .buffered {
-	position:absolute;
-	top:0;bottom:0;
-	margin:auto 0;
-	width:0%;
-	height:2px;
-	background-color:rgba(0,127,255,.26);
-	pointer-events:none;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin: auto 0;
+  width: 0%;
+  height: 2px;
+  background-color: rgba(0, 127, 255, 0.26);
+  pointer-events: none;
 }
 
 .msxplay .slider .track .progress {
-	position:absolute;
-	top:0;bottom:0;
-	margin:auto 0;
-	width:0%;
-	height:2px;
-	background-color:rgba(0,127,255,1.0);
-	pointer-events:none;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin: auto 0;
+  width: 0%;
+  height: 2px;
+  background-color: rgba(0, 127, 255, 1);
+  pointer-events: none;
 }
