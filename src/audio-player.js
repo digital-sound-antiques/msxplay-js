@@ -1,7 +1,6 @@
 module.exports = (function() {
   var AudioPlayer = function(audioCtx, destination, renderer) {
-    this.audioCtx =
-      audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    this.audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
     this.destination = destination || this.audioCtx.destination;
     this.sampleRate = this.audioCtx.sampleRate;
 
@@ -86,9 +85,7 @@ module.exports = (function() {
 
   AudioPlayer.prototype.setMaxPlayTime = function(time) {
     this.maxPlayTime = time;
-    this.waveBuffer = new Float32Array(
-      Math.round((this.sampleRate * time) / 1000)
-    );
+    this.waveBuffer = new Float32Array(Math.round((this.sampleRate * time) / 1000));
     this.waveTotalSize = this.waveBuffer.length;
   };
 
@@ -114,9 +111,7 @@ module.exports = (function() {
 
   AudioPlayer.prototype.onRender = function() {
     var interval = Date.now() - this.lastOnRenderAt;
-    var samples = Math.round(
-      ((this.sampleRate * interval) / 1000) * Math.max(1.0, this.renderSpeed)
-    );
+    var samples = Math.round(((this.sampleRate * interval) / 1000) * Math.max(1.0, this.renderSpeed));
     if (!this._render(samples)) {
       if (this.timerId != null) {
         clearInterval(this.timerId);

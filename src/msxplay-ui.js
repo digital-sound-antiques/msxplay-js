@@ -55,11 +55,7 @@ module.exports = (function() {
   MSXPlayUI.prototype.attach = function(playerElement) {
     this.initPlayer(playerElement);
     this.playerElements.push(playerElement);
-    playerElement.addEventListener(
-      "click",
-      this.onClickPlayer.bind(this),
-      true
-    );
+    playerElement.addEventListener("click", this.onClickPlayer.bind(this), true);
   };
 
   MSXPlayUI.prototype.detach = function(playerElement) {
@@ -113,32 +109,21 @@ module.exports = (function() {
       }
     } else if (event.target.classList.contains("track")) {
       if (playerElement == this.currentPlayerElement) {
-        var pos = Math.floor(
-          (this.msxplay.getTotalTime() * event.offsetX) /
-            event.target.offsetWidth
-        );
+        var pos = Math.floor((this.msxplay.getTotalTime() * event.offsetX) / event.target.offsetWidth);
         this.msxplay.seekTo(pos);
       }
     } else if (event.target.classList.contains("next")) {
-      var song =
-        (parseInt(playerElement.dataset.song) + (event.shiftKey ? 10 : 1)) %
-        256;
+      var song = (parseInt(playerElement.dataset.song) + (event.shiftKey ? 10 : 1)) % 256;
       playerElement.dataset.song = song;
-      playerElement.querySelector(".number").textContent = zeroPadding(
-        song.toString(16)
-      );
+      playerElement.querySelector(".number").textContent = zeroPadding(song.toString(16));
       playerElement.dataset.duration = null;
       if (playerElement == this.currentPlayerElement) {
         this.play(playerElement);
       }
     } else if (event.target.classList.contains("prev")) {
-      var song =
-        (parseInt(playerElement.dataset.song) + (event.shiftKey ? 246 : 255)) %
-        256;
+      var song = (parseInt(playerElement.dataset.song) + (event.shiftKey ? 246 : 255)) % 256;
       playerElement.dataset.song = song;
-      playerElement.querySelector(".number").textContent = zeroPadding(
-        song.toString(16)
-      );
+      playerElement.querySelector(".number").textContent = zeroPadding(song.toString(16));
       playerElement.dataset.duration = null;
       if (playerElement == this.currentPlayerElement) {
         this.play(playerElement);
@@ -195,16 +180,13 @@ module.exports = (function() {
     }
 
     if (playerElement.dataset.footnote) {
-      playerElement.querySelector(".footer").textContent =
-        playerElement.dataset.footnote;
+      playerElement.querySelector(".footer").textContent = playerElement.dataset.footnote;
     }
 
     if (!playerElement.dataset.song) {
       playerElement.dataset.song = 0;
     }
-    playerElement.querySelector(".number").textContent = zeroPadding(
-      parseInt(playerElement.dataset.song).toString(16)
-    );
+    playerElement.querySelector(".number").textContent = zeroPadding(parseInt(playerElement.dataset.song).toString(16));
   };
 
   MSXPlayUI.prototype.loadKSS = function(playerElement) {
@@ -242,9 +224,7 @@ module.exports = (function() {
 
       var duration = parseTime(playerElement.dataset.duration);
       if (duration) {
-        playerElement.querySelector(".duration").textContent = timeToString(
-          duration
-        );
+        playerElement.querySelector(".duration").textContent = timeToString(duration);
       } else {
         playerElement.querySelector(".duration").textContent = "?:??";
       }
@@ -301,17 +281,14 @@ module.exports = (function() {
     playerElement.querySelector(".playtime").textContent = timeToString(played);
 
     if (buffered < total) {
-      playerElement.querySelector(".playtime").textContent +=
-        " buffering... (x" + renderSpeed + ") ";
+      playerElement.querySelector(".playtime").textContent += " buffering... (x" + renderSpeed + ") ";
     } else {
       playerElement.dataset.duration = total + "ms";
     }
     playerElement.querySelector(".duration").textContent = timeToString(total);
 
-    playerElement.querySelector(".progress").style.width =
-      Math.round((100 * played) / total) + "%";
-    playerElement.querySelector(".buffered").style.width =
-      Math.round((100 * buffered) / total) + "%";
+    playerElement.querySelector(".progress").style.width = Math.round((100 * played) / total) + "%";
+    playerElement.querySelector(".buffered").style.width = Math.round((100 * buffered) / total) + "%";
 
     setPlayerState(playerElement, this.msxplay.getState());
   };

@@ -102,10 +102,7 @@ module.exports = (function() {
     }
 
     if (this.kssplay.getFadeFlag() === 0) {
-      if (
-        this.maxDuration - this.elapsed < this.opts.fadeTime ||
-        this.opts.loop <= this.kssplay.getLoopCount()
-      ) {
+      if (this.maxDuration - this.elapsed < this.opts.fadeTime || this.opts.loop <= this.kssplay.getLoopCount()) {
         this.kssplay.fadeStart(this.opts.fadeTime);
       }
     }

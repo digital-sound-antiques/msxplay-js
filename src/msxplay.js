@@ -7,11 +7,7 @@ module.exports = (function() {
   var AudioPlayer = require("./audio-player");
 
   var MSXPlay = function(audioCtx, destination) {
-    this.audioPlayer = new AudioPlayer(
-      audioCtx,
-      destination,
-      this._generateWave.bind(this)
-    );
+    this.audioPlayer = new AudioPlayer(audioCtx, destination, this._generateWave.bind(this));
     this.sampleRate = this.audioPlayer.sampleRate;
 
     this.kssplay = new KSSPlay(this.sampleRate);
@@ -46,10 +42,7 @@ module.exports = (function() {
     if (this.kssplay.getFadeFlag() == 0) {
       var loop = this.kssplay.getLoopCount();
       var remains = this.maxPlayTime - currentTime;
-      if (
-        this.loopCount <= loop ||
-        (this.fadeTime && remains <= this.fadeTime)
-      ) {
+      if (this.loopCount <= loop || (this.fadeTime && remains <= this.fadeTime)) {
         this.kssplay.fadeStart(this.fadeTime);
       }
     }
@@ -93,14 +86,9 @@ module.exports = (function() {
     this.kssplay.setData(kss);
     this.kssplay.reset(song, 0);
 
-    this.maxPlayTime = Math.min(
-      20 * 60 * 1000,
-      options.duration || 5 * 60 * 1000
-    );
+    this.maxPlayTime = Math.min(20 * 60 * 1000, options.duration || 5 * 60 * 1000);
     if (options.gain != null) {
-      this.audioPlayer.setOutputGain(
-        Number.isNaN(options.gain) ? 1.0 : options.gain
-      );
+      this.audioPlayer.setOutputGain(Number.isNaN(options.gain) ? 1.0 : options.gain);
     }
   };
 
