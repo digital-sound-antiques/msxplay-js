@@ -1,6 +1,6 @@
 {
   "name": "msxplay-js",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "",
   "main": "src/entry.js",
   "engines": {
@@ -9,12 +9,16 @@
   },
   "dependencies": {
     "lamejs": "^1.2.0",
-    "libkss-js": "^0.9.11",
+    "libkss-js": "^0.9.13",
     "mgsc-js": "^1.0.1",
     "object-assign": "^4.1.1"
   },
   "devDependencies": {
+    "eslint": "^6.5.1",
+    "eslint-config-prettier": "^6.4.0",
+    "eslint-plugin-prettier": "^3.1.1",
     "http-server": "^0.10.0",
+    "prettier": "^1.18.2",
     "webpack": "^3.12.0"
   },
   "scripts": {

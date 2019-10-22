@@ -1,182 +1,288 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<meta content="text/html" charset="utf-8">
+  <head>
+    <meta content="text/html" charset="utf-8" />
 
-	<title>MSXplay.js</title>
+    <title>MSXplay.js</title>
 
-	<meta property="og:type" content="website"/>
-	<meta name="keywords" content="MSX, YM2413, OPLL, PSG, SCC, MGSDRV, JavaScript, Emscripten, MML">
-	<meta name="description" content="A MSX sound emulation player for JavaScript.">
-	<meta property="og:title" content="MSXplay.js">
-	<meta property="og:site_name" content="MSXplay.js">
-	<meta property="og:description" content="A MSX sound emulation player for JavaScript.">
-	<meta property="og:image" content="http://digital-sound-antiques.github.io/msxplay-js/img/ogp.png">
+    <meta property="og:type" content="website" />
+    <meta name="keywords" content="MSX, YM2413, OPLL, PSG, SCC, MGSDRV, JavaScript, Emscripten, MML" />
+    <meta name="description" content="A MSX sound emulation player for JavaScript." />
+    <meta property="og:title" content="MSXplay.js" />
+    <meta property="og:site_name" content="MSXplay.js" />
+    <meta property="og:description" content="A MSX sound emulation player for JavaScript." />
+    <meta property="og:image" content="http://digital-sound-antiques.github.io/msxplay-js/img/ogp.png" />
 
-	<link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
-	<link href='css/msxplay.css' rel='stylesheet' type='text/css'>
-	<link href='css/style.css' rel='stylesheet' type='text/css'>
-	<script src="dist/msxplay-bundle.js"></script>
-	<script src="js/lang-switcher.js"></script>
-	<script>
-  	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css" />
+    <link href="css/msxplay.css" rel="stylesheet" type="text/css" />
+    <link href="css/style.css" rel="stylesheet" type="text/css" />
+    <script src="dist/msxplay-bundle.js"></script>
+    <script src="js/lang-switcher.js"></script>
+    <script>
+      (function(i, s, o, g, r, a, m) {
+        i["GoogleAnalyticsObject"] = r;
+        (i[r] =
+          i[r] ||
+          function() {
+            (i[r].q = i[r].q || []).push(arguments);
+          }),
+          (i[r].l = 1 * new Date());
+        (a = s.createElement(o)), (m = s.getElementsByTagName(o)[0]);
+        a.async = 1;
+        a.src = g;
+        m.parentNode.insertBefore(a, m);
+      })(window, document, "script", "https://www.google-analytics.com/analytics.js", "ga");
 
-  	ga('create', 'UA-77432401-1', 'auto');
-  	ga('send', 'pageview');
-	</script>
-	<script>
-		var dndPanel;
-		
-		function onDragEnter(e) {
-			e.preventDefault();
-			dndPanel.classList.add('ondrag');
-		}
+      ga("create", "UA-77432401-1", "auto");
+      ga("send", "pageview");
+    </script>
+    <script>
+      function findDndFrame(element) {
+        var panel = element;
+        while (panel != null && !panel.classList.contains("dnd-able")) {
+          panel = panel.parentNode;
+        }
+        return panel;
+      }
 
-		function onDragLeave(e) {
-			e.preventDefault();
-			dndPanel.classList.remove('ondrag');
-		}
+      var dragNestCounter = 0;
 
-		function onDragOver(e) { 
-			e.preventDefault();
-		}
+      function onDragEnter(e) {
+        var dndPanel = findDndFrame(e.srcElement);
+        if (dragNestCounter === 0) {
+          if (dndPanel && dndPanel.classList.contains("dnd-able")) {
+            dndPanel.classList.add("ondrag");
+          }
+        }
+        e.preventDefault();
+        e.stopPropagation();
+        dragNestCounter++;
+      }
 
-		function onDrop(e) {
-			e.preventDefault();
-			dndPanel.classList.remove('ondrag');
+      function onDragLeave(e) {
+        var dndPanel = findDndFrame(e.srcElement);
+        e.stopPropagation();
+        e.preventDefault();
+        dragNestCounter--;
 
-			function createPlayerForFile(file) {
-				var reader = new FileReader();
-				reader.onloadend = function() {
-					try {
-						var player = MSXPlayUI.createPlayer(reader.result, file.name);
-						dndPanel.parentNode.insertBefore(player,dndPanel);
-						MSXPlayUI.play(player);
-					} catch(e) {
-						console.log(e);
-					}
-				}
-				reader.readAsArrayBuffer(file);				
-			}
+        if (dragNestCounter === 0) {
+          dndPanel.classList.remove("ondrag");
+          currentDnDTarget = null;
+        }
+      }
 
-			for(var i=0;i<e.dataTransfer.files.length;i++) {
-				createPlayerForFile(e.dataTransfer.files[i]);
-			}
-		}
+      function onDragOver(e) {
+        e.preventDefault();
+      }
 
-		window.addEventListener('DOMContentLoaded', function() {
-			MSXPlayUI.install(document.body);
+      function createPlayerForFile(file, dndPanel) {
+        return new Promise(function(resolve, reject) {
+          var reader = new FileReader();
+          reader.onloadend = function() {
+            try {
+              var player = MSXPlayUI.createPlayer(reader.result, file.name);
+              player.classList.add("dnd-able");
+              makeDnDable(player);
+              dndPanel.parentNode.insertBefore(player, dndPanel);
+              MSXPlayUI.play(player);
+              resolve();
+            } catch (e) {
+              console.log(e);
+              reject();
+            }
+          };
+          reader.readAsArrayBuffer(file);
+        });
+      }
 
-			dndPanel = document.getElementById('dnd-panel');
-			dndPanel.addEventListener("dragover", onDragOver);
-			dndPanel.addEventListener("dragenter", onDragEnter);
-			dndPanel.addEventListener("dragleave", onDragLeave);
-			dndPanel.addEventListener("drop", onDrop);
-		});
+      async function onDrop(e) {
+        var dndPanel = findDndFrame(e.srcElement);
 
-	</script>
-</head>
-<body>
+        dndPanel.classList.remove("ondrag");
+        dragNestCounter = 0;
 
-	<section class="page-header">
-		<h1 class="project-name">MSXplay.js <a href="https://github.com/digital-sound-antiques/msxplay-js" class="btn">View on GitHub</a></h1>
-		<h2 class="project-tagline">
-			A MSX sound emulation player for JavaScript.
-		</h2>
-		<nav class="root-nav">
-			<ul>
-			<li class="selected">Home</li>
-			<li><a href="editor.html">MML Editor</a></li>
-			</ul>
-		</nav>
-	</section>
+        e.preventDefault();
+        e.stopPropagation();
 
-	<section class="content">
-		<p lang="ja">
-			MSXplay.js はブラウザ内で MSX の音楽 (PSG,SCC,OPLL) をエミュレーション再生する実験的なサウンドプレイヤーです。
-			C言語版の <a href="https://github.com/digital-sound-antiques/libkss">libkss</a> を <a href="http://kripken.github.io/emscripten-site/">Emscripten</a> で JavaScript に変換して利用しています。
-		</p>
-		<p lang="ja">
-			音声の再生にはブラウザの <a href="https://developer.mozilla.org/docs/Web/API/Web_Audio_API">Web Audio API</a> を使用しています。<br>
-		</p>
-		<p lang="en">
-		MSXplay.js is an experimental MSX sound player which emulates PSG, SCC and OPLL on the 
-		JavaScript engine in the browser. The emulation core is based on <a href="https://github.com/digital-sound-antiques/libkss">libkss</a> in C. <a href="http://kripken.github.io/emscripten-site/">Emscripten</a> is used to build JavaScript version of libkss.
-		</p>
-		<p lang="en">
-			To play audio stream directly on the browser, we use <a href="https://developer.mozilla.org/docs/Web/API/Web_Audio_API">Web Audio API</a> interface.
-		</p>
+        var tasks = [];
+        for (var i = 0; i < e.dataTransfer.files.length; i++) {
+          tasks.push(createPlayerForFile(e.dataTransfer.files[i], dndPanel));
+        }
 
-		<h2>Supported Browsers</h2>
-		<p lang="ja">
-			Chrome または FireFox 推奨です。IE は Web Audio API をサポートしないため対応予定はありません。
-		</p>
-		<p lang="en">We recommend Chrome or FireFox. We have no plan to support any version of IE since they do not 
-			provide Web Audio API interface.</p>
-			<table>
-				<style>th{width:80px;}</style>
-				<tr>
-					<th>Chrome</th>
-					<th>FireFox</th>
-					<th>Safari</th>
-					<th>IE</th>
-					<th>Edge</th>
-				</tr>
-				<tr>
-					<td><img src="img/chrome_32x32.png"></td>
-					<td><img src="img/firefox_32x32.png"></td>
-					<td><img src="img/safari_32x32.png"></td>
-					<td><img src="img/internet-explorer_32x32.png"></td>
-					<td><img src="img/edge_32x32.png"></td></tr>
-				<tr>
-					<td>50+</td>
-					<td>42+</td>
-					<td>9.1+</td>
-					<td>x</td>
-					<td>20+</td>
-				</tr>
-			</table>
-			<p class="note x-small">The browser icons by <a href="https://github.com/alrra/browser-logos">alrra/browser-logos</a></p>
+        Promise.all(tasks).then(function(values) {
+          console.log(values);
+          if (dndPanel.classList.contains("msxplay")) {
+            dndPanel.remove();
+          }
+        });
+      }
 
-		<h2>Demo Player</h2>
-		<p lang="ja">次のプレーヤーパネルの左側にある再生ボタンを押してください。演奏が始まります。</p>
-		<p lang="en">To listen the demo sound, press play button on the left in the player panel below.</p>
-		
-		<div class="msxplay" data-gain="2.0" data-title='OPLL (YM2413) demo' data-url='demo/grider.mgs' data-footnote='Gun Rider by J, arr. by Brezza.'></div>
+      function makeDnDable(e) {
+        e.addEventListener("dragover", onDragOver);
+        e.addEventListener("dragenter", onDragEnter);
+        e.addEventListener("dragleave", onDragLeave);
+        e.addEventListener("drop", onDrop);
+      }
 
-		<p lang="ja">ご自身の音楽ファイルを再生してみたい方は、以下のパネルにファイルをドロップしてください。<br>
-		対応フォーマットは KSS, BGM(MuSICA), MGS, MPK, OPX です。</p>
-		<p lang="en">If you want to test your own sound files, drag and drop them to the panel below.<br>
-		The supported formats are KSS, BGM(MuSICA), MGS, MPK and OPX.</p>
+      window.addEventListener("DOMContentLoaded", function() {
+        MSXPlayUI.install(document.body);
 
-		<div id="dnd-panel">Drag and Drop your file here.</div>
-		
-		<h2>MML Compiler</h2>
-		<p lang="ja">MGSDRV用のMMLコンパイラ MGSC.COM のエミュレータも <a href="https://github.com/digital-sound-antiques/mgsc-js">mgsc-js</a> として JavaScript で動作するバージョンがあります。これを MSXplay.js と組み合わせて MML をブラウザで直接コンパイルする環境を実現しました。<a href="editor.html">MML EDITOR</a> からお試しください。MML の文法は <a href="http://www.gigamix.jp/mgsdrv/MGSC111.TXT">MGSC.COMの仕様</a> のとおりです。
-		</p>
+        var elems = document.getElementsByClassName("dnd-able");
+        for (var i = 0; i < elems.length; i++) {
+          makeDnDable(elems[i]);
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">
+        MSXplay.js
+        <a href="https://github.com/digital-sound-antiques/msxplay-js" class="btn">View on GitHub</a>
+      </h1>
+      <h2 class="project-tagline">
+        A MSX sound emulation player for JavaScript.
+      </h2>
+      <nav class="root-nav">
+        <ul>
+          <li class="selected">Home</li>
+          <li><a href="editor.html">MML Editor</a></li>
+        </ul>
+      </nav>
+    </section>
 
-		<p lang="en">A emulator of MML compiler for MGSDRV (aka MGSC.COM) is also available as <a href="https://github.com/digital-sound-antiques/mgsc-js">mgsc-js</a> for JavaScript. Using this with MSXplay.js, we can compile MML and play its sound directly on the browser. Try <a href="editor.html">MML EDITOR</a>. The MML grammer of MGSDRV can be found at <a href="http://www.gigamix.jp/mgsdrv/MGSC111.TXT">MGSC.COM specification (japanese)</a>.
-		</p>
+    <section class="content">
+      <p lang="ja">
+        MSXplay.js はブラウザ内で MSX の音楽 (PSG,SCC,OPLL) をエミュレーション再生する実験的なサウンドプレイヤーです。
+        C言語版の
+        <a href="https://github.com/digital-sound-antiques/libkss">libkss</a> を
+        <a href="http://kripken.github.io/emscripten-site/">Emscripten</a> で JavaScript に変換して利用しています。
+      </p>
+      <p lang="ja">
+        音声の再生にはブラウザの
+        <a href="https://developer.mozilla.org/docs/Web/API/Web_Audio_API">Web Audio API</a>
+        を使用しています。<br />
+      </p>
+      <p lang="en">
+        MSXplay.js is an experimental MSX sound player which emulates PSG, SCC and OPLL on the JavaScript engine in the
+        browser. The emulation core is based on
+        <a href="https://github.com/digital-sound-antiques/libkss">libkss</a> in C.
+        <a href="http://kripken.github.io/emscripten-site/">Emscripten</a> is used to build JavaScript version of
+        libkss.
+      </p>
+      <p lang="en">
+        To play audio stream directly on the browser, we use
+        <a href="https://developer.mozilla.org/docs/Web/API/Web_Audio_API">Web Audio API</a>
+        interface.
+      </p>
 
-		<h2>Acknowledgement</h2>
-		<p lang="ja">MSXplay.js は各種MSXフォーマットの再生のため内部で以下のMSX用バイナリを利用しています。
-		各バイナリの製作者の皆様に感謝します。</p>
-		<p lang="en">The following software binaries are embedded to MSXplay.js.
-		We thank the authors for their great artifacts.</p>
-		<ul>
-		  <li>MGSDRV by GIGAMIX/Ain.</li>
-		  <li>KINROU5 by Keiichi Kuroda.</li>
-		  <li>MPK by K-KAZ</li>
-		  <li>OPLLDriver by Ring</li>
-		</ul>
-    	<footer>
-      	<hr>
-      	<p>MSXPlay.js - Copyright &copy; 2016 Digital Sound Antiques.</p>
-    	</footer>
-	</section>
+      <h2>Supported Browsers</h2>
+      <p lang="ja">
+        Chrome または FireFox 推奨です。IE は Web Audio API をサポートしないため対応予定はありません。最近の Safari
+        は利用できなくっており、調査中です。
+      </p>
+      <p lang="en">
+        We recommend Chrome or FireFox. We have no plan to support any version of IE since they do not provide Web Audio
+        API interface. Reccent Safari does not work (We're currently investegating the problem).
+      </p>
+      <table>
+        <style>
+          th {
+            width: 80px;
+          }
+        </style>
+        <tr>
+          <th>Chrome</th>
+          <th>FireFox</th>
+          <th>Safari</th>
+          <th>IE</th>
+          <th>Edge</th>
+        </tr>
+        <tr>
+          <td><img src="img/chrome_32x32.png" /></td>
+          <td><img src="img/firefox_32x32.png" /></td>
+          <td><img src="img/safari_32x32.png" /></td>
+          <td><img src="img/internet-explorer_32x32.png" /></td>
+          <td><img src="img/edge_32x32.png" /></td>
+        </tr>
+        <tr>
+          <td>50+</td>
+          <td>42+</td>
+          <td><u>9.1+</u></td>
+          <td>x</td>
+          <td>20+</td>
+        </tr>
+      </table>
 
-</body>
+      <p class="note x-small">
+        The browser icons by
+        <a href="https://github.com/alrra/browser-logos">alrra/browser-logos</a>
+      </p>
+
+      <h2>Demo Player</h2>
+      <p lang="ja">
+        次のプレーヤーパネルの左側にある再生ボタンを押してください。演奏が始まります。
+      </p>
+      <p lang="en">
+        To listen the demo sound, press play button on the left in the player panel below.
+      </p>
+
+      <div
+        class="msxplay dnd-able"
+        data-gain="1.0"
+        data-title="OPLL (YM2413) demo"
+        data-url="demo/grider.mgs"
+        data-footnote="Gun Rider by J, arr. by Brezza."
+      ></div>
+
+      <p lang="ja">
+        ご自身の音楽ファイルを再生してみたい方は、以下のパネルにファイルをドロップしてください。<br />
+        対応フォーマットは KSS, BGM(MuSICA), MGS, MPK, OPX です。
+      </p>
+      <p lang="en">
+        If you want to test your own sound files, drag and drop them to the panel below.<br />
+        The supported formats are KSS, BGM(MuSICA), MGS, MPK and OPX.
+      </p>
+
+      <div id="dnd-panel" class="dnd-able">Drag and Drop your file here.</div>
+
+      <h2>MML Compiler</h2>
+      <p lang="ja">
+        MGSDRV用のMMLコンパイラ MGSC のエミュレータも
+        <a href="https://github.com/digital-sound-antiques/mgsc-js">mgsc-js</a>
+        として JavaScript で動作するバージョンがあります。これを MSXplay.js と組み合わせて MML
+        をブラウザで直接コンパイルする環境を実現しました。<a href="editor.html">MML EDITOR</a>
+        からお試しください。MML の文法は
+        <a href="http://www.gigamix.jp/mgsdrv/MGSC111.TXT">MGSC.COMの仕様</a>
+        のとおりです。
+      </p>
+
+      <p lang="en">
+        A emulator of MML compiler for MGSDRV (aka MGSC) is also available as
+        <a href="https://github.com/digital-sound-antiques/mgsc-js">mgsc-js</a>
+        for JavaScript. Using this with MSXplay.js, we can compile MML and play its sound directly on the browser. Try
+        <a href="editor.html">MML EDITOR</a>. The MML grammer of MGSDRV can be found at
+        <a href="http://www.gigamix.jp/mgsdrv/MGSC111.TXT">MGSC.COM specification (japanese)</a>.
+      </p>
+
+      <h2>Acknowledgement</h2>
+      <p lang="ja">
+        MSXplay.js は各種MSXフォーマットの再生のため内部で以下のMSX用バイナリを利用しています。
+        各バイナリの製作者の皆様に感謝します。
+      </p>
+      <p lang="en">
+        The following software binaries are embedded to MSXplay.js. We thank the authors for their great artifacts.
+      </p>
+      <ul>
+        <li>MGSDRV by GIGAMIX/Ain.</li>
+        <li>KINROU5 by Keiichi Kuroda.</li>
+        <li>MPK by K-KAZ</li>
+        <li>OPLLDriver by Ring</li>
+      </ul>
+      <footer>
+        <hr />
+        <p>MSXPlay.js - Copyright &copy; 2016 Digital Sound Antiques.</p>
+      </footer>
+    </section>
+  </body>
 </html>

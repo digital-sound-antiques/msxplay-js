@@ -200,11 +200,11 @@ footer {
   text-align: center;
   color: #666;
   font-size: 14px;
-  transition: transform 0.25s;
+  transition: all 0.25s;
 }
 
-#dnd-panel.ondrag {
-  background-color: #f0f0f0;
+.dnd-able.ondrag {
+  border: 2px solid #ce0d0d;
   transform: scale(1.05, 1.05);
 }
 
