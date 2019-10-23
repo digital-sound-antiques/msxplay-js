@@ -1,4 +1,4 @@
-;[gain=2.0 duration=auto]
+;[gain=1.0 duration=auto]
 #opll_mode 1
 #tempo 165
 #title { "YM2413 Demo - Gun Rider" }
