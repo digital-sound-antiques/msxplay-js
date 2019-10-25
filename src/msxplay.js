@@ -6,10 +6,7 @@ export default class MSXPlay {
   constructor(audioCtx, destination) {
     this.audioPlayer = new AudioPlayer(audioCtx, destination, this._generateWave.bind(this));
     this.sampleRate = this.audioPlayer.sampleRate;
-    this.kssplay = new KSSPlay(this.sampleRate);
-    this.kssplay.setRCF(0, 0);
-    this.kssplay.setSilentLimit(5000);
-    this.kssplay.setDeviceQuality({ psg: 1, scc: 0, opll: 1, opl: 1 });
+    this.kssplay = null;
     this.kss = null;
     this.maxCalcSamples = this.sampleRate;
   }
@@ -62,6 +59,14 @@ export default class MSXPlay {
     this.song = song;
     this.loopCount = options.loopCount || 2;
     this.fadeTime = options.fadeTime || 5000;
+    if (this.kssplay != null) {
+      this.kssplay.release();
+      this.kssplay = null;
+    }
+    this.kssplay = new KSSPlay(this.sampleRate);
+    this.kssplay.setRCF(0, 0);
+    this.kssplay.setSilentLimit(5000);
+    this.kssplay.setDeviceQuality({ psg: 1, scc: 0, opll: 1, opl: 1 });
     this.kssplay.setData(kss);
     this.kssplay.reset(song, 0);
     this.maxPlayTime = Math.min(20 * 60 * 1000, options.duration || 5 * 60 * 1000);
@@ -111,9 +116,11 @@ export default class MSXPlay {
       this.tempkss.release();
       this.tempkss = null;
     }
-    this.kssplay.release();
-    this.kssplay = null;
-    this.audioPlayer.release();
-    this.audioPlayer = null;
+    if (this.kssplay != null) {
+      this.kssplay.release();
+      this.kssplay = null;
+      this.audioPlayer.release();
+      this.audioPlayer = null;
+    }
   }
 }

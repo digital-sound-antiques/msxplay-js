@@ -6,15 +6,17 @@ export default class KSS2MP3 {
     this.mp3encoder = new Lamejs.Mp3Encoder(1, sampleRate, kbps);
     this.sampleRate = sampleRate;
     this.bitRate = kbps;
-    this.kssplay = new KSSPlay(sampleRate);
+    this.kssplay = null;
     this.mp3data = [];
   }
+
   release() {
     if (this.kssplay != null) {
       this.kssplay.release();
       this.kssplay = null;
     }
   }
+
   /**
    * @typedef {Object} EncodeOptions
    * @prop {number} [gain=1.0]
@@ -32,6 +34,7 @@ export default class KSS2MP3 {
    * @prop {Object} [quality.opll=1]
    * @prop {Object} [quality.opl=1]
    */
+
   /**
    * @param {EncodeOptions} [opts]
    */
@@ -51,6 +54,12 @@ export default class KSS2MP3 {
       },
       opts
     );
+
+    if (this.kssplay) {
+      this.kssplay.release();
+      this.kssplay = null;
+    }
+    this.kssplay = new KSSPlay(this.sampleRate);
     this.kssplay.setDeviceQuality(quality);
     this.kssplay.setSilentLimit(this.opts.slientLimit);
     this.kssplay.setRCF(rcf.registor, rcf.capacitor);
@@ -62,11 +71,13 @@ export default class KSS2MP3 {
     this.mp3data = [];
     this.processEncode();
   }
+
   addDataBlock(block) {
     if (0 < block.length) {
       this.mp3data.push(block);
     }
   }
+
   processEncode() {
     var samples = this.kssplay.calc(this.sampleRate);
     var gain = this.opts.gain * 2.0;
