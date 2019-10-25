@@ -1,44 +1,34 @@
-module.exports = (function() {
-  "use strict";
+import { KSS, KSSPlay } from "libkss-js";
+import KSS2MP3 from "./kss2mp3";
+import AudioPlayer from "./audio-player";
 
-  var KSS = require("libkss-js").KSS;
-  var KSSPlay = require("libkss-js").KSSPlay;
-  var KSS2MP3 = require("./kss2mp3");
-  var AudioPlayer = require("./audio-player");
-
-  var MSXPlay = function(audioCtx, destination) {
+export default class MSXPlay {
+  constructor(audioCtx, destination) {
     this.audioPlayer = new AudioPlayer(audioCtx, destination, this._generateWave.bind(this));
     this.sampleRate = this.audioPlayer.sampleRate;
-
     this.kssplay = new KSSPlay(this.sampleRate);
     this.kssplay.setRCF(0, 0);
     this.kssplay.setSilentLimit(5000);
     this.kssplay.setDeviceQuality({ psg: 1, scc: 0, opll: 1, opl: 1 });
     this.kss = null;
-
     this.maxCalcSamples = this.sampleRate;
-  };
-
-  MSXPlay.prototype.mp3encode = function(data, song, callback, opts) {
+  }
+  mp3encode(data, song, callback, opts) {
     opts = opts || {};
-
     if (this.kss2mp3 != null) {
       this.kss2mp3.release();
     }
     if (this.tempkss != null) {
       this.tempkss.release();
     }
-
     this.tempkss = new KSS(data);
     this.kss2mp3 = new KSS2MP3(opts.sampleRate || 44100, opts.bitRate || 192);
     this.kss2mp3.encode(this.tempkss, song, callback, opts);
-  };
-
-  MSXPlay.prototype._generateWave = function(currentTime, samples) {
+  }
+  _generateWave(currentTime, samples) {
     if (this.kssplay.getStopFlag() || this.kssplay.getFadeFlag() == 2) {
       return null;
     }
-
     if (this.kssplay.getFadeFlag() == 0) {
       var loop = this.kssplay.getLoopCount();
       var remains = this.maxPlayTime - currentTime;
@@ -46,97 +36,73 @@ module.exports = (function() {
         this.kssplay.fadeStart(this.fadeTime);
       }
     }
-
     return this.kssplay.calc(samples);
-  };
-
-  MSXPlay.prototype.getState = function() {
+  }
+  getState() {
     return this.audioPlayer.getState();
-  };
-
-  MSXPlay.prototype.getMasterVolume = function() {
+  }
+  getMasterVolume() {
     return this.audioPlayer.getMasterVolume();
-  };
-
-  MSXPlay.prototype.setMasterVolume = function(gain) {
+  }
+  setMasterVolume(gain) {
     this.audioPlayer.setMasterVolume(gain);
-  };
-
-  MSXPlay.prototype.getOutputGain = function() {
+  }
+  getOutputGain() {
     return this.audioPlayer.getOutputGain();
-  };
-
-  MSXPlay.prototype.setOutputGain = function(gain) {
+  }
+  setOutputGain(gain) {
     return this.audioPlayer.setOutputGain(gain);
-  };
-
-  MSXPlay.prototype.getTitle = function() {
+  }
+  getTitle() {
     return this.kss ? this.kss.getTitle() : "";
-  };
-
-  MSXPlay.prototype.setData = function(kss, song, options) {
+  }
+  setData(kss, song, options) {
     options = options || {};
-
     this.kss = kss;
     this.song = song;
-
     this.loopCount = options.loopCount || 2;
     this.fadeTime = options.fadeTime || 5000;
-
     this.kssplay.setData(kss);
     this.kssplay.reset(song, 0);
-
     this.maxPlayTime = Math.min(20 * 60 * 1000, options.duration || 5 * 60 * 1000);
     if (options.gain != null) {
       this.audioPlayer.setOutputGain(Number.isNaN(options.gain) ? 1.0 : options.gain);
     }
-  };
-
-  MSXPlay.prototype.play = function() {
+  }
+  play() {
     this.audioPlayer.play(this.maxPlayTime);
-  };
-
-  MSXPlay.prototype.stop = function() {
+  }
+  stop() {
     this.audioPlayer.stop();
-  };
-
-  MSXPlay.prototype.pause = function() {
+  }
+  pause() {
     this.audioPlayer.pause();
-  };
-
-  MSXPlay.prototype.resume = function() {
+  }
+  resume() {
     this.audioPlayer.resume();
-  };
-
-  MSXPlay.prototype.isPlaying = function() {
+  }
+  isPlaying() {
     return this.audioPlayer.isPlaying();
-  };
-
-  MSXPlay.prototype.isPaused = function() {
+  }
+  isPaused() {
     return this.audioPlayer.isPaused();
-  };
-
-  MSXPlay.prototype.seekTo = function(posInMs) {
+  }
+  seekTo(posInMs) {
     this.audioPlayer.seekTo(posInMs);
-  };
-
-  MSXPlay.prototype.getTotalTime = function() {
+  }
+  getTotalTime() {
     return this.audioPlayer.getTotalTime();
-  };
-
-  MSXPlay.prototype.getPlayedTime = function() {
+  }
+  getPlayedTime() {
     return this.audioPlayer.getPlayedTime();
-  };
-
-  MSXPlay.prototype.getBufferedTime = function() {
+  }
+  getBufferedTime() {
     return this.audioPlayer.getBufferedTime();
-  };
-
-  MSXPlay.prototype.getRenderSpeed = function() {
+  }
+  getRenderSpeed() {
     return this.audioPlayer.renderSpeed;
-  };
-
-  MSXPlay.prototype.release = function() {
+  }
+  release() {
     if (this.kss2mp3 != null) {
       this.kss2mp3.release();
       this.kss2mp3 = null;
@@ -149,7 +115,5 @@ module.exports = (function() {
     this.kssplay = null;
     this.audioPlayer.release();
     this.audioPlayer = null;
-  };
-
-  return MSXPlay;
-})();
+  }
+}

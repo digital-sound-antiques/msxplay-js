@@ -1,6 +1,6 @@
 module.exports = {
-  context: __dirname + '/src',
-	entry: {
+  context: __dirname + "/src",
+  entry: {
     "msxplay-bundle": "./entry.js"
   },
   // devtool: 'source-map',
@@ -8,9 +8,10 @@ module.exports = {
     path: __dirname + "/dist",
     filename: "[name].js",
     library: "MSXPlayUI",
-    libraryTarget: "var"
+    libraryTarget: "var",
+    libraryExport: "default"
   },
   node: {
-    fs: 'empty'
+    fs: "empty"
   }
 };

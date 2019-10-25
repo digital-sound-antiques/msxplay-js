@@ -1,25 +1,20 @@
-module.exports = (function() {
-  "use strict";
+import { KSSPlay } from "libkss-js";
+import Lamejs from "lamejs";
 
-  var KSS = require("libkss-js").KSS;
-  var KSSPlay = require("libkss-js").KSSPlay;
-  var Lamejs = require("lamejs");
-
-  var KSS2MP3 = function(sampleRate, kbps) {
+export default class KSS2MP3 {
+  constructor(sampleRate, kbps) {
     this.mp3encoder = new Lamejs.Mp3Encoder(1, sampleRate, kbps);
     this.sampleRate = sampleRate;
     this.bitRate = kbps;
     this.kssplay = new KSSPlay(sampleRate);
     this.mp3data = [];
-  };
-
-  KSS2MP3.prototype.release = function() {
+  }
+  release() {
     if (this.kssplay != null) {
       this.kssplay.release();
       this.kssplay = null;
     }
-  };
-
+  }
   /**
    * @typedef {Object} EncodeOptions
    * @prop {number} [gain=1.0]
@@ -37,11 +32,10 @@ module.exports = (function() {
    * @prop {Object} [quality.opll=1]
    * @prop {Object} [quality.opl=1]
    */
-
   /**
    * @param {EncodeOptions} [opts]
    */
-  KSS2MP3.prototype.encode = function(kss, song, callback, opts) {
+  encode(kss, song, callback, opts) {
     opts = opts || {};
     var assign = require("object-assign");
     var rcf = assign({ registor: 0, capacitor: 0 }, opts.rcf);
@@ -57,7 +51,6 @@ module.exports = (function() {
       },
       opts
     );
-
     this.kssplay.setDeviceQuality(quality);
     this.kssplay.setSilentLimit(this.opts.slientLimit);
     this.kssplay.setRCF(rcf.registor, rcf.capacitor);
@@ -67,17 +60,14 @@ module.exports = (function() {
     this.elapsed = 0;
     this.maxDuration = this.opts.playTime - this.opts.fadeTime;
     this.mp3data = [];
-
     this.processEncode();
-  };
-
-  KSS2MP3.prototype.addDataBlock = function(block) {
+  }
+  addDataBlock(block) {
     if (0 < block.length) {
       this.mp3data.push(block);
     }
-  };
-
-  KSS2MP3.prototype.processEncode = function() {
+  }
+  processEncode() {
     var samples = this.kssplay.calc(this.sampleRate);
     var gain = this.opts.gain * 2.0;
     if (gain !== 1.0) {
@@ -85,29 +75,23 @@ module.exports = (function() {
         samples[i] = Math.max(-32768, Math.min(samples[i] * gain, 32767));
       }
     }
-
     this.addDataBlock(this.mp3encoder.encodeBuffer(samples));
     this.elapsed += 1000;
-
     if (this.kssplay.getStopFlag() || this.kssplay.getFadeFlag() === 2) {
       this.addDataBlock(this.mp3encoder.flush());
       this.callbackFunc(this.elapsed, this.mp3data, true);
       return;
     }
-
     if (!this.callbackFunc(this.elapsed, this.mp3data, false)) {
       // abort the encode process
       this.addDataBlock(this.mp3encoder.flush());
       return;
     }
-
     if (this.kssplay.getFadeFlag() === 0) {
       if (this.maxDuration - this.elapsed < this.opts.fadeTime || this.opts.loop <= this.kssplay.getLoopCount()) {
         this.kssplay.fadeStart(this.opts.fadeTime);
       }
     }
-
     setTimeout(this.processEncode.bind(this), 0);
-  };
-  return KSS2MP3;
-})();
+  }
+}
