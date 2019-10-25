@@ -1,4 +1,5 @@
 module.exports = {
+  mode: "production",
   context: __dirname + "/src",
   entry: {
     "msxplay-bundle": "./entry.js"
