@@ -1,210 +1,232 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<meta content="text/html" charset="utf-8">
+  <head>
+    <meta content="text/html" charset="utf-8" />
 
-	<title>MML to MGS Compiler (MGSC.COM) on Browser</title>
+    <title>MML to MGS Compiler (MGSC.COM) on Browser</title>
 
-	<meta property="og:type" content="website"/>
-	<meta name="keywords" content="MSX, YM2413, OPLL, PSG, SCC, MGSDRV, JavaScript, Emscripten, MML">
-	<meta name="description" content="A MSX sound emulation player for JavaScript.">
-	<meta property="og:title" content="MSXplay.js">
-	<meta property="og:site_name" content="MSXplay.js">
-	<meta property="og:description" content="A MSX sound emulation player for JavaScript.">
-	<meta property="og:image" content="http://digital-sound-antiques.github.io/msxplay-js/img/ogp.png">
+    <meta property="og:type" content="website" />
+    <meta name="keywords" content="MSX, YM2413, OPLL, PSG, SCC, MGSDRV, JavaScript, Emscripten, MML" />
+    <meta name="description" content="A MSX sound emulation player for JavaScript." />
+    <meta property="og:title" content="MSXplay.js" />
+    <meta property="og:site_name" content="MSXplay.js" />
+    <meta property="og:description" content="A MSX sound emulation player for JavaScript." />
+    <meta property="og:image" content="http://digital-sound-antiques.github.io/msxplay-js/img/ogp.png" />
 
-	<script src="dist/msxplay-bundle.js"></script>
-	<link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
-	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-	<link href='css/msxplay.css' rel='stylesheet' type='text/css'>
-	<link href='css/style.css' rel='stylesheet' type='text/css'>
-	<link href="css/editor.css" rel='stylesheet' type='text/css'>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/ace.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/theme-xcode.js"></script>
+    <script src="dist/msxplay-bundle.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link href="css/msxplay.css" rel="stylesheet" type="text/css" />
+    <link href="css/style.css" rel="stylesheet" type="text/css" />
+    <link href="css/editor.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.6/ace.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.6/theme-xcode.js"></script>
 
-	<script>
-		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-		})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+    <script>
+      (function(i, s, o, g, r, a, m) {
+        i["GoogleAnalyticsObject"] = r;
+        (i[r] =
+          i[r] ||
+          function() {
+            (i[r].q = i[r].q || []).push(arguments);
+          }),
+          (i[r].l = 1 * new Date());
+        (a = s.createElement(o)), (m = s.getElementsByTagName(o)[0]);
+        a.async = 1;
+        a.src = g;
+        m.parentNode.insertBefore(a, m);
+      })(window, document, "script", "https://www.google-analytics.com/analytics.js", "ga");
 
-		ga('create', 'UA-77432401-1', 'auto');
-		ga('send', 'pageview');
-	</script>
+      ga("create", "UA-77432401-1", "auto");
+      ga("send", "pageview");
+    </script>
 
-	<script src="js/lang-switcher.js"></script>
-	<script src="js/editor.js"></script>
+    <script src="js/lang-switcher.js"></script>
+    <script src="js/editor.js"></script>
+  </head>
+  <body>
+    <a id="download-helper" style="display:none"></a>
 
-</head>
-<body>
-	<a id="download-helper" style="display:none"></a>
+    <section class="page-header short">
+      <nav class="root-nav">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li class="selected">MML Editor</li>
+        </ul>
+      </nav>
+    </section>
 
-	<section class="page-header short">
-		<nav class="root-nav">
-			<ul>
-			<li><a href="index.html">Home</a></li>
-			<li class="selected">MML Editor</li>
-			</ul>
-		</nav>
-	</section>
+    <section class="actions">
+      <input id="open-file" type="file" accept=".mml,.mus,.txt" style="display:none;" />
+      <button onclick="document.getElementById('open-file').click();">
+        <p><i class="material-icons">folder</i> File</p>
+      </button>
+      <button onclick="selectSample()">
+        <p><i class="material-icons">library_music</i> Sample</p>
+      </button>
+      <div style="display:inline-block;width:32px;"></div>
+      <button onclick="compile()">
+        <p><i class="material-icons">build</i> Compile</p>
+      </button>
+      <input id="autoplay" type="checkbox" checked /> <label for="autoplay">play</label>
+      <div style="display:inline-block;width:12px;"></div>
+      <button onclick="download()">
+        <p><i class="material-icons">file_download</i> Download As...</p>
+      </button>
+    </section>
 
-	<section class="actions">
-		<input id="open-file" type="file" accept=".mml,.mus,.txt" style="display:none;" />
-		<button onclick="document.getElementById('open-file').click();">
-			<p><i class="material-icons">folder</i> File</p>
-		</button>
-		<button onclick="selectSample()">
-			<p><i class="material-icons">library_music</i> Sample</p>
-		</button>
-		<div style="display:inline-block;width:32px;"></div>
-		<button onclick="compile()">
-			<p><i class="material-icons">build</i> Compile</p>
-		</button>
-		<input id="autoplay" type="checkbox" checked> <label for="autoplay">play</label>		
-		<div style="display:inline-block;width:12px;"></div>
-		<button onclick="download()">
-			<p><i class="material-icons">file_download</i> Download As...</p>
-		</button>
-	</section>
+    <div id="editor"></div>
+    <div id="editor-foot">
+      <div style="float:left;">MML file can be dropped to the editor.</div>
+      <div style="float:right;">[<a target="_blank" href="http://www.gigamix.jp/mgsdrv/MGSC111.TXT">MML Help</a>]</div>
+    </div>
 
-	<div id="editor"></div>
-	<div id="editor-foot">
-		<div style="float:left;">MML file can be dropped to the editor.</div>
-		<div style="float:right;">[<a target="_blank" href="http://www.gigamix.jp/mgsdrv/MGSC111.TXT">MML Help</a>]</div>
-	</div>
+    <div id="message" class="minimized">
+      <div class="title">Console</div>
+      <pre></pre>
+    </div>
+    <div id="player" class="msxplay bottom-fixed"></div>
 
-	<div id="message" class="minimized">
-		<div class="title">Console</div>
-		<pre></pre>
-	</div>
-	<div id="player" class="msxplay bottom-fixed"></div>
+    <!-- Dialogs -->
 
-	<!-- Dialogs -->
+    <div id="modal-stage">
+      <div id="confirm-restore" class="dialog" style="width:280px">
+        <div class="content">
+          <p lang="ja">前回、編集していた内容が残っています。読み込みますか？</p>
+          <p lang="en">The last text you were editing is found. Recover it?</p>
+        </div>
+        <div class="button-area">
+          <div class="button" data-value="yes">YES</div>
+          <div class="button" data-value="no">NO</div>
+        </div>
+      </div>
 
-	<div id="modal-stage">
+      <div id="select-sample" class="dialog" style="width:392px">
+        <div class="content">
+          <p lang="ja">編集したいMMLを選んでください。</p>
+          <p lang="en">Choose a sample MML file to open.</p>
+        </div>
+        <ul class="item-list">
+          <li data-value="demo/blank.mml">
+            <div class="title" lang="ja">新しいMML</div>
+            <div class="title" lang="en">New MML</div>
+            <div class="subtext" lang="ja">テンプレートから新規作成</div>
+            <div class="subtext" lang="en">a new MML template</div>
+          </li>
+          <li data-value="demo/grider.mml">
+            <div class="title">
+              Gun Rider
+              <div class="chips"><i>OPLL</i></div>
+            </div>
+            <div class="subtext">by J. arranged by Brezza</div>
+          </li>
+          <li data-value="demo/p52_arbl.mml">
+            <div class="title">
+              Arabiyaan (Long Version)
+              <div class="chips"><i>PSG</i><i>SCC</i></div>
+            </div>
+            <div class="subtext">by Wiz.</div>
+          </li>
+          <li data-value="demo/contrail.mml">
+            <div class="title">
+              [MSX Rock] Contrail
+              <div class="chips"><i>PSG</i><i>SCC</i><i>OPLL</i></div>
+            </div>
+            <div class="subtext">by DRM</div>
+          </li>
+          <li data-value="demo/es56.mml">
+            <div class="title">
+              Evil Swrod -Wilderness-
+              <div class="chips"><i>PSG</i><i>OPLL</i></div>
+            </div>
+            <div class="subtext">by DRM, arranged by Brezza</div>
+          </li>
+          <li data-value="demo/es59.mml">
+            <div class="title">
+              Evil Swrod -Fire master-
+              <div class="chips"><i>PSG</i><i>OPLL</i></div>
+            </div>
+            <div class="subtext">by DRM, arranged by Brezza</div>
+          </li>
+        </ul>
+        <div class="button-area">
+          <div class="button" data-value="cancel">Close</div>
+        </div>
+      </div>
 
-		<div id="confirm-restore" class="dialog" style="width:280px">
-			<div class="content">
-				<p lang="ja">前回、編集していた内容が残っています。読み込みますか？</p>
-				<p lang="en">The last text you were editing is found. Recover it?</p>
-			</div>
-			<div class="button-area">
-				<div class="button" data-value="yes">YES</div>
-				<div class="button" data-value="no">NO</div>
-			</div>
-		</div>
+      <div id="confirm-clear" class="dialog" style="width:280px">
+        <div class="content">
+          <p lang="ja">テキストを消去します。よろしいですか？</p>
+          <p lang="en">Are you sure to clear all the text?</p>
+        </div>
+        <div class="button-area">
+          <div class="button" data-value="ok">OK</div>
+          <div class="button" data-value="cancel">Cancel</div>
+        </div>
+      </div>
 
-		<div id="select-sample" class="dialog" style="width:392px">
-			<div class="content">
-				<p lang="ja">編集したいMMLを選んでください。</p>
-				<p lang="en">Choose a sample MML file to open.</p>
-			</div>
-			<ul class="item-list">
-				<li data-value="demo/blank.mml">
-					<div class="title" lang="ja">新しいMML</div>
-					<div class="title" lang="en">New MML</div>
-					<div class="subtext" lang="ja">テンプレートから新規作成</div>
-					<div class="subtext" lang="en">a new MML template</div>				
-				</li>
-				<li data-value="demo/grider.mml">
-					<div class="title">Gun Rider <div class="chips"><i>OPLL</i></div></div>
-					<div class="subtext">by J. arranged by Brezza</div>
-				</li>
-				<li data-value="demo/p52_arbl.mml">
-					<div class="title">Arabiyaan (Long Version)<div class="chips"><i>PSG</i><i>SCC</i></div></div>
-					<div class="subtext">by Wiz.</div>
-				</li>
-				<li data-value="demo/contrail.mml">
-					<div class="title">[MSX Rock] Contrail<div class="chips"><i>PSG</i><i>SCC</i><i>OPLL</i></div></div>
-					<div class="subtext">by DRM</div>
-				</li>
-				<li data-value="demo/es56.mml">
-					<div class="title">Evil Swrod -Wilderness- <div class="chips"><i>PSG</i><i>OPLL</i></div></div>
-					<div class="subtext">by DRM, arranged by Brezza</div>
-				</li>
-				<li data-value="demo/es59.mml">
-					<div class="title">Evil Swrod -Fire master- <div class="chips"><i>PSG</i><i>OPLL</i></div></div>
-					<div class="subtext">by DRM, arranged by Brezza</div>
-				</li>
-			</ul>
-			<div class="button-area">
-				<div class="button" data-value="cancel">Close</div>
-			</div>
-		</div>
+      <div id="no-mgs" class="dialog" style="width:280px">
+        <div class="content">
+          <p lang="ja">MGSデータがありません。先にMMLをコンパイルしてください。</p>
+          <p lang="en">No MGS data. Please compile the MML first.</p>
+        </div>
+        <div class="button-area">
+          <div class="button" data-value="ok">OK</div>
+        </div>
+      </div>
 
-		<div id="confirm-clear" class="dialog" style="width:280px">
-			<div class="content">
-				<p lang="ja">テキストを消去します。よろしいですか？</p>
-				<p lang="en">Are you sure to clear all the text?</p>
-			</div>
-			<div class="button-area">
-				<div class="button" data-value="ok">OK</div>
-				<div class="button" data-value="cancel">Cancel</div>
-			</div>
-		</div>
+      <div id="download-type" class="dialog" style="width:392px">
+        <div class="content">
+          <p lang="ja">ダウンロード形式を選んでください。</p>
+          <p lang="en">Choose a format for download.</p>
+        </div>
 
-		<div id="no-mgs" class="dialog" style="width:280px">
-			<div class="content">
-				<p lang="ja">MGSデータがありません。先にMMLをコンパイルしてください。</p>
-				<p lang="en">No MGS data. Please compile the MML first.</p>
-			</div>
-			<div class="button-area">
-				<div class="button" data-value="ok">OK</div>
-			</div>
-		</div>
+        <ul class="item-list">
+          <li data-value="mml">
+            <div class="title">MML</div>
+            <div class="subtext" lang="ja">テキスト形式でダウンロード</div>
+            <div class="subtext" lang="en">Download as a plain text file.</div>
+          </li>
+          <li data-value="mgs">
+            <div class="title">MGS</div>
+            <div class="subtext" lang="ja">MGS形式でダウンロード</div>
+            <div class="subtext" lang="en">Download as a MGS binary.</div>
+          </li>
+          <li data-value="mp3low">
+            <div class="title">MP3 Low</div>
+            <div class="subtext">44100Hz / 128kbps</div>
+          </li>
+          <li data-value="mp3mid">
+            <div class="title">MP3 Mid</div>
+            <div class="subtext">44100Hz / 160kbps</div>
+          </li>
+          <li data-value="mp3high">
+            <div class="title">MP3 High</div>
+            <div class="subtext">48000Hz / 192kbps</div>
+          </li>
+        </ul>
+        <div class="button-area">
+          <div class="button" data-value="cancel">Close</div>
+        </div>
+      </div>
 
-		<div id="download-type" class="dialog" style="width:392px">
-			<div class="content">
-				<p lang="ja">ダウンロード形式を選んでください。</p>
-				<p lang="en">Choose a format for download.</p>
-			</div>
-
-			<ul class="item-list">
-				<li data-value="mml">
-					<div class="title">MML</div>
-					<div class="subtext" lang="ja">テキスト形式でダウンロード</div>
-					<div class="subtext" lang="en">Download as a plain text file.</div>
-				</li>
-				<li data-value="mgs">
-					<div class="title">MGS</div>
-					<div class="subtext" lang="ja">MGS形式でダウンロード</div>
-					<div class="subtext" lang="en">Download as a MGS binary.</div>
-				</li>
-				<li data-value="mp3low">
-					<div class="title">MP3 Low</div>
-					<div class="subtext">44100Hz / 128kbps</div>
-				</li>
-				<li data-value="mp3mid">
-					<div class="title">MP3 Mid</div>
-					<div class="subtext">44100Hz / 160kbps</div>
-				</li>
-				<li data-value="mp3high">
-					<div class="title">MP3 High</div>
-					<div class="subtext">48000Hz / 192kbps</div>
-				</li>
-			</ul>
-			<div class="button-area">
-				<div class="button" data-value="cancel">Close</div>
-			</div>
-		</div>
-
-		<div id="encoding" class="dialog" style="width:360px">
-			<div class="content">
-				<p lang="ja">MP3データを生成しています...<br>
-					<span class="encode-progress"></span>秒 生成済み (<span class="encode-speed"></span>倍速)
-				</p>
-				<p lang="en">Rendering MP3 Stream ...<br>
-					<span class="encode-progress"></span>s rendered.<br>
-					(<span class="encode-speed"></span>x faster than realtime)
-				</p>
-			</div>
-			<div class="button-area">
-				<div lang="ja" class="button" data-value="abort">中断</div>
-				<div lang="en" class="button" data-value="abort">Abort</div>
-			</div>
-		</div>
-
-	</div>
-
-</body>
+      <div id="encoding" class="dialog" style="width:360px">
+        <div class="content">
+          <p lang="ja">
+            MP3データを生成しています...<br />
+            <span class="encode-progress"></span>秒 生成済み (<span class="encode-speed"></span>倍速)
+          </p>
+          <p lang="en">
+            Rendering MP3 Stream ...<br />
+            <span class="encode-progress"></span>s rendered.<br />
+            (<span class="encode-speed"></span>x faster than realtime)
+          </p>
+        </div>
+        <div class="button-area">
+          <div lang="ja" class="button" data-value="abort">中断</div>
+          <div lang="en" class="button" data-value="abort">Abort</div>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>

@@ -50,18 +50,14 @@ function createAceEditor() {
       contentChanged = true;
     });
   } catch (e) {
-    window.alert(
-      "Failed to create the Ace editor instance. Please check your network connection."
-    );
+    window.alert("Failed to create the Ace editor instance. Please check your network connection.");
   }
 }
 
 var marker = null;
 function addErrorMarker(line) {
   var range = ace.require("ace/range");
-  marker = editor
-    .getSession()
-    .addMarker(new range.Range(line, 0, line, 2000), "mml-error", "line", true);
+  marker = editor.getSession().addMarker(new range.Range(line, 0, line, 2000), "mml-error", "line", true);
 }
 
 function removeErrorMarker() {
@@ -313,8 +309,7 @@ function downloadMP3(rate, kbps, quality) {
     bitRate: kbps,
     quality: quality
   };
-  var filename =
-    (info.name || Date.now()) + "_" + rate + "_" + kbps + "kbps.mp3";
+  var filename = (info.name || Date.now()) + "_" + rate + "_" + kbps + "kbps.mp3";
   mp3encode(result.mgs, filename, opts);
 }
 

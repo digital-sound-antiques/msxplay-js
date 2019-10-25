@@ -1,6 +1,5 @@
 (function() {
-  var lang =
-    navigator.browserLanguage || navigator.language || navigator.userLanguage;
+  var lang = navigator.browserLanguage || navigator.language || navigator.userLanguage;
 
   window.addEventListener("DOMContentLoaded", function() {
     if (/^ja/.test(lang)) {
