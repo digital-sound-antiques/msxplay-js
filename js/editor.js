@@ -25,7 +25,6 @@ function getShareUrl(id) {
 async function openMML(key) {
   if (key.indexOf("http") === 0) {
     showDialog("loading");
-
     await loadFromUrl(key);
     hideDialog("loading");
     compile(true);
@@ -52,28 +51,35 @@ async function getShareLink(mml) {
 }
 
 async function share() {
-  storeToLocalStorage();
-  const mml = editor.getValue().trim();
-  if (mml == null || mml === "") {
-    showDialog("empty-error-on-share");
-    return;
-  }
-  var result = MSXPlayUI.compile(mml);
-  if (!result.success) {
-    showDialog("compile-error-on-share");
-    return;
-  }
-  showDialog("wait-for-share-link");
-  const url = await getShareLink(mml);
-  hideDialog("wait-for-share-link");
+  try {
+    storeToLocalStorage();
+    const mml = editor.getValue().trim();
+    if (mml == null || mml === "") {
+      showDialog("empty-error-on-share");
+      return;
+    }
+    var result = MSXPlayUI.compile(mml);
+    if (!result.success) {
+      showDialog("compile-error-on-share");
+      return;
+    }
+    showDialog("wait-for-share-link");
+    const url = await getShareLink(mml);
+    hideDialog("wait-for-share-link");
 
-  var elem = document.querySelector("#share-link input");
-  elem.value = url;
-  setTimeout(() => {
-    elem.focus();
-    elem.select();
-  }, 150);
-  showDialog("share-link");
+    var elem = document.querySelector("#share-link input");
+    elem.value = url;
+    setTimeout(() => {
+      elem.focus();
+      elem.select();
+    }, 150);
+    showDialog("share-link");
+  } catch (e) {
+    hideDialog();
+    const p = document.querySelector("#generic-error p");
+    p.innerText = e.message;
+    showDialog("generic-error");
+  }
 }
 
 // Prevent unexpected location change.
@@ -429,13 +435,15 @@ function showDialog(id, complete) {
 }
 
 function hideDialog(id) {
-  var dialog = document.getElementById(id);
+  var dialogs = id ? [document.getElementById(id)] : document.querySelectorAll(".dialog");
   var stage = document.getElementById("modal-stage");
-  dialog.style.display = "none";
-  stage.style.display = "none";
-  if (dialogListener != null) {
-    dialog.removeEventListener("click", dialogListener);
+  for (let i = 0; i < dialogs.length; i++) {
+    if (dialogListener != null) {
+      dialogs[i].removeEventListener("click", dialogListener);
+    }
+    dialogs[i].style.display = "none";
   }
+  stage.style.display = "none";
 }
 
 var dragCounter = 0;
