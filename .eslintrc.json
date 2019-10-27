@@ -1,4 +1,11 @@
 {
+  "env": {
+    "browser": true
+  },
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaVersion": 2017
+  },
   "plugins": ["prettier"],
   "rules": {
     "prettier/prettier": "error"
