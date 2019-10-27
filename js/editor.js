@@ -19,21 +19,21 @@ function getPastebinUrl(key) {
 }
 
 function getShareUrl(id) {
-  return `http://${location.host}?open=${id}`;
+  //return `http://${location.host}?open=${id}`;
+  return `https://msxplay.com?open=${id}`;
 }
 
 async function openMML(key) {
   try {
+    showDialog("loading");
     if (key.indexOf("http") === 0) {
-      showDialog("loading");
       await loadFromUrl(key);
-      hideDialog("loading");
-      compile(true);
     } else {
-      showDialog("loading");
       await loadFromUrl(getPastebinUrl(key));
-      hideDialog("loading");
-      compile(true);
+    }
+    hideDialog("loading");
+    if (!compile(false)) {
+      throw new Error("Failed to compile the MML file.");
     }
   } catch (e) {
     hideDialog();
@@ -269,12 +269,24 @@ function clearLocalStorage() {
   localStorage.removeItem(AUTOBACKUP_KEY);
 }
 
+function trimAllLines(text) {
+  const lines = text.split(/\n/);
+  for (let i = 0; i < lines.length; i++) {
+    lines[i] = lines[i].replace(/\s+$/, "");
+  }
+  return lines.join("\n");
+}
+
+function getEditorMML() {
+  return trimAllLines(editor.getValue());
+}
+
 function storeToLocalStorage() {
-  var text = editor.getValue();
+  const text = getEditorMML();
   if (/^\s*$/.test(text)) {
     localStorage.removeItem(AUTOBACKUP_KEY);
   } else {
-    localStorage.setItem(AUTOBACKUP_KEY, editor.getValue());
+    localStorage.setItem(AUTOBACKUP_KEY, text);
   }
 }
 

@@ -23,6 +23,7 @@
     <script src="dist/msxplay-bundle.js"></script>
     <script src="js/lang-switcher.js"></script>
     <script src="js/query-parser.js"></script>
+    <script src="js/modal-player.js"></script>
     <script>
       (function(i, s, o, g, r, a, m) {
         i["GoogleAnalyticsObject"] = r;
@@ -128,25 +129,6 @@
         e.addEventListener("drop", onDrop);
       }
 
-      function closeModalPlayer() {
-        let player = document.getElementById("modal-player");
-        MSXPlayUI.stop(player);
-        player.remove();
-        let stage = document.getElementById("modal-stage");
-        stage.style.display = "none";
-        window.history.replaceState(null, null, `${location.pathname}`);
-      }
-
-      async function showModalPlayer(url) {
-        let player = MSXPlayUI.createPlayerFromUrl(url);
-        player.setAttribute("id", "modal-player");
-        let stage = document.getElementById("modal-stage");
-        stage.append(player);
-        stage.style.display = "block";
-        await MSXPlayUI.attach(player);
-        MSXPlayUI.play(player);
-      }
-
       var queries = QueryParser.parse();
       var target = queries["open"];
       if (target && !/.*\.(mgs|kss|mpk|opx|bgm|mbm)/i.test(target)) {
@@ -159,7 +141,7 @@
           const href = elems[i]
             .getAttribute("data-href")
             .trim()
-            .replace(/\$\{host_path\}/, `${location.host}${location.path ? location.path : ""}`);
+            .replace(/\$\{host_path\}/, `${location.protocol}//${location.host}${location.path ? location.path : ""}`);
           elems[i].setAttribute("href", href);
           elems[i].innerText = href;
         }
@@ -353,7 +335,7 @@
         <p>MSXPlay.js - Copyright &copy; 2016-2019 Digital Sound Antiques.</p>
       </footer>
     </section>
-    <div id="modal-stage">
+    <div id="modal-player-stage">
       <div class="close-button" onclick="closeModalPlayer()"><i class="material-icons">close</i></div>
     </div>
     <!-- The core Firebase JS SDK is always required and must be listed first -->

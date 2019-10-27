@@ -213,15 +213,15 @@ footer {
   margin-bottom: 32px;
 }
 
-#modal-stage {
-  position: absolute;
+#modal-player-stage {
+  position: fixed;
   top: 0;
   left: 0;
   bottom: 0;
   right: 0;
   background-color: rgba(0, 0, 0, 0.5);
   display: none;
-  z-index: 101;
+  z-index: 100;
 }
 
 #modal-player {
@@ -233,7 +233,7 @@ footer {
   margin: auto auto;
 }
 
-#modal-stage .close-button {
+#modal-player-stage .close-button {
   position: absolute;
   top: 0;
   left: 0;
