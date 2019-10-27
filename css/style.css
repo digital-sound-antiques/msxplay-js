@@ -242,3 +242,10 @@ footer {
   padding: 24px;
   cursor: pointer;
 }
+
+.beta {
+  line-height: 1;
+  margin: 0;
+  font-size: 50%;
+  color: #c01111;
+}
