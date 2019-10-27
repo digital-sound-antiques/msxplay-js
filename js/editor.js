@@ -23,16 +23,23 @@ function getShareUrl(id) {
 }
 
 async function openMML(key) {
-  if (key.indexOf("http") === 0) {
-    showDialog("loading");
-    await loadFromUrl(key);
-    hideDialog("loading");
-    compile(true);
-  } else {
-    showDialog("loading");
-    await loadFromUrl(getPastebinUrl(key));
-    hideDialog("loading");
-    compile(true);
+  try {
+    if (key.indexOf("http") === 0) {
+      showDialog("loading");
+      await loadFromUrl(key);
+      hideDialog("loading");
+      compile(true);
+    } else {
+      showDialog("loading");
+      await loadFromUrl(getPastebinUrl(key));
+      hideDialog("loading");
+      compile(true);
+    }
+  } catch (e) {
+    hideDialog();
+    const p = document.querySelector("#generic-error p");
+    p.innerText = e.message;
+    showDialog("generic-error");
   }
 }
 
@@ -226,10 +233,14 @@ function loadText(text) {
 async function loadFromUrl(url) {
   try {
     const mml = await loadTextFromUrl(url);
+    if (mml.indexOf("#opll_mode") < 0) {
+      throw new Error("Not a mml file.");
+    }
     loadText(mml);
   } catch (e) {
     editor.setValue(e.message, -1);
     contentChanged = false;
+    throw e;
   }
 }
 
