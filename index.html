@@ -4,7 +4,6 @@
     <meta content="text/html" charset="utf-8" />
 
     <title>MSXplay.js</title>
-
     <meta property="og:type" content="website" />
     <meta name="keywords" content="MSX, YM2413, OPLL, PSG, SCC, MGSDRV, JavaScript, Emscripten, MML" />
     <meta name="description" content="A MSX sound emulation player for JavaScript." />
@@ -14,10 +13,12 @@
     <meta property="og:image" content="http://digital-sound-antiques.github.io/msxplay-js/img/ogp.png" />
 
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <link href="css/msxplay.css" rel="stylesheet" type="text/css" />
     <link href="css/style.css" rel="stylesheet" type="text/css" />
     <script src="dist/msxplay-bundle.js"></script>
     <script src="js/lang-switcher.js"></script>
+    <script src="js/query-parser.js"></script>
     <script>
       (function(i, s, o, g, r, a, m) {
         i["GoogleAnalyticsObject"] = r;
@@ -75,7 +76,7 @@
         e.preventDefault();
       }
 
-      function createPlayerForFile(file, dndPanel) {
+      async function createPlayerForFile(file, dndPanel) {
         return new Promise(function(resolve, reject) {
           var reader = new FileReader();
           reader.onloadend = function() {
@@ -124,12 +125,41 @@
         e.addEventListener("drop", onDrop);
       }
 
+      function closeModalPlayer() {
+        let player = document.getElementById("modal-player");
+        MSXPlayUI.stop(player);
+        player.remove();
+        let stage = document.getElementById("modal-stage");
+        stage.style.display = "none";
+        window.history.replaceState(null, null, `${location.pathname}`);
+      }
+
+      async function showModalPlayer(url) {
+        let player = MSXPlayUI.createPlayerFromUrl(url);
+        player.setAttribute("id", "modal-player");
+        let stage = document.getElementById("modal-stage");
+        stage.append(player);
+        stage.style.display = "block";
+        await MSXPlayUI.attach(player);
+        MSXPlayUI.play(player);
+      }
+
+      var queries = QueryParser.parse();
+      var target = queries["open"];
+      if (target && !/.*\.(mgs|kss|mpk|opx|kss|mbm)/i.test(target)) {
+        location.pathname = "/editor.html";
+      }
+
       window.addEventListener("DOMContentLoaded", function() {
         MSXPlayUI.install(document.body);
 
         var elems = document.getElementsByClassName("dnd-able");
         for (var i = 0; i < elems.length; i++) {
           makeDnDable(elems[i]);
+        }
+
+        if (target) {
+          showModalPlayer(target);
         }
       });
     </script>
@@ -227,6 +257,7 @@
       </p>
 
       <div
+        id="initial-player"
         class="msxplay dnd-able"
         data-gain="1.0"
         data-title="OPLL (YM2413) demo"
@@ -244,6 +275,17 @@
       </p>
 
       <div id="dnd-panel" class="dnd-able">Drag and Drop your file here.</div>
+
+      <h2>Open from URL</h2>
+      <p lang="ja">
+        次のように GitHub 上の RWA ファイルのURL(https://raw.githubusercontent.com/ で始まるURL) を URL
+        に追記すると、インターネット上のファイルを読み込んで演奏できます。拡張子が mml または mus
+        のファイルのURLを指定した場合は、MMLエディタ画面が開きます。
+      </p>
+      <p lang="en">
+        To open files directly, add open URL query parameter like following.
+      </p>
+      <code>https://msxplay.com?open=https://raw.githubusercontent.com/msxplay-js/master/demo/es55.mml</code>
 
       <h2>MML Compiler</h2>
       <p lang="ja">
@@ -280,8 +322,34 @@
       </ul>
       <footer>
         <hr />
-        <p>MSXPlay.js - Copyright &copy; 2016 Digital Sound Antiques.</p>
+        <p>MSXPlay.js - Copyright &copy; 2016-2019 Digital Sound Antiques.</p>
       </footer>
     </section>
+    <div id="modal-stage">
+      <div class="close-button" onclick="closeModalPlayer()"><i class="material-icons">close</i></div>
+    </div>
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.2.2/firebase-app.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/7.2.2/firebase-analytics.js"></script>
+
+    <script>
+      // Your web app's Firebase configuration
+      var firebaseConfig = {
+        apiKey: "AIzaSyA3yBgjdAOXUS8MiVvlUjMoPAsfEk_k9ZA",
+        authDomain: "msxplay-63a7a.firebaseapp.com",
+        databaseURL: "https://msxplay-63a7a.firebaseio.com",
+        projectId: "msxplay-63a7a",
+        storageBucket: "msxplay-63a7a.appspot.com",
+        messagingSenderId: "720072373890",
+        appId: "1:720072373890:web:d4f28f5c3c3a27b8eea69b",
+        measurementId: "G-CV2H302X7T"
+      };
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      firebase.analytics();
+    </script>
   </body>
 </html>

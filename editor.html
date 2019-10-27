@@ -18,6 +18,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <link href="css/msxplay.css" rel="stylesheet" type="text/css" />
     <link href="css/style.css" rel="stylesheet" type="text/css" />
+    <link href="css/lds-ripple.css" rel="stylesheet" type="text/css" />
     <link href="css/editor.css" rel="stylesheet" type="text/css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.6/ace.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.6/theme-xcode.js"></script>
@@ -42,6 +43,7 @@
     </script>
 
     <script src="js/lang-switcher.js"></script>
+    <script src="js/query-parser.js"></script>
     <script src="js/editor.js"></script>
   </head>
   <body>
@@ -73,6 +75,9 @@
       <button onclick="download()">
         <p><i class="material-icons">file_download</i> Download As...</p>
       </button>
+      <button onclick="share()">
+        <p><i class="material-icons">share</i> Share</p>
+      </button>
     </section>
 
     <div id="editor"></div>
@@ -98,6 +103,17 @@
         <div class="button-area">
           <div class="button" data-value="yes">YES</div>
           <div class="button" data-value="no">NO</div>
+        </div>
+      </div>
+
+      <div id="loading" class="dialog" style="width:280px">
+        <div class="content">
+          <div style="text-align: center;padding-bottom:16px;">
+            <div class="lds-ripple">
+              <div></div>
+              <div></div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -175,6 +191,53 @@
         </div>
       </div>
 
+      <div id="empty-error-on-share" class="dialog" style="width:280px">
+        <div class="content">
+          <p lang="ja">空のファイルはシェアできません。</p>
+          <p lang="en">Empty file is not allowed for share.</p>
+        </div>
+        <div class="button-area">
+          <div class="button" data-value="ok">OK</div>
+        </div>
+      </div>
+
+      <div id="compile-error-on-share" class="dialog" style="width:280px">
+        <div class="content">
+          <p lang="ja">シェアの前にコンパイルエラーを解決してください。</p>
+          <p lang="en">Resolve compile error first before sharing.</p>
+        </div>
+        <div class="button-area">
+          <div class="button" data-value="ok">OK</div>
+        </div>
+      </div>
+
+      <div id="wait-for-share-link" class="dialog" style="width:280px">
+        <div class="content">
+          <p lang="ja">シェアの準備中...</p>
+          <p lang="en">Sharing...</p>
+        </div>
+        <div style="text-align: center;padding-bottom:16px;">
+          <div class="lds-ripple">
+            <div></div>
+            <div></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="share-link" class="dialog" style="width:336px">
+        <div class="content">
+          <p lang="ja">次のURLをコピーしてシェアしてください。</p>
+          <p lang="en">Copy and share the URL below.</p>
+          <div style="padding:16px 16px;">
+            <input type="text" onclick="this.select()" style="width:100%" readonly />
+          </div>
+        </div>
+        <div class="button-area">
+          <div class="button" lang="ja" data-value="close">閉じる</div>
+          <div class="button" lang="en" data-value="close">CLOSE</div>
+        </div>
+      </div>
+
       <div id="download-type" class="dialog" style="width:392px">
         <div class="content">
           <p lang="ja">ダウンロード形式を選んでください。</p>
@@ -206,7 +269,7 @@
           </li>
         </ul>
         <div class="button-area">
-          <div class="button" data-value="cancel">Close</div>
+          <div class="button" data-value="cancel">CLOSE</div>
         </div>
       </div>
 
@@ -224,9 +287,32 @@
         </div>
         <div class="button-area">
           <div lang="ja" class="button" data-value="abort">中断</div>
-          <div lang="en" class="button" data-value="abort">Abort</div>
+          <div lang="en" class="button" data-value="abort">ABORT</div>
         </div>
       </div>
     </div>
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.2.2/firebase-app.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/7.2.2/firebase-analytics.js"></script>
+
+    <script>
+      // Your web app's Firebase configuration
+      var firebaseConfig = {
+        apiKey: "AIzaSyA3yBgjdAOXUS8MiVvlUjMoPAsfEk_k9ZA",
+        authDomain: "msxplay-63a7a.firebaseapp.com",
+        databaseURL: "https://msxplay-63a7a.firebaseio.com",
+        projectId: "msxplay-63a7a",
+        storageBucket: "msxplay-63a7a.appspot.com",
+        messagingSenderId: "720072373890",
+        appId: "1:720072373890:web:d4f28f5c3c3a27b8eea69b",
+        measurementId: "G-CV2H302X7T"
+      };
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      firebase.analytics();
+    </script>
   </body>
 </html>

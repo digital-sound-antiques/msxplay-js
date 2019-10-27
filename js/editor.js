@@ -1,27 +1,79 @@
 "use strict";
 
-function loadTextFromUrl(url, complete) {
-  var xhr = new XMLHttpRequest();
-  xhr.open("GET", url, true);
-  xhr.responseType = "text";
-  xhr.addEventListener("load", function() {
-    if (xhr.status == 200 || xhr.status == 304 || xhr.status == 0) {
-      if (complete) complete(xhr.response, url, null);
-    } else if (xhr.status == 404) {
-      var err = new Error("File Not Found: " + url);
-      if (complete) complete(null, url, err);
-    } else {
-      var err = new Error(xhr.statusText);
-      if (complete) complete(null, url, err);
+async function loadTextFromUrl(url, complete) {
+  const res = await fetch(url, {
+    method: "GET",
+    mode: "cors",
+    headers: {
+      Accept: "text/plain"
     }
   });
-  xhr.addEventListener("error", function(e) {
-    var err = new Error(
-      "Load Error: Check 'Access-Control-Allow-Origin' header is present for the target resource. See browser's development panel for detail. If you run this script local browser, `--allow-file-access-from-files` or the equivalent option is required."
-    );
-    if (complete) complete(null, url, err);
+  if (res.ok) {
+    return await res.text();
+  }
+  throw new Error(res.statusText);
+}
+
+function getPastebinUrl(key) {
+  return `https://firebasestorage.googleapis.com/v0/b/msxplay-63a7a.appspot.com/o/pastebin%2F${key}?alt=media`;
+}
+
+function getShareUrl(id) {
+  return `http://${location.host}?open=${id}`;
+}
+
+async function openMML(key) {
+  if (key.indexOf("http") === 0) {
+    showDialog("loading");
+
+    await loadFromUrl(key);
+    hideDialog("loading");
+    compile(true);
+  } else {
+    showDialog("loading");
+    await loadFromUrl(getPastebinUrl(key));
+    hideDialog("loading");
+    compile(true);
+  }
+}
+
+async function getShareLink(mml) {
+  const res = await fetch("https://asia-northeast1-msxplay-63a7a.cloudfunctions.net/pastebin", {
+    method: "POST",
+    mode: "cors",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "text/plain"
+    },
+    body: mml
   });
-  xhr.send();
+  const { id } = await res.json();
+  return getShareUrl(id);
+}
+
+async function share() {
+  storeToLocalStorage();
+  const mml = editor.getValue().trim();
+  if (mml == null || mml === "") {
+    showDialog("empty-error-on-share");
+    return;
+  }
+  var result = MSXPlayUI.compile(mml);
+  if (!result.success) {
+    showDialog("compile-error-on-share");
+    return;
+  }
+  showDialog("wait-for-share-link");
+  const url = await getShareLink(mml);
+  hideDialog("wait-for-share-link");
+
+  var elem = document.querySelector("#share-link input");
+  elem.value = url;
+  setTimeout(() => {
+    elem.focus();
+    elem.select();
+  }, 150);
+  showDialog("share-link");
 }
 
 // Prevent unexpected location change.
@@ -165,15 +217,14 @@ function loadText(text) {
   clearLocalStorage();
 }
 
-function loadFromUrl(url) {
-  loadTextFromUrl(url, function(mml, url, err) {
-    if (mml) {
-      loadText(mml);
-    } else {
-      editor.setValue(err.toString(), -1);
-      contentChanged = false;
-    }
-  });
+async function loadFromUrl(url) {
+  try {
+    const mml = await loadTextFromUrl(url);
+    loadText(mml);
+  } catch (e) {
+    editor.setValue(e.message, -1);
+    contentChanged = false;
+  }
 }
 
 function loadFromFile(file, complete) {
@@ -435,12 +486,6 @@ window.addEventListener("DOMContentLoaded", function() {
   MSXPlayUI.install(document.body);
   createAceEditor();
 
-  if (localStorage.getItem(AUTOBACKUP_KEY)) {
-    restoreFromLocalStorage();
-  } else {
-    selectSample();
-  }
-
   document.getElementById("open-file").addEventListener("change", openFile);
 
   var mbox = document.getElementById("message");
@@ -457,4 +502,15 @@ window.addEventListener("DOMContentLoaded", function() {
     },
     true
   );
+
+  var query = QueryParser.parse();
+  var openTarget = query["open"];
+  if (openTarget) {
+    window.history.replaceState(null, null, `${location.pathname}`);
+    openMML(openTarget);
+  } else if (localStorage.getItem(AUTOBACKUP_KEY)) {
+    restoreFromLocalStorage();
+  } else {
+    selectSample();
+  }
 });

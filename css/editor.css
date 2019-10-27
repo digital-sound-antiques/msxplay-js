@@ -192,6 +192,11 @@ body {
   font-size: 14px;
 }
 
+.dialog .content input {
+  padding: 4px;
+  font-size: 12px;
+}
+
 .dialog .button-area {
   width: 100%;
   height: 44px;

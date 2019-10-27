@@ -212,3 +212,33 @@ footer {
   margin-top: 32px;
   margin-bottom: 32px;
 }
+
+#modal-stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;
+  z-index: 101;
+}
+
+#modal-player {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  margin: auto auto;
+}
+
+#modal-stage .close-button {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: white;
+  height: 24px;
+  padding: 24px;
+  cursor: pointer;
+}

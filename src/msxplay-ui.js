@@ -48,8 +48,8 @@ class MSXPlayUI {
     }
   }
 
-  attach(playerElement) {
-    this.initPlayer(playerElement);
+  async attach(playerElement) {
+    await this.initPlayer(playerElement);
     this.playerElements.push(playerElement);
     playerElement.addEventListener("click", this.onClickPlayer.bind(this), true);
   }
@@ -61,6 +61,14 @@ class MSXPlayUI {
     }
   }
 
+  createPlayerFromUrl(url) {
+    var playerElement = document.createElement("div");
+    playerElement.classList.add("msxplay");
+    playerElement.dataset.gain = "1.0";
+    playerElement.dataset.url = url;
+    return playerElement;
+  }
+
   createPlayer(data, url) {
     var m = (url || "").match(/([^/]+)$/);
     var name = m ? m[1] : null;
@@ -70,11 +78,6 @@ class MSXPlayUI {
     playerElement.dataset.gain = "1.0";
     playerElement.dataset.url = url;
     playerElement.dataset.hash = kss.hash;
-    if (kss.hasMultiSongs) {
-      playerElement.classList.add("multi-songs");
-    } else {
-      playerElement.classList.remove("multi-songs");
-    }
     this.attach(playerElement);
     return playerElement;
   }
@@ -129,7 +132,7 @@ class MSXPlayUI {
     setKSSToPlayerElement(playerElement, kss, name);
   }
 
-  initPlayer(playerElement) {
+  async initPlayer(playerElement) {
     playerElement.innerHTML = "";
     playerElement.insertAdjacentHTML(
       "afterbegin",
@@ -154,7 +157,7 @@ class MSXPlayUI {
     );
     if (playerElement.dataset.url) {
       playerElement.querySelector(".title").textContent = "Loading...";
-      this.loadKSS(playerElement);
+      await this.loadKSS(playerElement);
     }
     if (playerElement.dataset.footnote) {
       playerElement.querySelector(".footer").textContent = playerElement.dataset.footnote;
@@ -165,17 +168,19 @@ class MSXPlayUI {
     playerElement.querySelector(".number").textContent = zeroPadding(parseInt(playerElement.dataset.song).toString(16));
   }
 
-  loadKSS(playerElement) {
-    var loadComplete = function(kss, url) {
-      setKSSToPlayerElement(playerElement, kss, url);
-    };
+  async loadKSS(playerElement) {
     var hash = playerElement.dataset.hash;
     if (hash) {
       var kss = KSS.hashMap[hash];
-      loadComplete(kss, playerElement.dataset.url);
+      setKSSToPlayerElement(playerElement.dataset.url, kss, url);
     } else {
       var url = playerElement.dataset.url;
-      KSS.loadFromUrl(url, loadComplete);
+      var kss = await new Promise((resolve, reject) => {
+        KSS.loadFromUrl(url, kss => {
+          resolve(kss);
+        });
+      });
+      setKSSToPlayerElement(playerElement, kss, url);
     }
   }
 
@@ -267,6 +272,7 @@ function setKSSToPlayerElement(playerElement, kss, url) {
     playerElement.querySelector(".title").textContent = title;
     playerElement.dataset.hash = kss.hash;
   } else {
+    // Error
     playerElement.querySelector(".title").textContent = kss.toString();
     playerElement.dataset.hash = null;
   }
