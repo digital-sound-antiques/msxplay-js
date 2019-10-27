@@ -155,6 +155,7 @@ class MSXPlayUI {
         "</div>" +
         '<div class="footer"></div>'
     );
+
     if (playerElement.dataset.url) {
       playerElement.querySelector(".title").textContent = "Loading...";
       await this.loadKSS(playerElement);
@@ -172,15 +173,15 @@ class MSXPlayUI {
     var hash = playerElement.dataset.hash;
     if (hash) {
       var kss = KSS.hashMap[hash];
-      setKSSToPlayerElement(playerElement.dataset.url, kss, url);
+      setKSSToPlayerElement(playerElement, kss, playerElement.dataset.url);
     } else {
       var url = playerElement.dataset.url;
       var kss = await new Promise((resolve, reject) => {
         KSS.loadFromUrl(url, kss => {
+          setKSSToPlayerElement(playerElement, kss, url);
           resolve(kss);
         });
       });
-      setKSSToPlayerElement(playerElement, kss, url);
     }
   }
 

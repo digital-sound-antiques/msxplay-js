@@ -111,7 +111,6 @@
         }
 
         Promise.all(tasks).then(function(values) {
-          console.log(values);
           if (dndPanel.classList.contains("msxplay")) {
             dndPanel.remove();
           }
@@ -151,10 +150,20 @@
       }
 
       window.addEventListener("DOMContentLoaded", function() {
+        let elems = document.querySelectorAll("a.incomplete");
+        for (let i = 0; i < elems.length; i++) {
+          const href = elems[i]
+            .getAttribute("data-href")
+            .trim()
+            .replace(/\$\{host_path\}/, `${location.host}${location.path ? location.path : ""}`);
+          elems[i].setAttribute("href", href);
+          elems[i].innerText = href;
+        }
+
         MSXPlayUI.install(document.body);
 
-        var elems = document.getElementsByClassName("dnd-able");
-        for (var i = 0; i < elems.length; i++) {
+        elems = document.getElementsByClassName("dnd-able");
+        for (let i = 0; i < elems.length; i++) {
           makeDnDable(elems[i]);
         }
 
@@ -278,14 +287,29 @@
 
       <h2>Open from URL</h2>
       <p lang="ja">
-        次のように GitHub 上の RWA ファイルのURL(https://raw.githubusercontent.com/ で始まるURL) を URL
-        に追記すると、インターネット上のファイルを読み込んで演奏できます。拡張子が mml または mus
-        のファイルのURLを指定した場合は、MMLエディタ画面が開きます。
+        GitHub 上の Raw ファイルのURL (https://raw.githubusercontent.com/ で始まるURL) をクエリ変数 open
+        に追記すると、インターネット上のファイルを読み込んで演奏が開始します。拡張子が .mml または .mus
+        のURLを指定した場合、MMLエディタ画面が開きます。
       </p>
       <p lang="en">
-        To open files directly, add open URL query parameter like following.
+        To open raw file on GitHub directly from this site, add open parameter like following. If .mml or .mus file
+        extension is given, MML editor page is open instead of top page.
       </p>
-      <code>https://msxplay.com?open=https://raw.githubusercontent.com/msxplay-js/master/demo/es55.mml</code>
+
+      <ul>
+        <li>
+          <a
+            class="incomplete"
+            data-href="${host_path}?open=https://raw.githubusercontent.com/digital-sound-antiques/msxplay-js/master/demo/es59.mgs"
+          ></a>
+        </li>
+        <li>
+          <a
+            class="incomplete"
+            data-href="${host_path}?open=https://raw.githubusercontent.com/digital-sound-antiques/msxplay-js/master/demo/es59.mml"
+          ></a>
+        </li>
+      </ul>
 
       <h2>MML Compiler</h2>
       <p lang="ja">
