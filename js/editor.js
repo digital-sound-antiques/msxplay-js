@@ -231,17 +231,11 @@ function loadText(text) {
 }
 
 async function loadFromUrl(url) {
-  try {
-    const mml = await loadTextFromUrl(url);
-    if (mml.indexOf("#opll_mode") < 0) {
-      throw new Error("Not a mml file.");
-    }
-    loadText(mml);
-  } catch (e) {
-    editor.setValue(e.message, -1);
-    contentChanged = false;
-    throw e;
+  const mml = await loadTextFromUrl(url);
+  if (mml.indexOf("#opll_mode") < 0) {
+    throw new Error("Not a mml file.");
   }
+  loadText(mml);
 }
 
 function loadFromFile(file, complete) {
