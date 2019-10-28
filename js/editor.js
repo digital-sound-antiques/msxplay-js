@@ -75,11 +75,11 @@ async function share() {
     hideDialog("wait-for-share-link");
 
     var elem = document.querySelector("#share-link input");
+    elem.value = "";
+    elem.focus();
     elem.value = url;
-    setTimeout(() => {
-      elem.focus();
-      elem.select();
-    }, 150);
+    elem.setSelectionRange(0, 0);
+    setTimeout(() => elem.select(), 100);
     showDialog("share-link");
   } catch (e) {
     hideDialog();
