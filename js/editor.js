@@ -189,7 +189,7 @@ function compile(autoplay) {
   MSXPlayUI.releaseKSS(player.dataset.hash);
 
   removeErrorMarker();
-  var mml = editor.getValue();
+  var mml = getEditorMML();
   var result = MSXPlayUI.compile(mml);
 
   document.querySelector("#message pre").textContent = result.rawMessage;
@@ -269,16 +269,21 @@ function clearLocalStorage() {
   localStorage.removeItem(AUTOBACKUP_KEY);
 }
 
-function trimAllLines(text) {
+function removeTrailingSpaces(text) {
   const lines = text.split(/\n/);
   for (let i = 0; i < lines.length; i++) {
-    lines[i] = lines[i].replace(/\s+$/, "");
+    if (/^[1-9a-z]\s+/i.test(lines[i])) {
+      console.log(lines[i]);
+      lines[i] = lines[i].replace(/\s+$/, " ");
+    } else {
+      lines[i] = lines[i].replace(/\s+$/, "");
+    }
   }
   return lines.join("\n");
 }
 
 function getEditorMML() {
-  return trimAllLines(editor.getValue());
+  return removeTrailingSpaces(editor.getValue());
 }
 
 function storeToLocalStorage() {
@@ -288,6 +293,7 @@ function storeToLocalStorage() {
   } else {
     localStorage.setItem(AUTOBACKUP_KEY, text);
   }
+  return text;
 }
 
 function restoreFromLocalStorage() {
@@ -361,7 +367,7 @@ function mp3encode(mgs, filename, opts) {
 function downloadMP3(rate, kbps, quality) {
   MSXPlayUI.stop();
 
-  var mml = editor.getValue();
+  var mml = getEditorMML();
   var info = getMetaMMLInfo(mml);
   var result = MSXPlayUI.compile(mml);
 
