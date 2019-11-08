@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "lamejs": "^1.2.0",
-    "libkss-js": "^0.10.1",
+    "libkss-js": "^0.10.2",
     "mgsc-js": "^1.0.1",
     "object-assign": "^4.1.1"
   },
