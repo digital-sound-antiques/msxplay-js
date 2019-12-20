@@ -232,7 +232,7 @@ function loadText(text) {
 
 async function loadFromUrl(url) {
   const mml = await loadTextFromUrl(url);
-  if (mml.indexOf("#opll_mode") < 0) {
+  if (!/#opll_mode/i.test(mml)) {
     throw new Error("Not a mml file.");
   }
   loadText(mml);
