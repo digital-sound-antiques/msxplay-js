@@ -1,13 +1,38 @@
 import { KSSPlay } from "libkss-js";
-import Lamejs from "lamejs";
 
-export default class KSS2MP3 {
-  constructor(sampleRate, kbps) {
-    this.mp3encoder = new Lamejs.Mp3Encoder(1, sampleRate, kbps);
+function rawToWav(rate, data) {
+  const nch = 1;
+  const bit = 16;
+  const dataSize = 44 + data.length * 2;
+  const blockSize = (nch * bit) >> 3;
+  const buf = new ArrayBuffer(dataSize);
+  const view = new DataView(buf, 0);
+  view.setUint32(0, 0x52494646); // 'RIFF'
+  view.setUint32(4, dataSize - 8, true); // size of RIFF  chunk
+  view.setUint32(8, 0x57415645); // 'WAVE'
+  view.setUint32(12, 0x666d7420); // 'fmt '
+  view.setUint32(16, 16, true); // size of format chunk (16)
+  view.setUint16(20, 1, true); // WAVE_FORMAT_PCM
+  view.setUint16(22, nch, true); // channels=1
+  view.setUint32(24, rate, true); // samples per sec
+  view.setUint32(28, 4 * rate, true); // byte per sec
+  view.setUint16(32, blockSize, true); // block size
+  view.setUint16(34, nch * bit, true); // bit per sample
+  view.setUint32(36, 0x64617461); // 'data'
+  view.setUint32(40, blockSize * data.length); // 'data'
+
+  const wavbuf = new DataView(buf, 44);
+  for (let i = 0; i < data.length; i++) {
+    wavbuf.setInt16(i * 2, data[i], true);
+  }
+  return buf;
+}
+
+export default class KSS2WAV {
+  constructor(sampleRate) {
     this.sampleRate = sampleRate;
-    this.bitRate = kbps;
     this.kssplay = null;
-    this.mp3data = [];
+    this.wavdata = [];
   }
 
   release() {
@@ -68,13 +93,13 @@ export default class KSS2MP3 {
     this.callbackFunc = callback || function() {};
     this.elapsed = 0;
     this.maxDuration = this.opts.playTime - this.opts.fadeTime;
-    this.mp3data = [];
+    this.wavdata = [];
     this.processEncode();
   }
 
   addDataBlock(block) {
-    if (0 < block.length) {
-      this.mp3data.push(block);
+    for (let i = 0; i < block.length; i++) {
+      this.wavdata.push(block[i]);
     }
   }
 
@@ -87,16 +112,14 @@ export default class KSS2MP3 {
         samples[i] = Math.max(-32768, Math.min(samples[i] * gain, 32767));
       }
     }
-    this.addDataBlock(this.mp3encoder.encodeBuffer(samples));
+    this.addDataBlock(samples);
     this.elapsed += (1000 * packetSize) / this.sampleRate;
     if (this.kssplay.getStopFlag() || this.kssplay.getFadeFlag() === 2) {
-      this.addDataBlock(this.mp3encoder.flush());
-      this.callbackFunc(this.elapsed, this.mp3data, true);
+      this.callbackFunc(this.elapsed, rawToWav(this.sampleRate, this.wavdata), true);
       return;
     }
-    if (!this.callbackFunc(this.elapsed, this.mp3data, false)) {
+    if (!this.callbackFunc(this.elapsed, null, false)) {
       // abort the encode process
-      this.addDataBlock(this.mp3encoder.flush());
       return;
     }
     if (this.kssplay.getFadeFlag() === 0) {

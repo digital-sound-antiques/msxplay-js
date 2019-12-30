@@ -27,7 +27,7 @@
     <link href="css/editor.css" rel="stylesheet" type="text/css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.6/ace.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.6/theme-xcode.js"></script>
-
+    
     <script>
       (function(i, s, o, g, r, a, m) {
         i["GoogleAnalyticsObject"] = r;
@@ -277,6 +277,18 @@
             <div class="subtext" lang="ja">MGS形式でダウンロード</div>
             <div class="subtext" lang="en">Download as a MGS binary.</div>
           </li>
+          <li data-value="wav44k">
+            <div class="title">WAV 44k</div>
+            <div class="subtext">44100Hz / 16-bit</div>
+          </li>
+          <li data-value="wav48k">
+            <div class="title">WAV 48k</div>
+            <div class="subtext">48000Hz / 16-bit</div>
+          </li>
+          <li data-value="wav96k">
+            <div class="title">WAV 96k</div>
+            <div class="subtext">96000Hz / 16-bit</div>
+          </li>
           <li data-value="mp3low">
             <div class="title">MP3 Low</div>
             <div class="subtext">44100Hz / 128kbps</div>
@@ -298,11 +310,11 @@
       <div id="encoding" class="dialog" style="width:360px">
         <div class="content">
           <p lang="ja">
-            MP3データを生成しています...<br />
+            音声データを生成しています...<br />
             <span class="encode-progress"></span>秒 生成済み (<span class="encode-speed"></span>倍速)
           </p>
           <p lang="en">
-            Rendering MP3 Stream ...<br />
+            Rendering Audio Stream ...<br />
             <span class="encode-progress"></span>s rendered.<br />
             (<span class="encode-speed"></span>x faster than realtime)
           </p>

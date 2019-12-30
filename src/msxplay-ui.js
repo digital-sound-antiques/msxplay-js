@@ -33,8 +33,8 @@ class MSXPlayUI {
     setInterval(this.updateDisplay.bind(this), 100);
   }
 
-  mp3encode(data, song, callback, opts) {
-    this.msxplay.mp3encode(data, song, callback, opts);
+  audio_encode(type, data, song, callback, opts) {
+    this.msxplay.audio_encode(type, data, song, callback, opts);
   }
 
   compile(mml) {

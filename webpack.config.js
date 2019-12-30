@@ -4,7 +4,7 @@ module.exports = {
   entry: {
     "msxplay-bundle": "./entry.js"
   },
-  // devtool: 'source-map',
+  // devtool: "source-map",
   output: {
     path: __dirname + "/dist",
     filename: "[name].js",

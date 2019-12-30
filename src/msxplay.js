@@ -1,5 +1,6 @@
 import { KSS, KSSPlay } from "libkss-js";
 import KSS2MP3 from "./kss2mp3";
+import KSS2WAV from "./kss2wav";
 import AudioPlayer from "./audio-player";
 
 export default class MSXPlay {
@@ -10,17 +11,30 @@ export default class MSXPlay {
     this.kss = null;
     this.maxCalcSamples = this.sampleRate;
   }
-  mp3encode(data, song, callback, opts) {
+  audio_encode(type, data, song, callback, opts) {
     opts = opts || {};
+
     if (this.kss2mp3 != null) {
       this.kss2mp3.release();
+      this.kss2mp3 = null;
     }
+    if (this.kss2wav != null) {
+      this.kss2wav.release();
+      this.kss2wav = null;
+    }
+
     if (this.tempkss != null) {
       this.tempkss.release();
     }
     this.tempkss = new KSS(data);
-    this.kss2mp3 = new KSS2MP3(opts.sampleRate || 44100, opts.bitRate || 192);
-    this.kss2mp3.encode(this.tempkss, song, callback, opts);
+
+    if (type === "mp3") {
+      this.kss2mp3 = new KSS2MP3(opts.sampleRate || 44100, opts.bitRate || 192);
+      this.kss2mp3.encode(this.tempkss, song, callback, opts);
+    } else {
+      this.kss2wav = new KSS2WAV(opts.sampleRate || 44100);
+      this.kss2wav.encode(this.tempkss, song, callback, opts);
+    }
   }
   _generateWave(currentTime, samples) {
     if (this.kssplay.getStopFlag() || this.kssplay.getFadeFlag() == 2) {

@@ -273,7 +273,6 @@ function removeTrailingSpaces(text) {
   const lines = text.split(/\n/);
   for (let i = 0; i < lines.length; i++) {
     if (/^[1-9a-z]\s+/i.test(lines[i])) {
-      console.log(lines[i]);
       lines[i] = lines[i].replace(/\s+$/, " ");
     } else {
       lines[i] = lines[i].replace(/\s+$/, "");
@@ -333,15 +332,16 @@ var saveAs = function(blob, fileName) {
 
 var abortEncode;
 
-function mp3encode(mgs, filename, opts) {
+function audio_encode(type, mgs, filename, opts) {
   var start = Date.now();
   var progs = document.querySelectorAll("#encoding .encode-progress");
   var spds = document.querySelectorAll("#encoding .encode-speed");
 
-  MSXPlayUI.mp3encode(
+  MSXPlayUI.audio_encode(
+    type,
     mgs,
     0,
-    function(time, mp3data, done) {
+    function(time, data, done) {
       var elapsed = Date.now() - start;
       var speed = time / elapsed;
 
@@ -353,7 +353,8 @@ function mp3encode(mgs, filename, opts) {
       }
 
       if (done) {
-        var blob = new Blob(mp3data, { type: "audio/mp3" });
+        const parts = data instanceof ArrayBuffer ? [data] : data;
+        var blob = new Blob(parts, { type: type === "mp3" ? "audio/mp3" : "audio/wav" });
         saveAs(blob, filename);
         hideDialog("encoding");
         return true;
@@ -364,7 +365,7 @@ function mp3encode(mgs, filename, opts) {
   );
 }
 
-function downloadMP3(rate, kbps, quality) {
+function downloadAudio(type, rate, kbps, quality) {
   MSXPlayUI.stop();
 
   var mml = getEditorMML();
@@ -389,8 +390,14 @@ function downloadMP3(rate, kbps, quality) {
     bitRate: kbps,
     quality: quality
   };
-  var filename = (info.name || Date.now()) + "_" + rate + "_" + kbps + "kbps.mp3";
-  mp3encode(result.mgs, filename, opts);
+
+  var filename;
+  if (type === "mp3") {
+    var filename = (info.name || Date.now()) + "_" + rate + "_" + kbps + "kbps.mp3";
+  } else {
+    var filename = (info.name || Date.now()) + "_" + rate + ".wav";
+  }
+  audio_encode(type, result.mgs, filename, opts);
 }
 
 function downloadMML() {
@@ -421,11 +428,17 @@ function download() {
     } else if (e === "mgs") {
       downloadMGS();
     } else if (e === "mp3low") {
-      downloadMP3(44100, 128, { psg: 0, scc: 0, opll: 1, opl: 1 });
+      downloadAudio("mp3", 44100, 128, { psg: 1, scc: 0, opll: 1, opl: 1 });
     } else if (e === "mp3mid") {
-      downloadMP3(44100, 160, { psg: 1, scc: 1, opll: 1, opl: 1 });
+      downloadAudio("mp3", 44100, 160, { psg: 1, scc: 0, opll: 1, opl: 1 });
     } else if (e === "mp3high") {
-      downloadMP3(48000, 192, { psg: 1, scc: 1, opll: 1, opl: 1 });
+      downloadAudio("mp3", 48000, 192, { psg: 1, scc: 0, opll: 1, opl: 1 });
+    } else if (e === "wav44k") {
+      downloadAudio("wav", 44100, 0, { psg: 1, scc: 0, opll: 1, opl: 1 });
+    } else if (e === "wav48k") {
+      downloadAudio("wav", 48000, 0, { psg: 1, scc: 0, opll: 1, opl: 1 });
+    } else if (e === "wav96k") {
+      downloadAudio("wav", 96000, 0, { psg: 1, scc: 0, opll: 1, opl: 1 });
     }
   });
 }
