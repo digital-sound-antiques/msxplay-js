@@ -10,7 +10,7 @@
   "dependencies": {},
   "devDependencies": {
     "lamejs": "^1.2.0",
-    "libkss-js": "^0.15.0",
+    "libkss-js": "^0.16.0",
     "mgsc-js": "^1.0.1",
     "object-assign": "^4.1.1",
     "eslint": "^6.5.1",
