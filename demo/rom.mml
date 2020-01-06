@@ -66,7 +66,7 @@
 
 @25={ ; Synthesizer
 ;       TL FB
-        11, 3,
+        11, 0,
 ; AR DR SL RR KL MT AM VB EG KR WF
    8, 5, 8, 1, 0, 1, 0, 1, 0, 0, 1,
   15, 0, 0, 7, 0, 1, 0, 1, 1, 0, 1 }
@@ -80,10 +80,10 @@
 
 @27={ ; Vibraphone
 ;       TL FB
-        32, 7,
+        36, 7,
 ; AR DR SL RR KL MT AM VB EG KR WF
-  15,14, 2, 2, 0, 7, 0, 0, 0, 1, 0,
-  15, 7, 2, 2, 0, 1, 1, 1, 0, 0, 0 }
+  15, 8, 2, 2, 0, 7, 0, 0, 0, 1, 0,
+  15, 8, 1, 2, 0, 1, 1, 1, 0, 0, 0 }
 
 @28={ ; Synthesizer Bass
 ;       TL FB
@@ -94,7 +94,7 @@
 
 @29={ ; Acoustic Bass
 ;       TL FB
-        22, 3,
+        21, 3,
 ; AR DR SL RR KL MT AM VB EG KR WF
   14, 4, 0, 3, 1, 1, 0, 0, 0, 0, 0,
    9, 0, 0, 2, 0, 1, 0, 0, 0, 0, 0 }
