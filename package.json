@@ -14,7 +14,7 @@
     "eslint-plugin-prettier": "^3.1.1",
     "http-server": "^0.10.0",
     "lamejs": "^1.2.0",
-    "libkss-js": "^0.16.2",
+    "libkss-js": "^0.16.3",
     "mgsc-js": "^1.0.1",
     "object-assign": "^4.1.1",
     "prettier": "^1.18.2",
