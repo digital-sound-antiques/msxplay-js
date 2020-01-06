@@ -1,125 +1,125 @@
-#opll_mode 1
-#tempo 150
-#title { "Estimated YM2413 ROM Instruments"}
+#opll_mode 0
+#tempo 120
 
-@16 = { ; VIOLIN
+@16={ ; Violin
 ;       TL FB
         30, 7,
-; AR DR SL RR KL MT AM VB EG KR DT
-  15, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0,
+; AR DR SL RR KL MT AM VB EG KR WF
+  13, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0,
    7, 8, 1, 7, 0, 1, 0, 1, 1, 0, 1 }
 
-@17 = { ; GUITAR
+@17={ ; Guitar
 ;       TL FB
         26, 5,
-; AR DR SL RR KL MT AM VB EG KR DT
-  15, 8, 2, 3, 0, 3, 0, 0, 0, 1, 1,
+; AR DR SL RR KL MT AM VB EG KR WF
+  13, 8, 2, 3, 0, 3, 0, 0, 0, 1, 1,
   15, 7, 1, 3, 0, 1, 0, 1, 0, 0, 0 }
 
-@18 = { ; PIANO
+@18={ ; Piano
 ;       TL FB
         25, 0,
-; AR DR SL RR KL MT AM VB EG KR DT
-   15, 2, 2, 1, 2, 3, 0, 0, 0, 1, 0,
-   13, 4, 2, 3, 0, 1, 0, 0, 0, 0, 0 }
+; AR DR SL RR KL MT AM VB EG KR WF
+  15, 2, 2, 1, 2, 3, 0, 0, 0, 1, 0,
+  13, 4, 2, 3, 0, 1, 0, 0, 0, 0, 0 }
 
-@19 = { ; FLUTE
+@19={ ; Flute
 ;       TL FB
         14, 7,
-; AR DR SL RR KL MT AM VB EG KR DT
-   15,13, 7, 0, 0, 1, 0, 0, 0, 1, 0,
-    6, 4, 2, 7, 0, 1, 0, 1, 1, 0, 0 }
+; AR DR SL RR KL MT AM VB EG KR WF
+   8,13, 7, 0, 0, 1, 0, 0, 0, 1, 0,
+   6, 4, 2, 7, 0, 1, 0, 1, 1, 0, 0 }
 
-@20 = { ; CLARINET
+@20={ ; Clarinet
 ;       TL FB
         30, 6,
-; AR DR SL RR KL MT AM VB EG KR DT
-   15, 1, 0, 1, 0, 2, 0, 0, 1, 1, 0,
-    7, 6, 2, 8, 0, 1, 0, 0, 1, 0, 0 }
+; AR DR SL RR KL MT AM VB EG KR WF
+  14, 1, 0, 1, 0, 2, 0, 0, 1, 1, 0,
+   7, 6, 2, 8, 0, 1, 0, 0, 1, 0, 0 }
 
-@21 = { ; OBOE
+@21={ ; Oboe
 ;       TL FB
         22, 5,
-; AR DR SL RR KL MT AM VB EG KR DT
-   15, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0,
-    7, 1, 1, 8, 0, 2, 0, 0, 1, 0, 0 }
+; AR DR SL RR KL MT AM VB EG KR WF
+  14, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0,
+   7, 1, 1, 8, 0, 2, 0, 0, 1, 0, 0 }
 
-@22 = { ; TRUMPET
+@22={ ; Trumpet
 ;       TL FB
-        28, 7,
-; AR DR SL RR KL MT AM VB EG KR DT
-    8, 2, 1, 1, 0, 1, 0, 0, 1, 0, 0,
-    8, 1, 0, 7, 0, 1, 0, 1, 1, 0, 0 }
+        29, 7,
+; AR DR SL RR KL MT AM VB EG KR WF
+   8, 2, 1, 1, 0, 1, 0, 0, 1, 0, 0,
+   8, 1, 0, 7, 0, 1, 0, 1, 1, 0, 0 }
 
-@23 = { ; Organ
+@23={ ; Organ
 ;       TL FB
-        45, 6,
-; AR DR SL RR KL MT AM VB EG KR DT
-  11, 0, 0, 0, 0, 3, 0, 0, 1, 0, 0,
+        45, 3,
+; AR DR SL RR KL MT AM VB EG KR WF
+  11, 0, 0, 0, 0, 3, 0, 0, 1, 1, 0,
    7, 0, 0, 7, 0, 1, 0, 0, 1, 0, 1 }
 
-@24 = { ; Horn
+@24={ ; Horn
 ;       TL FB
         27, 6,
-; AR DR SL RR KL MT AM VB EG KR DT
+; AR DR SL RR KL MT AM VB EG KR WF
    6, 4, 1, 0, 0, 1, 0, 1, 1, 0, 0,
    6, 5, 1, 7, 0, 1, 0, 1, 1, 0, 0 }
 
-@25 = { ; Synthe
+@25={ ; Synthesizer
 ;       TL FB
-        11, 2,
-; AR DR SL RR KL MT AM VB EG KR DT
-  13, 5, 7, 1, 0, 1, 0, 1, 0, 0, 1,
+        11, 3,
+; AR DR SL RR KL MT AM VB EG KR WF
+   8, 5, 8, 1, 0, 1, 0, 1, 0, 0, 1,
   15, 0, 0, 7, 0, 1, 0, 1, 1, 0, 1 }
 
-@26 = { ; Harpsicode
+@26={ ; Harpsicode
 ;       TL FB
-         3, 1,
-; AR DR SL RR KL MT AM VB EG KR DT
-  15,10, 1, 0, 2, 3, 0, 0, 1, 1, 0,
+        3, 1,
+; AR DR SL RR KL MT AM VB EG KR WF
+  14,10, 1, 0, 2, 3, 0, 0, 1, 1, 0,
   14,15, 0, 4, 0, 1, 0, 0, 0, 0, 1 }
 
-@27 = { ; Vibraphone
+@27={ ; Vibraphone
 ;       TL FB
         32, 7,
-; AR DR SL RR KL MT AM VB EG KR DT
+; AR DR SL RR KL MT AM VB EG KR WF
   15,14, 2, 2, 0, 7, 0, 0, 0, 1, 0,
   15, 7, 2, 2, 0, 1, 1, 1, 0, 0, 0 }
 
-@28 = { ; Synthesizer Bass
+@28={ ; Synthesizer Bass
 ;       TL FB
         12, 5,
-; AR DR SL RR KL MT AM VB EG KR DT
+; AR DR SL RR KL MT AM VB EG KR WF
   13, 2, 4, 0, 0, 1, 0, 1, 1, 0, 0,
   15, 5, 4, 2, 0, 0, 0, 1, 0, 1, 0 }
 
-@29 = { ; Acoustic Bass
+@29={ ; Acoustic Bass
 ;       TL FB
         22, 3,
-; AR DR SL RR KL MT AM VB EG KR DT
-  15, 4, 0, 3, 1, 1, 0, 0, 0, 0, 0,
+; AR DR SL RR KL MT AM VB EG KR WF
+  14, 4, 0, 3, 1, 1, 0, 0, 0, 0, 0,
    9, 0, 0, 2, 0, 1, 0, 0, 0, 0, 0 }
 
-@30 = { ; Electric Guitar
+@30={ ; Electric Guitar
 ;       TL FB
-         9, 3,
-; AR DR SL RR KL MT AM VB EG KR DT
+        9, 3,
+; AR DR SL RR KL MT AM VB EG KR WF
   15, 1,12, 0, 2, 1, 0, 1, 0, 0, 0,
   14, 4, 1, 3, 0, 1, 0, 1, 0, 0, 0 }
 
-9 v15
-9 o1 [@0c1r4@16c1r4>]8
-9 o1 [@1c1r4@17c1r4>]8
-9 o1 [@2c1r4@18c1r4>]8
-9 o1 [@3c1r4@19c1r4>]8
-9 o1 [@4c1r4@20c1r4>]8
-9 o1 [@5c1r4@21c1r4>]8
-9 o1 [@6c1r4@22c1r4>]8
-9 o1 [@7c1r4@23c1r4>]8
-9 o1 [@8c1r4@24c1r4>]8
-9 o1 [@9c1r4@25c1r4>]8
-9 o1 [@10c1r4@26c1r4>]8
-9 o1 [@11c1r4@27c1r4>]8
-9 o1 [@12c1r4@28c1r4>]8
-9 o1 [@13c1r4@29c1r4>]8
-9 o1 [@14c1r4@30c1r4>]8
+9 v15 l2
+
+9 o1 [@0cr4@16cr4>]8
+9 o1 [@1cr4@17cr4>]8
+9 o1 [@2cr4@18cr4>]8
+9 o1 [@3cr4@19cr4>]8
+9 o1 [@4cr4@20cr4>]8
+9 o1 [@5cr4@21cr4>]8
+9 o1 [@6cr4@22cr4>]8
+9 o1 [@7cr4@23cr4>]8
+9 o1 [@8cr4@24cr4>]8
+9 o1 [@9cr4@25cr4>]8
+9 o1 [@10cr4@26cr4>]8
+9 o1 [@11cr4@27cr4>]8
+9 o1 [@12cr4@28cr4>]8
+9 o1 [@13cr4@29cr4>]8
+9 o1 [@14cr4@30cr4>]8
