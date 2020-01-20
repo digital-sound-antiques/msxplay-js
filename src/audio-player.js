@@ -136,7 +136,7 @@ export default class AudioPlayer {
     this.dummyNode.start(0);
     this.dummyNode.connect(this.scriptNode);
     this.renderSpeed = 0.0;
-    this._render(this.sampleRate); // pre-buffer 1.0s
+    this._render(this.sampleRate * 2); // pre-buffer 2.0s
     this.lastOnRenderAt = Date.now();
     this.timerId = setInterval(this.onRender.bind(this), 0);
     this._changeState("playing");
