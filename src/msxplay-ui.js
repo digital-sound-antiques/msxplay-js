@@ -1,6 +1,7 @@
 import { KSS } from "libkss-js";
 import MGSC from "mgsc-js";
 import MSXPlay from "./msxplay";
+import mgs2mml from "mgsrc-js";
 
 function zeroPadding(num) {
   return ("00" + num).slice(-2);
@@ -39,6 +40,10 @@ class MSXPlayUI {
 
   compile(mml) {
     return MGSC.compile(mml);
+  }
+
+  decompile(mgs) {
+    return mgs2mml(mgs);
   }
 
   install(rootElement) {

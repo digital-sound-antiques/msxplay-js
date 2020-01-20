@@ -241,10 +241,27 @@ async function loadFromUrl(url) {
 function loadFromFile(file, complete) {
   var reader = new FileReader();
   reader.onloadend = function() {
-    loadText(reader.result);
+    const u = new Uint8Array(reader.result);
+    let text = null;
+    if (String.fromCharCode(u[0], u[1], u[2]) === "MGS") {
+      try {
+        text = `;[gain=1.0 name=${file.name} duration=300s fade=5s]
+${MSXPlayUI.decompile(reader.result)}
+`;
+      } catch (e) {
+        document.querySelector("#generic-error .message").innerText = e.message;
+        showDialog("generic-error");
+        return;
+      }
+    } else {
+      text = new TextDecoder().decode(reader.result);
+    }
+    if (text) {
+      loadText(text);
+    }
     if (complete) complete();
   };
-  reader.readAsText(file);
+  reader.readAsArrayBuffer(file);
 }
 
 function openFile(e) {
