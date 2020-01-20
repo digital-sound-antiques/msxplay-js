@@ -64,7 +64,7 @@
     </section>
 
     <section class="actions">
-      <input id="open-file" type="file" accept=".mml,.mus,.txt" style="display:none;" />
+      <input id="open-file" type="file" accept=".mml,.mus,.txt,.mgs" style="display:none;" />
       <button onclick="document.getElementById('open-file').click();">
         <p><i class="material-icons">folder</i> File</p>
       </button>
@@ -199,6 +199,17 @@
         </div>
         <div class="button-area">
           <div class="button" data-value="ok">OK</div>
+        </div>
+      </div>
+
+      <div id="mgsrc-legacy-warn" class="dialog" style="width:280px">
+        <div class="content">
+          <p lang="ja">v3.00のMGSデータです。MMLへの変換は不完全です。続行しますか？</p>
+          <p lang="en">Legacy v3.00 MGS. MML conversion is possible but incomplete. Continue?</p>
+        </div>
+        <div class="button-area">
+          <div class="button" data-value="ok">YES</div>
+          <div class="button" data-value="cancel">NO</div>
         </div>
       </div>
 

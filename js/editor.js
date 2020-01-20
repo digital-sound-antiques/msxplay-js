@@ -238,30 +238,45 @@ async function loadFromUrl(url) {
   loadText(mml);
 }
 
-function loadFromFile(file, complete) {
+function convertFromMGS(buffer) {
+  try {
+    return MSXPlayUI.decompile(buffer);
+  } catch (e) {
+    document.querySelector("#generic-error .message").innerText = e.message;
+    showDialog("generic-error");
+  }
+  return null;
+}
+
+async function loadFromFile(file) {
   var reader = new FileReader();
-  reader.onloadend = function() {
-    const u = new Uint8Array(reader.result);
-    let text = null;
-    if (String.fromCharCode(u[0], u[1], u[2]) === "MGS") {
-      try {
-        text = `;[gain=1.0 name=${file.name} duration=300s fade=5s]
-${MSXPlayUI.decompile(reader.result)}
-`;
-      } catch (e) {
-        document.querySelector("#generic-error .message").innerText = e.message;
-        showDialog("generic-error");
-        return;
+  return new Promise((resolve, _) => {
+    reader.onloadend = async () => {
+      const u = new Uint8Array(reader.result);
+      if (String.fromCharCode(u[0], u[1], u[2]) === "MGS") {
+        if (String.fromCharCode(u[3], u[4], u[5]) === "300") {
+          const ret = await showDialogAsync("mgsrc-legacy-warn");
+          if (ret !== "ok") {
+            resolve(false);
+            return;
+          }
+        }
+        const mml = convertFromMGS(reader.result);
+        if (mml) {
+          loadText(`;[gain=1.0 name=${file.name} duration=300s fade=5s]\n${mml}`);
+          resolve(true);
+        }
+      } else {
+        const mml = new TextDecoder().decode(reader.result);
+        if (mml) {
+          loadText(mml);
+          resolve(true);
+        }
       }
-    } else {
-      text = new TextDecoder().decode(reader.result);
-    }
-    if (text) {
-      loadText(text);
-    }
-    if (complete) complete();
-  };
-  reader.readAsArrayBuffer(file);
+      resolve(false);
+    };
+    reader.readAsArrayBuffer(file);
+  });
 }
 
 function openFile(e) {
@@ -462,6 +477,10 @@ function download() {
 
 var dialogListener;
 
+async function showDialogAsync(id) {
+  return new Promise((resolve, _) => showDialog(id, resolve));
+}
+
 function showDialog(id, complete) {
   var dialog = document.getElementById(id);
   var stage = document.getElementById("modal-stage");
@@ -520,12 +539,14 @@ function onDragLeave(e) {
   }
 }
 
-function onDrop(e) {
+async function onDrop(e) {
   dragCounter = 0;
   document.getElementById("editor").style.borderColor = null;
   e.preventDefault();
   if (0 < e.dataTransfer.files.length) {
-    loadFromFile(e.dataTransfer.files[0], compile);
+    if (await loadFromFile(e.dataTransfer.files[0])) {
+      compile();
+    }
   }
 }
 
