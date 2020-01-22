@@ -253,8 +253,9 @@ async function loadFromFile(file) {
   return new Promise((resolve, _) => {
     reader.onloadend = async () => {
       const u = new Uint8Array(reader.result);
-      if (String.fromCharCode(u[0], u[1], u[2]) === "MGS") {
-        if (String.fromCharCode(u[3], u[4], u[5]) === "300") {
+      let version = 6 < u.length ? String.fromCharCode(u[0], u[1], u[2], u[3], u[4], u[5]) : null;
+      if (version && version.indexOf("MGS" === 0)) {
+        if (/[3A](00|01|02|03)$/.test(version)) {
           const ret = await showDialogAsync("mgsrc-legacy-warn");
           if (ret !== "ok") {
             resolve(false);
@@ -263,7 +264,7 @@ async function loadFromFile(file) {
         }
         const mml = convertFromMGS(reader.result);
         if (mml) {
-          loadText(`;[gain=1.0 name=${file.name} duration=300s fade=5s]\n${mml}`);
+          loadText(`;[gain=1.0 name=${file.name} duration=300s fade=5s]\n;${mml}`);
           resolve(true);
         }
       } else {
