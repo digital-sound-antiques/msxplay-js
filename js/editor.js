@@ -264,7 +264,7 @@ async function loadFromFile(file) {
         }
         const mml = convertFromMGS(reader.result);
         if (mml) {
-          loadText(`;[gain=1.0 name=${file.name} duration=300s fade=5s]\n;${mml}`);
+          loadText(`;[gain=1.0 name=${file.name} duration=300s fade=5s]\n${mml}`);
           resolve(true);
         }
       } else {
