@@ -254,7 +254,7 @@ async function loadFromFile(file) {
     reader.onloadend = async () => {
       const u = new Uint8Array(reader.result);
       let version = 6 < u.length ? String.fromCharCode(u[0], u[1], u[2], u[3], u[4], u[5]) : null;
-      if (version && version.indexOf("MGS" === 0)) {
+      if (version && version.indexOf("MGS") === 0) {
         if (/[3A](00|01|02|03)$/.test(version)) {
           const ret = await showDialogAsync("mgsrc-legacy-warn");
           if (ret !== "ok") {
