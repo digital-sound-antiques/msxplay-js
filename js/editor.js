@@ -268,7 +268,7 @@ async function loadFromFile(file) {
           resolve(true);
         }
       } else {
-        const mml = new TextDecoder().decode(reader.result);
+        const mml = MSXPlayUI.decode_text(u);
         if (mml) {
           loadText(mml);
           resolve(true);

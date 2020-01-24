@@ -2,6 +2,7 @@ import { KSS } from "libkss-js";
 import MGSC from "mgsc-js";
 import MSXPlay from "./msxplay";
 import mgs2mml from "mgsrc-js";
+import Encoding from "encoding-japanese";
 
 function zeroPadding(num) {
   return ("00" + num).slice(-2);
@@ -36,6 +37,11 @@ class MSXPlayUI {
 
   audio_encode(type, data, song, callback, opts) {
     this.msxplay.audio_encode(type, data, song, callback, opts);
+  }
+
+  decode_text(data) {
+    const encode = Encoding.detect(data);
+    return Encoding.convert(data, { to: "UNICODE", from: encode, type: "string" });
   }
 
   compile(mml) {
