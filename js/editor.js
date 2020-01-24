@@ -9,7 +9,8 @@ async function loadTextFromUrl(url, complete) {
     }
   });
   if (res.ok) {
-    return await res.text();
+    const buf = await res.arrayBuffer();
+    return MSXPlayUI.decode_text(new Uint8Array(buf));
   }
   throw new Error(res.statusText);
 }
