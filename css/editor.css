@@ -13,6 +13,40 @@ body {
   bottom: 100px;
 }
 
+#editor-cover {
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  top: 0px;
+  bottom: 0px;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  visibility: hidden;
+  z-index: 101;
+}
+
+#editor-cover .button {
+  padding: 24px 32px 24px 24px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  color: #0080ff;
+  font-size: 24px;
+  background-color: #fff;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+#editor-cover .button i {
+  font-size: 48px;
+}
+
+#editor-cover .button:hover {
+  background-color: #f0f0f0;
+}
+
 #editor-tab {
   display: block;
   margin-top: 20px;

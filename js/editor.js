@@ -24,7 +24,7 @@ function getShareUrl(id) {
   return `https://msxplay.com?open=${id}`;
 }
 
-async function openMML(key) {
+async function openExternalMML(key) {
   try {
     showDialog("loading");
     if (key.indexOf("http") === 0) {
@@ -36,10 +36,11 @@ async function openMML(key) {
     if (!compile(false)) {
       throw new Error("Failed to compile the MML file.");
     }
+    document.getElementById("editor-cover").style.visibility = "visible";
   } catch (e) {
     hideDialog();
     const p = document.querySelector("#generic-error p");
-    p.innerText = e.message;
+    p.innerText = "Load Error";
     showDialog("generic-error");
   }
 }
@@ -172,6 +173,12 @@ function getMetaMMLInfo(mml) {
   }
 
   return result;
+}
+
+function editorCoverButtonPressed() {
+  document.getElementById("editor-cover").style.display = "none";
+  var player = document.getElementById("player");
+  MSXPlayUI.play(player);
 }
 
 function compile(autoplay) {
@@ -591,7 +598,7 @@ window.addEventListener("DOMContentLoaded", function() {
   var openTarget = query["open"];
   if (openTarget) {
     window.history.replaceState(null, null, `${location.pathname}`);
-    openMML(openTarget);
+    openExternalMML(openTarget);
   } else if (localStorage.getItem(AUTOBACKUP_KEY)) {
     restoreFromLocalStorage();
   } else {

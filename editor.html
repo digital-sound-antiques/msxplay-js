@@ -27,7 +27,7 @@
     <link href="css/editor.css" rel="stylesheet" type="text/css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.6/ace.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.6/theme-xcode.js"></script>
-    
+
     <script>
       (function(i, s, o, g, r, a, m) {
         i["GoogleAnalyticsObject"] = r;
@@ -96,6 +96,12 @@
       <pre></pre>
     </div>
     <div id="player" class="msxplay bottom-fixed"></div>
+
+    <div id="editor-cover" onclick="editorCoverButtonPressed()">
+      <div class="button" onclick="editorCoverButtonPressed()">
+        <i class="material-icons" style="vertical-align:middle;">play_circle_outline</i> TAP to PLAY
+      </div>
+    </div>
 
     <!-- Dialogs -->
 
@@ -205,7 +211,9 @@
       <div id="mgsrc-legacy-warn" class="dialog" style="width:280px">
         <div class="content">
           <p lang="ja">古いMGSデータです。変換後のMMLはコンパイルできない可能性があります。続行しますか？</p>
-          <p lang="en">Legacy MGS binary. It can be decompiled to MML but is not possibly ready for re-compile. Continue?</p>
+          <p lang="en">
+            Legacy MGS binary. It can be decompiled to MML but is not possibly ready for re-compile. Continue?
+          </p>
         </div>
         <div class="button-area">
           <div class="button" data-value="ok">YES</div>
@@ -222,7 +230,7 @@
           <div class="button" data-value="ok">OK</div>
         </div>
       </div>
-     
+
       <div id="empty-error-on-share" class="dialog" style="width:280px">
         <div class="content">
           <p lang="ja">空のファイルはシェアできません。</p>
