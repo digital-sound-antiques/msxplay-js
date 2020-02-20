@@ -87,7 +87,25 @@ export default class MSXPlay {
     if (options.gain != null) {
       this.audioPlayer.setOutputGain(Number.isNaN(options.gain) ? 1.0 : options.gain);
     }
+    if (options.debug_mgs) {
+      this._skipToDebugMarker();
+    }
   }
+
+  _skipToDebugMarker() {
+    const interval = Math.floor(this.sampleRate / 60);
+    const maxTick = (this.sampleRate * this.maxPlayTime) / 1000;
+    let tick = 0;
+    while (tick <= maxTick) {
+      this.kssplay.calcSilent(interval);
+      const jumpct = this.kssplay.getMGSJumpCount();
+      if (jumpct != 0) {
+        break;
+      }
+      tick += interval;
+    }
+  }
+
   play() {
     this.audioPlayer.play(this.maxPlayTime);
   }

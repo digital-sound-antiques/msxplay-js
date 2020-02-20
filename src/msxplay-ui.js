@@ -1,7 +1,7 @@
 import { KSS } from "libkss-js";
 import MGSC from "mgsc-js";
 import MSXPlay from "./msxplay";
-import mgs2mml from "mgsrc-js";
+import mgs2mml, { getJumpMarkerCount } from "mgsrc-js";
 import Encoding from "encoding-japanese";
 
 function zeroPadding(num) {
@@ -50,6 +50,10 @@ class MSXPlayUI {
 
   decompile(mgs) {
     return mgs2mml(mgs);
+  }
+
+  checkMGSJumpMarker(mgs) {
+    return getJumpMarkerCount(mgs);
   }
 
   install(rootElement) {
@@ -224,12 +228,14 @@ class MSXPlayUI {
     var duration = parseTime(playerElement.dataset.duration);
     var fade = parseFloat(playerElement.dataset.fade);
     var gain = parseFloat(playerElement.dataset.gain);
+    var debug_mgs = parseInt(playerElement.dataset.debug_mgs);
     var kss = KSS.hashMap[hash];
     if (kss) {
       this.msxplay.setData(kss, song, {
         duration: duration,
         fade: fade,
-        gain: gain
+        gain: gain,
+        debug_mgs: debug_mgs
       });
       this.msxplay.play();
       this.currentPlayerElement = playerElement;

@@ -223,6 +223,16 @@ function compile(autoplay) {
   if (info.fade) player.dataset.fade = info.fade;
   if (info.gain) player.dataset.gain = info.gain;
 
+  let toArrayBuffer = u8a => u8a.buffer.slice(u8a.byteOffset);
+
+  try {
+    if (0 < MSXPlayUI.checkMGSJumpMarker(toArrayBuffer(result.mgs))) {
+      player.dataset.debug_mgs = 1;
+    }
+  } catch (e) {
+    console.error(e);
+  }
+
   if (autoplay) {
     MSXPlayUI.play(player);
   }
