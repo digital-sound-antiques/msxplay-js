@@ -226,9 +226,8 @@ function compile(autoplay) {
   let toArrayBuffer = u8a => u8a.buffer.slice(u8a.byteOffset);
 
   try {
-    if (0 < MSXPlayUI.checkMGSJumpMarker(toArrayBuffer(result.mgs))) {
-      player.dataset.debug_mgs = 1;
-    }
+    const jumps = MSXPlayUI.checkMGSJumpMarker(toArrayBuffer(result.mgs));
+    player.dataset.debug_mgs = 0 < jumps ? 1 : 0;
   } catch (e) {
     console.error(e);
   }
