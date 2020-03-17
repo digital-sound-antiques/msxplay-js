@@ -1,0 +1,43 @@
+;[gain=1.0 name=sample duration=300s fade=5s]
+; The line above defines the extra options for MSXplay. 
+; gain    : The volume gain of the playback. It is just linear multiplier, not dB.
+; name    : The name of the mml, use as the base download filename.
+; duration: The length of the song.
+; fade    : The time of fade out.
+#opll_mode 1
+#tempo 120
+#title { "PSG+FM Tiny Sample"}
+
+@v15 = {
+;       TL FB
+        10, 4,
+; AR DR SL RR KL MT AM VB EG KR DT
+  12, 5, 2, 1, 2, 1, 0, 0, 0, 0, 0,
+  14, 5, 2, 3, 0, 1, 0, 0, 0, 0, 0 }
+
+@e0 = {2,31,fn8.0=26}
+@e1 = {2,0,e0=24}
+
+19abcdef [
+
+9a @15v14l16q6
+a \-2
+9a o2 [ e8>e<e>>d<q2eq6d>e<<d>e<q2dq6db>>c&d<<e  ]4  
+9a o2 [ d8>d<d>>c<q2dq6c>d<<c>d<q2cq6ca>a+&>c<<d ]2
+9a o2 [ e8>e<e>>d<q2eq6d>e<<d>e<q2dq6db>>c&d<<e  ]2   
+
+bcd @15v13o5l16q7
+b [b8rb8rb8rb8rbr>c8<]2 br2...r1
+c [g8rg8rg8rg8rgrg8 ]2  gr2...r1
+d [e8re8re8re8rerd+8]2  er2...r1
+b [a8ra8ra8ra8rara+8]2  br2...r1
+c [f8rf8rf8rf8rfrf+8]2  gr2...r1
+d [d8rd8rd8rd8rdrd+8]2  dr2...r1
+
+f vb15vs15vh12vc10l16
+f [cb8h:h:s8h:vs-2sh:vs+2cb:s:h:h:|bs8h:h:]4 cs:s:cs:s:
+
+1 l16v13@0
+1 [@1c4@0c4rv-3cv+3r8|c4]4 cccc
+
+19abcdf ]0
