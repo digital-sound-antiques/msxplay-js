@@ -15,11 +15,11 @@ function rawToWav(rate, data) {
   view.setUint16(20, 1, true); // WAVE_FORMAT_PCM
   view.setUint16(22, nch, true); // channels=1
   view.setUint32(24, rate, true); // samples per sec
-  view.setUint32(28, 4 * rate, true); // byte per sec
+  view.setUint32(28, nch * 2 * rate, true); // byte per sec
   view.setUint16(32, blockSize, true); // block size
   view.setUint16(34, nch * bit, true); // bit per sample
   view.setUint32(36, 0x64617461); // 'data'
-  view.setUint32(40, blockSize * data.length); // 'data'
+  view.setUint32(40, blockSize * data.length, true); // 'data'
 
   const wavbuf = new DataView(buf, 44);
   for (let i = 0; i < data.length; i++) {
