@@ -78,7 +78,7 @@ export default class MSXPlay {
       this.kssplay = null;
     }
     this.kssplay = new KSSPlay(this.sampleRate);
-    this.kssplay.setRCF(0, 0);
+    this.kssplay.setRCF(3870, 15);
     this.kssplay.setSilentLimit(5000);
     this.kssplay.setDeviceQuality({ psg: 1, scc: 0, opll: 1, opl: 1 });
     this.kssplay.setData(kss);
