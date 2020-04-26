@@ -438,8 +438,8 @@ function downloadAudio(type, rate, kbps, quality) {
     fadeTime: info.fade || 3000,
     sampleRate: rate,
     bitRate: kbps,
-    quality: quality,
-    rcf: { registor: 3870, capacitor: 15 },
+    quality: quality
+    // rcf: { registor: 3870, capacitor: 15 },
   };
 
   var filename;
