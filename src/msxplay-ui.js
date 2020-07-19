@@ -32,6 +32,7 @@ class MSXPlayUI {
   constructor() {
     this.msxplay = new MSXPlay();
     this.playerElements = [];
+    this.unmuteTried = false;
     setInterval(this.updateDisplay.bind(this), 100);
   }
 
@@ -152,23 +153,23 @@ class MSXPlayUI {
     playerElement.insertAdjacentHTML(
       "afterbegin",
       '<div class="leftbox"></div>' +
-        '<div class="rightbox">' +
-        '    <div class="title"></div>' +
-        '    <div class="spinner">' +
-        '       <div class="button next"></div>' +
-        '       <div class="number"></div>' +
-        '       <div class="button prev"></div>' +
-        "    </div>" +
-        '    <div class="slider">' +
-        '	    <div class="playtime">0:00</div>' +
-        '       <div class="duration">?:??</div>' +
-        '		<div class="track">' +
-        '			<div class="buffered"></div>' +
-        ' 		    <div class="progress"></div>' +
-        "		</div>" +
-        "	 </div>" +
-        "</div>" +
-        '<div class="footer"></div>'
+      '<div class="rightbox">' +
+      '    <div class="title"></div>' +
+      '    <div class="spinner">' +
+      '       <div class="button next"></div>' +
+      '       <div class="number"></div>' +
+      '       <div class="button prev"></div>' +
+      "    </div>" +
+      '    <div class="slider">' +
+      '	    <div class="playtime">0:00</div>' +
+      '       <div class="duration">?:??</div>' +
+      '		<div class="track">' +
+      '			<div class="buffered"></div>' +
+      ' 		    <div class="progress"></div>' +
+      "		</div>" +
+      "	 </div>" +
+      "</div>" +
+      '<div class="footer"></div>'
     );
 
     if (playerElement.dataset.url) {
@@ -221,6 +222,23 @@ class MSXPlayUI {
     }
   }
 
+  // unmute for mobile browsers
+  // https://stackoverflow.com/questions/21122418/ios-webaudio-only-works-on-headphones/46839941#46839941
+  unmute() {
+    if (this.unmuteTried) {
+      return;
+    }
+    const silenceDataURL = "data:audio/mp3;base64,//MkxAAHiAICWABElBeKPL/RANb2w+yiT1g/gTok//lP/W/l3h8QO/OCdCqCW2Cw//MkxAQHkAIWUAhEmAQXWUOFW2dxPu//9mr60ElY5sseQ+xxesmHKtZr7bsqqX2L//MkxAgFwAYiQAhEAC2hq22d3///9FTV6tA36JdgBJoOGgc+7qvqej5Zu7/7uI9l//MkxBQHAAYi8AhEAO193vt9KGOq+6qcT7hhfN5FTInmwk8RkqKImTM55pRQHQSq//MkxBsGkgoIAABHhTACIJLf99nVI///yuW1uBqWfEu7CgNPWGpUadBmZ////4sL//MkxCMHMAH9iABEmAsKioqKigsLCwtVTEFNRTMuOTkuNVVVVVVVVVVVVVVVVVVV//MkxCkECAUYCAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV";
+    const tag = document.createElement("audio");
+    tag.controls = false;
+    tag.preload = "auto";
+    tag.loop = false;
+    tag.src = silenceDataURL;
+    const p = tag.play();
+    if (p) p.then(function () { console.log("play success") }, function (reason) { console.log("play failed", reason) });
+    this.unmuteTried = true;
+  }
+
   play(playerElement) {
     this.stop();
     var hash = playerElement.dataset.hash;
@@ -231,6 +249,7 @@ class MSXPlayUI {
     var debug_mgs = parseInt(playerElement.dataset.debug_mgs);
     var kss = KSS.hashMap[hash];
     if (kss) {
+      this.unmute();
       this.msxplay.setData(kss, song, {
         duration: duration,
         fade: fade,
