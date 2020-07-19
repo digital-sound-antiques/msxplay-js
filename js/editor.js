@@ -55,7 +55,11 @@ async function getShareLink(mml) {
     },
     body: mml
   });
-  const { id } = await res.json();
+  const { id, url } = await res.json();
+  if (url != null) {
+    return url;
+  }
+  // old version
   return getShareUrl(id);
 }
 
