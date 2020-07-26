@@ -58,6 +58,7 @@ class MSXPlayUI {
   }
 
   async install(rootElement) {
+    await MGSC.initialize();
     await MSXPlay.initialize();
     const players = rootElement.querySelectorAll(".msxplay");
     for (let i = 0; i < players.length; i++) {
