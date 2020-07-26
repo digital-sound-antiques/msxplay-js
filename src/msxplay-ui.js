@@ -9,14 +9,14 @@ function zeroPadding(num) {
 }
 
 function timeToString(timeInMs) {
-  var timeInSec = Math.floor(timeInMs / 1000);
+  const timeInSec = Math.floor(timeInMs / 1000);
   return Math.floor(timeInSec / 60) + ":" + zeroPadding(timeInSec % 60);
 }
 
 function parseTime(str) {
   if (!str) return null;
 
-  var m = str.match(/^(.*)ms$/);
+  let m = str.match(/^(.*)ms$/);
   if (m) {
     return parseFloat(m[1]);
   }
@@ -57,9 +57,10 @@ class MSXPlayUI {
     return getJumpMarkerCount(mgs);
   }
 
-  install(rootElement) {
-    var players = rootElement.querySelectorAll(".msxplay");
-    for (var i = 0; i < players.length; i++) {
+  async install(rootElement) {
+    await MSXPlay.initialize();
+    const players = rootElement.querySelectorAll(".msxplay");
+    for (let i = 0; i < players.length; i++) {
       this.attach(players[i]);
     }
   }
@@ -71,14 +72,14 @@ class MSXPlayUI {
   }
 
   detach(playerElement) {
-    var i = this.playerElements.indexOf(playerElement);
+    const i = this.playerElements.indexOf(playerElement);
     if (0 <= i) {
       this.playerElements.splice(i, 1);
     }
   }
 
   createPlayerFromUrl(url) {
-    var playerElement = document.createElement("div");
+    const playerElement = document.createElement("div");
     playerElement.classList.add("msxplay");
     playerElement.dataset.gain = "1.0";
     playerElement.dataset.url = url;
@@ -86,10 +87,10 @@ class MSXPlayUI {
   }
 
   createPlayer(data, url) {
-    var m = (url || "").match(/([^/]+)$/);
-    var name = m ? m[1] : null;
-    var kss = KSS.createUniqueInstance(new Uint8Array(data), name);
-    var playerElement = document.createElement("div");
+    const m = (url || "").match(/([^/]+)$/);
+    const name = m ? m[1] : null;
+    const kss = KSS.createUniqueInstance(new Uint8Array(data), name);
+    const playerElement = document.createElement("div");
     playerElement.classList.add("msxplay");
     playerElement.dataset.gain = "1.0";
     playerElement.dataset.url = url;
@@ -99,7 +100,7 @@ class MSXPlayUI {
   }
 
   onClickPlayer(event) {
-    var playerElement = event.target;
+    let playerElement = event.target;
     while (playerElement) {
       if (playerElement.classList.contains("msxplay")) break;
       playerElement = playerElement.parentNode;
@@ -121,11 +122,11 @@ class MSXPlayUI {
       }
     } else if (event.target.classList.contains("track")) {
       if (playerElement == this.currentPlayerElement) {
-        var pos = Math.floor((this.msxplay.getTotalTime() * event.offsetX) / event.target.offsetWidth);
+        const pos = Math.floor((this.msxplay.getTotalTime() * event.offsetX) / event.target.offsetWidth);
         this.msxplay.seekTo(pos);
       }
     } else if (event.target.classList.contains("next")) {
-      var song = (parseInt(playerElement.dataset.song) + (event.shiftKey ? 10 : 1)) % 256;
+      const song = (parseInt(playerElement.dataset.song) + (event.shiftKey ? 10 : 1)) % 256;
       playerElement.dataset.song = song;
       playerElement.querySelector(".number").textContent = zeroPadding(song.toString(16));
       playerElement.dataset.duration = null;
@@ -133,7 +134,7 @@ class MSXPlayUI {
         this.play(playerElement);
       }
     } else if (event.target.classList.contains("prev")) {
-      var song = (parseInt(playerElement.dataset.song) + (event.shiftKey ? 246 : 255)) % 256;
+      const song = (parseInt(playerElement.dataset.song) + (event.shiftKey ? 246 : 255)) % 256;
       playerElement.dataset.song = song;
       playerElement.querySelector(".number").textContent = zeroPadding(song.toString(16));
       playerElement.dataset.duration = null;
@@ -144,7 +145,7 @@ class MSXPlayUI {
   }
 
   setDataToPlayer(playerElement, data, name) {
-    var kss = KSS.createUniqueInstance(data, name);
+    const kss = KSS.createUniqueInstance(data, name);
     setKSSToPlayerElement(playerElement, kss, name);
   }
 
@@ -186,18 +187,14 @@ class MSXPlayUI {
   }
 
   async loadKSS(playerElement) {
-    var hash = playerElement.dataset.hash;
+    const hash = playerElement.dataset.hash;
     if (hash) {
-      var kss = KSS.hashMap[hash];
+      const kss = KSS.hashMap[hash];
       setKSSToPlayerElement(playerElement, kss, playerElement.dataset.url);
     } else {
-      var url = playerElement.dataset.url;
-      var kss = await new Promise((resolve, reject) => {
-        KSS.loadFromUrl(url, kss => {
-          setKSSToPlayerElement(playerElement, kss, url);
-          resolve(kss);
-        });
-      });
+      const url = playerElement.dataset.url;
+      const kss = await KSS.loadFromUrl(url);
+      setKSSToPlayerElement(playerElement, kss, url);
     }
   }
 
@@ -207,13 +204,13 @@ class MSXPlayUI {
       this.currentPlayerElement.classList.remove("active");
       this.currentPlayerElement = null;
     }
-    for (var i = 0; i < this.playerElements.length; i++) {
-      var playerElement = this.playerElements[i];
+    for (let i = 0; i < this.playerElements.length; i++) {
+      const playerElement = this.playerElements[i];
       setPlayerState(playerElement, "standby");
       playerElement.querySelector(".buffered").style.width = 0;
       playerElement.querySelector(".progress").style.width = 0;
       playerElement.querySelector(".playtime").textContent = "0:00";
-      var duration = parseTime(playerElement.dataset.duration);
+      const duration = parseTime(playerElement.dataset.duration);
       if (duration) {
         playerElement.querySelector(".duration").textContent = timeToString(duration);
       } else {
@@ -241,13 +238,13 @@ class MSXPlayUI {
 
   play(playerElement) {
     this.stop();
-    var hash = playerElement.dataset.hash;
-    var song = parseInt(playerElement.dataset.song);
-    var duration = parseTime(playerElement.dataset.duration);
-    var fade = parseFloat(playerElement.dataset.fade);
-    var gain = parseFloat(playerElement.dataset.gain);
-    var debug_mgs = parseInt(playerElement.dataset.debug_mgs);
-    var kss = KSS.hashMap[hash];
+    const hash = playerElement.dataset.hash;
+    const song = parseInt(playerElement.dataset.song);
+    const duration = parseTime(playerElement.dataset.duration);
+    const fade = parseFloat(playerElement.dataset.fade);
+    const gain = parseFloat(playerElement.dataset.gain);
+    const debug_mgs = parseInt(playerElement.dataset.debug_mgs);
+    const kss = KSS.hashMap[hash];
     if (kss) {
       this.unmute();
       this.msxplay.setData(kss, song, {
@@ -274,10 +271,10 @@ class MSXPlayUI {
   }
 
   updatePlayerStatus(playerElement) {
-    var played = this.msxplay.getPlayedTime();
-    var buffered = this.msxplay.getBufferedTime();
-    var total = this.msxplay.getTotalTime();
-    var renderSpeed = this.msxplay.getRenderSpeed().toFixed(1);
+    const played = this.msxplay.getPlayedTime();
+    const buffered = this.msxplay.getBufferedTime();
+    const total = this.msxplay.getTotalTime();
+    const renderSpeed = this.msxplay.getRenderSpeed().toFixed(1);
     playerElement.querySelector(".playtime").textContent = timeToString(played);
     if (buffered < total) {
       playerElement.querySelector(".playtime").textContent += " buffering... (x" + renderSpeed + ") ";
@@ -302,7 +299,7 @@ class MSXPlayUI {
 
 function setKSSToPlayerElement(playerElement, kss, url) {
   if (kss instanceof KSS) {
-    var title = playerElement.dataset.title || kss.getTitle();
+    let title = playerElement.dataset.title || kss.getTitle();
     if (/^[\u0000-\u0020]*$/.test(title)) {
       title = url.replace(/^.*[/\\]/, "");
     }

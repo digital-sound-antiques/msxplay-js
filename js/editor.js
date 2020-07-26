@@ -97,7 +97,7 @@ async function share() {
 
 // Prevent unexpected location change.
 var contentChanged = false;
-window.addEventListener("beforeunload", function(event) {
+window.addEventListener("beforeunload", function (event) {
   if (contentChanged) {
     storeToLocalStorage();
   }
@@ -117,7 +117,7 @@ function createAceEditor() {
     editor.setOptions({
       indentedSoftWrap: false
     });
-    editor.on("change", function() {
+    editor.on("change", function () {
       contentChanged = true;
     });
   } catch (e) {
@@ -308,7 +308,7 @@ function openFile(e) {
 }
 
 function clearFile(e) {
-  showDialog("confirm-clear", function(value) {
+  showDialog("confirm-clear", function (value) {
     if (value == "ok") {
       editor.setValue("", -1);
       clearLocalStorage();
@@ -355,7 +355,7 @@ function restoreFromLocalStorage() {
   contentChanged = false;
 }
 
-document.addEventListener("keydown", function(e) {
+document.addEventListener("keydown", function (e) {
   if (e.keyCode == 83 && (e.metaKey || e.ctrlKey)) {
     e.preventDefault();
     storeToLocalStorage();
@@ -368,7 +368,7 @@ document.addEventListener("keydown", function(e) {
   }
 });
 
-var saveAs = function(blob, fileName) {
+var saveAs = function (blob, fileName) {
   var a = document.getElementById("download-helper");
   var url = a.href;
   if (url) {
@@ -395,7 +395,7 @@ function audio_encode(type, mgs, filename, opts) {
     type,
     mgs,
     0,
-    function(time, data, done) {
+    function (time, data, done) {
       var elapsed = Date.now() - start;
       var speed = time / elapsed;
 
@@ -431,7 +431,7 @@ function downloadAudio(type, rate, kbps, quality) {
     return;
   }
 
-  showDialog("encoding", function() {
+  showDialog("encoding", function () {
     abortEncode = true;
   });
   abortEncode = false;
@@ -477,7 +477,7 @@ function download() {
     return;
   }
 
-  showDialog("download-type", function(e) {
+  showDialog("download-type", function (e) {
     if (e === "mml") {
       downloadMML();
     } else if (e === "mgs") {
@@ -507,7 +507,7 @@ async function showDialogAsync(id) {
 function showDialog(id, complete) {
   var dialog = document.getElementById(id);
   var stage = document.getElementById("modal-stage");
-  dialogListener = function(e) {
+  dialogListener = function (e) {
     var target = e.target;
     while (target) {
       if (target.dataset && target.dataset.value) {
@@ -574,48 +574,49 @@ async function onDrop(e) {
 }
 
 function selectSample() {
-  showDialog("select-sample", function(value) {
+  showDialog("select-sample", function (value) {
     if (value != "cancel") {
       loadFromUrl(value);
     }
   });
 }
 
-window.addEventListener("DOMContentLoaded", function() {
-  var elem = document.body;
+window.addEventListener("DOMContentLoaded", function () {
+  const elem = document.body;
   elem.addEventListener("dragover", onDragOver);
   elem.addEventListener("dragenter", onDragEnter);
   elem.addEventListener("dragleave", onDragLeave);
   elem.addEventListener("drop", onDrop);
 
-  MSXPlayUI.install(document.body);
-  createAceEditor();
+  MSXPlayUI.install(document.body).then(() => {
+    createAceEditor();
 
-  document.getElementById("open-file").addEventListener("change", openFile);
+    document.getElementById("open-file").addEventListener("change", openFile);
 
-  var mbox = document.getElementById("message");
-  mbox.addEventListener(
-    "click",
-    function(e) {
-      if (mbox.classList.contains("minimized")) {
-        mbox.classList.remove("minimized");
-      } else {
-        if (e.target == document.querySelector("#message .title")) {
-          mbox.classList.add("minimized");
+    const mbox = document.getElementById("message");
+    mbox.addEventListener(
+      "click",
+      function (e) {
+        if (mbox.classList.contains("minimized")) {
+          mbox.classList.remove("minimized");
+        } else {
+          if (e.target == document.querySelector("#message .title")) {
+            mbox.classList.add("minimized");
+          }
         }
-      }
-    },
-    true
-  );
+      },
+      true
+    );
 
-  var query = QueryParser.parse();
-  var openTarget = query["open"];
-  if (openTarget) {
-    window.history.replaceState(null, null, `${location.pathname}`);
-    openExternalMML(openTarget);
-  } else if (localStorage.getItem(AUTOBACKUP_KEY)) {
-    restoreFromLocalStorage();
-  } else {
-    selectSample();
-  }
+    const query = QueryParser.parse();
+    const openTarget = query["open"];
+    if (openTarget) {
+      window.history.replaceState(null, null, `${location.pathname}`);
+      openExternalMML(openTarget);
+    } else if (localStorage.getItem(AUTOBACKUP_KEY)) {
+      restoreFromLocalStorage();
+    } else {
+      selectSample();
+    }
+  });
 });

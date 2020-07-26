@@ -4,6 +4,11 @@ import KSS2WAV from "./kss2wav";
 import AudioPlayer from "./audio-player";
 
 export default class MSXPlay {
+
+  static async initialize() {
+    return KSSPlay.initialize();
+  }
+
   constructor(audioCtx, destination) {
     this.audioPlayer = new AudioPlayer(audioCtx, destination, this._generateWave.bind(this));
     this.sampleRate = this.audioPlayer.sampleRate;
@@ -67,6 +72,7 @@ export default class MSXPlay {
   getTitle() {
     return this.kss ? this.kss.getTitle() : "";
   }
+
   setData(kss, song, options) {
     options = options || {};
     this.kss = kss;
