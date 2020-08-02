@@ -1,5 +1,97 @@
 "use strict";
 
+ace.define('ace/mode/mgsc_highlight_rules', function (require, exports, module) {
+  const oop = require("ace/lib/oop");
+  const TextHighlightRules = require("ace/mode/text_highlight_rules").TextHighlightRules;
+  let MGSCHighlightRules = function () {
+    this.$rules = {
+      "start": [{
+        token: "comment",
+        regex: ";.*$"
+      }, {
+        token: "channel",
+        regex: "^\\s*[1-9a-hA-H]+",
+        next: "mml",
+      }, {
+        token: "paren.lparen",
+        regex: "{",
+        next: "block",
+      }, {
+        token: "directive",
+        regex: "^#[a-zA-Z_]+",
+      }],
+      "block": [{
+        token: "comment",
+        regex: ";.*$"
+      }, {
+        token: "paren.rparen",
+        regex: "}",
+        next: "start",
+      }, {
+        defaultToken: "block_body",
+      }],
+      "mml": [{
+        token: "comment",
+        regex: ";.*$",
+        next: "start"
+      }, {
+        token: "jump",
+        regex: "\\$"
+      }, {
+        token: "voice",
+        regex: "@e?[0-9]+"
+      }, {
+        token: "eol",
+        regex: "$",
+        next: "start"
+      }],
+    };
+  }
+  oop.inherits(MGSCHighlightRules, TextHighlightRules);
+  exports.MGSCHighlightRules = MGSCHighlightRules;
+});
+
+ace.define('ace/mode/mgsc', function (require, exports, module) {
+  const oop = require("ace/lib/oop");
+  const TextMode = require("ace/mode/text").Mode;
+  const MGSCHighlightRules = require("ace/mode/mgsc_highlight_rules").MGSCHighlightRules;
+  // let MatchingBraceOutdent = require("ace/mode/matching_brace_outdent").MatchingBraceOutdent;
+  const Mode = function () {
+    this.HighlightRules = MGSCHighlightRules;
+    // this.$outdent = new MatchingBraceOutdent();
+  };
+  oop.inherits(Mode, TextMode);
+  (function () {
+    // Extra logic goes here.
+  }).call(Mode.prototype);
+  exports.Mode = Mode;
+});
+
+ace.define("ace/theme/mgsc", function (require, exports, module) {
+  exports.isDark = false;
+  exports.cssClass = "ace-mgsc";
+  exports.cssText = `
+.ace-mgsc .ace_marker-layer .ace_bracket {
+  margin: -1px 0 0 -1px;
+  background-color: #bfbfbf;
+}
+.ace-mgsc .ace_comment {
+  color: #888;
+}
+.ace-mgsc .ace_directive {
+  color: #606;
+}
+.ace-mgsc .ace_channel {
+  color: #088;
+}
+.ace-mgsc .ace_jump {
+  color: #c0c;
+}
+`;
+  const dom = require("../lib/dom");
+  dom.importCssString(exports.cssText, exports.cssClass);
+});
+
 async function loadTextFromUrl(url, complete) {
   const res = await fetch(url, {
     method: "GET",
@@ -107,14 +199,15 @@ var editor;
 function createAceEditor() {
   try {
     editor = ace.edit("editor");
-    editor.setTheme("ace/theme/xcode");
-    //editor.getSession().setMode("ace/mode/text");
+    editor.setTheme("ace/theme/mgsc");
+    editor.getSession().setMode("ace/mode/mgsc");
     editor.commands.bindKey("Ctrl-P", "golineup");
     editor.$blockScrolling = Infinity;
     editor.getSession().setUseWrapMode(true);
     editor.setShowPrintMargin(false);
     editor.resize(true);
     editor.setOptions({
+      useWorker: false,
       indentedSoftWrap: false
     });
     editor.on("change", function () {
@@ -126,14 +219,21 @@ function createAceEditor() {
 }
 
 var marker = null;
-function addErrorMarker(line) {
+function addErrorMarker(line, message) {
   var range = ace.require("ace/range");
+  editor.getSession().setAnnotations([{
+    row: line,
+    column: 0,
+    text: message,
+    type: "error"
+  }]);
   marker = editor.getSession().addMarker(new range.Range(line, 0, line, 2000), "mml-error", "line", true);
 }
 
 function removeErrorMarker() {
   if (marker) {
     editor.getSession().removeMarker(marker);
+    editor.getSession().clearAnnotations();
     marker = null;
   }
 }
@@ -142,7 +242,7 @@ function highlightError(message) {
   var m = message.match(/.* in ([0-9]+)/i);
   if (m) {
     var line = parseInt(m[1]);
-    addErrorMarker(line);
+    addErrorMarker(line, message);
     editor.gotoLine(line + 1, 0, true);
   }
   document.getElementById("message").classList.remove("minimized");
