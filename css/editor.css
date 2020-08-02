@@ -1,16 +1,21 @@
 body {
   position: relative;
-  min-width: 720px;
   overflow-x: hidden;
 }
 
-#editor {
+#editor-container {
   position: absolute;
   border: 1px solid #ccc;
-  left: 72px;
-  right: 72px;
-  top: 132px;
-  bottom: 100px;
+  left: 0px;
+  right: 0px;
+  top: 48px;
+  bottom: 0px;
+  display: flex;
+  flex-direction: column;
+}
+
+#editor {
+  flex-grow: 1;
 }
 
 #editor-cover {
@@ -55,17 +60,14 @@ body {
 }
 
 #editor-foot {
-  border: 1px solid #ccc;
   border-top: none;
   font-size: 10px;
   background-color: #444;
   color: white;
-  left: 72px;
-  right: 72px;
-  position: absolute;
+  left: 16px;
+  right: 16px;
   height: 24px;
   line-height: 24px;
-  bottom: 76px;
   border-radius: 0 0 2px 2px;
 }
 
@@ -85,12 +87,11 @@ body {
 
 .actions {
   height: 48px;
-  margin: 32px 72px 0 72px;
   padding: 7px 12px;
   background-color: white;
-  border: 1px solid #ccc;
   font-size: 12px;
   color: #007aff;
+  border-bottom: 1px solid #ccc;
 }
 
 .actions button {
@@ -115,6 +116,11 @@ body {
   vertical-align: -6px;
 }
 
+@media screen and (max-width:639px) {
+  button.foldable { margin-right:0; }
+  button.foldable span { display: none; }
+}
+
 .actions button:focus {
   outline: 0;
 }
@@ -130,8 +136,6 @@ body {
 
 #message {
   position: absolute;
-  right: 72px;
-  top: 88px;
   width: 320px;
   height: 220px;
   border: 1px solid #ccc;
@@ -141,9 +145,10 @@ body {
   z-index: 100;
   overflow: hidden;
   transition: transform 0.25s ease, background-color 0.25s ease;
-  transform-origin: top right;
-  transform: translate(-24px, 56px);
   box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.25);
+  transform-origin: top right;
+  top: 50px;
+  right: 4px;
 }
 
 #message.minimized {
@@ -153,6 +158,7 @@ body {
 }
 
 #message .title {
+  position: relative;
   width: 100%;
   height: 24px;
   line-height: 24px;
@@ -160,8 +166,19 @@ body {
   color: rgba(0, 0, 0, 0.87);
   background-color: #f0f0f0;
   border-bottom: 1px solid #ccc;
-  padding: 0 10px;
+  padding: 0 2px 0 10px;
   cursor: pointer;
+  display: flex;
+  flex-direction: row;
+}
+
+#message .title .text {
+  flex-grow: 1;
+  pointer-events: none;
+}
+
+#message .title .material-icons {
+  pointer-events: none;
 }
 
 #message pre {
@@ -187,10 +204,17 @@ body {
 }
 
 .msxplay {
-  transition: bottom 0.5s ease;
+  margin: 0;
+  width: 100%;
+  height: 72px;
 }
+
+.msxplay .footer {
+  display: none;
+}
+
 .msxplay:not([data-hash]) {
-  bottom: -56px;
+  display: none;
 }
 
 #modal-stage {
