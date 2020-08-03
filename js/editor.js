@@ -87,6 +87,12 @@ ace.define("ace/theme/mgsc", function (require, exports, module) {
 .ace-mgsc .ace_jump {
   color: #c0c;
 }
+.ace-mgsc .ace_selection {
+  background-color: #e8e8f8;
+}
+.ace-mgsc .ace_gutter-cell {
+  background-color: #eee;
+}
 `;
   const dom = require("../lib/dom");
   dom.importCssString(exports.cssText, exports.cssClass);
