@@ -346,6 +346,7 @@ function compile(autoplay) {
     MSXPlayUI.play(player);
   }
   editor.focus();
+  editor.resize(); // needs to refresh height because player visibility may change.
   return true;
 }
 
