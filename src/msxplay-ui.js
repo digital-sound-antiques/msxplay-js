@@ -245,14 +245,16 @@ class MSXPlayUI {
     const fade = parseFloat(playerElement.dataset.fade);
     const gain = parseFloat(playerElement.dataset.gain);
     const debug_mgs = parseInt(playerElement.dataset.debug_mgs);
+    const cpu = parseInt(playerElement.dataset.cpu);
     const kss = KSS.hashMap[hash];
     if (kss) {
       this.unmute();
       this.msxplay.setData(kss, song, {
-        duration: duration,
-        fade: fade,
-        gain: gain,
-        debug_mgs: debug_mgs
+        duration,
+        fade,
+        gain,
+        debug_mgs,
+        cpu,
       });
       this.msxplay.play();
       this.currentPlayerElement = playerElement;

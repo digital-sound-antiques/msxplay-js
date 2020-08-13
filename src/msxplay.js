@@ -88,7 +88,7 @@ export default class MSXPlay {
     this.kssplay.setSilentLimit(5000);
     this.kssplay.setDeviceQuality({ psg: 1, scc: 0, opll: 1, opl: 1 });
     this.kssplay.setData(kss);
-    this.kssplay.reset(song, 0);
+    this.kssplay.reset(song, options.cpu || 0);
     this.maxPlayTime = Math.min(20 * 60 * 1000, options.duration || 5 * 60 * 1000);
     if (options.gain != null) {
       this.audioPlayer.setOutputGain(Number.isNaN(options.gain) ? 1.0 : options.gain);

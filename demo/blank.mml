@@ -1,9 +1,11 @@
-;[gain=1.0 name=blank duration=300s fade=5s]
-; The line above defines the extra options for MSXplay. 
-; gain    : The volume gain of the playback. It is just linear multiplier, not dB.
-; name    : The name of the mml, use as the base download filename.
-; duration: The length of the song.
-; fade    : The time of fade out.
+;[gain=1.0 name=blank duration=300s fade=5s cpu=0]
+; The line above defines extra options, works only on msxplay.com 
+; name    : Name of mml, use as the base download filename.
+; gain    : Volume gain. (default: 1.0)
+; duration: Length of the song. (default: 300s)
+; fade    : Time of fading out. (default: 5s)
+; cpu     : Specify Z80 emulation speed. (default: 0)
+;           0:auto 1:3.58MHz 2:7.16MHz 3:10.74MHz 4:14.32MHz
 #opll_mode 1
 #tempo 120
 #title { "No Title"}

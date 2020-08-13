@@ -282,6 +282,11 @@ function getMetaMMLInfo(mml) {
     result.name = m[1];
   }
 
+  m = mml.match(/^;\[.*cpu=([0-9]+).*\]/im);
+  if (m) {
+    result.cpu = m[1];
+  }
+
   return result;
 }
 
@@ -327,11 +332,13 @@ function compile(autoplay) {
 
   player.dataset.duration = null;
   player.dataset.gain = 1.0;
+  player.dataset.cpu = 0;
   MSXPlayUI.setDataToPlayer(player, result.mgs, lastCompiledName);
 
   if (info.duration) player.dataset.duration = info.duration;
   if (info.fade) player.dataset.fade = info.fade;
   if (info.gain) player.dataset.gain = info.gain;
+  if (info.cpu) player.dataset.cpu = info.cpu;
 
   let toArrayBuffer = u8a => u8a.buffer.slice(u8a.byteOffset);
 
