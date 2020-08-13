@@ -705,6 +705,7 @@ window.addEventListener("DOMContentLoaded", function () {
   MSXPlayUI.install(document.body).then(() => {
     createAceEditor();
 
+    document.getElementById("version").innerText = "MSXPlay v" + MSXPlayUI.getVersion();
     document.getElementById("open-file").addEventListener("change", openFile);
 
     const mbox = document.getElementById("message");

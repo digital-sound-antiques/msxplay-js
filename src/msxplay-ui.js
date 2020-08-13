@@ -298,6 +298,11 @@ class MSXPlayUI {
       kss.release();
     }
   }
+
+  getVersion() {
+    const json = require("../package.json");
+    return json.version;
+  }
 }
 
 function setKSSToPlayerElement(playerElement, kss, url) {
