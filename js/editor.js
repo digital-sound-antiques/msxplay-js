@@ -88,7 +88,10 @@ ace.define("ace/theme/mgsc", function (require, exports, module) {
   color: #c0c;
 }
 .ace-mgsc .ace_selection {
-  background-color: #e8e8f8;
+  background-color: #aaf;
+}
+.ace-mgsc .ace_selected-word {
+  background-color: #ddd;
 }
 .ace-mgsc .ace_gutter-cell {
   background-color: #eee;
