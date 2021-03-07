@@ -159,18 +159,20 @@
 
       <h2>Open from URL</h2>
       <p lang="ja">
-        以下のように id' パラメータに GitHub の Raw ファイルの URL (https://raw.githubusercontent.com/ で始まる URL) を記述すると、 MSXplay の
-        サイトでそのファイルを開くことができます。拡張子が .mgs 以外（.mml など）の URL を指定した場合は、MML エディタ画面で開きます。
+        以下のように 'id' パラメータに GitHub の raw ファイルの URL (https://raw.githubusercontent.com/ で始まる URL) を記述すると、 MSXplay の
+        サイトでそのファイルを開くことができます。'id' の値は  [パーセントエンコード](https://developer.mozilla.org/ja/docs/Glossary/percent-encoding) する必要があります。
+        拡張子が .mgs 以外（.mml など）の URL を指定した場合は、MML エディタ画面が開きます。
       </p>
       <p lang="en">
-        The following URL scheme with 'id' query parameter can be used to open an raw file on GitHub directly from this site.
+        The following URL scheme with 'id' query parameter can be used to open an raw file on GitHub directly from this site. 
+        The 'id' value is must be [percent-encoded](https://developer.mozilla.org/ja/docs/Glossary/percent-encoding).
         If 'id' value ends with an extension other than .mgs (ex .mml) is given, MML editor page will open instead of the top page.
       </p>
       <ul>
         <li>
           <a
             class="incomplete"
-            data-href="https://f.msxplay.com?id=https://raw.githubusercontent.com/digital-sound-antiques/msxplay-js/master/demo/es59.mml"
+            data-href="https://f.msxplay.com?id=https%3A%2F%2Fraw.githubusercontent.com%2Fdigital-sound-antiques%2Fmsxplay-js%2Fmaster%2Fdemo%2Fes59.mgs"
           ></a>
         </li>
       </ul>
