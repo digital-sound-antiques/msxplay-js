@@ -159,26 +159,18 @@
 
       <h2>Open from URL</h2>
       <p lang="ja">
-        GitHub 上の Raw ファイルのURL (https://raw.githubusercontent.com/ で始まるURL) をクエリ変数 open
-        に追記すると、インターネット上のファイルを読み込んで演奏が開始します。拡張子が .mml または .mus
-        のURLを指定した場合、MMLエディタ画面が開きます。
+        以下のように id' パラメータに GitHub の Raw ファイルの URL (https://raw.githubusercontent.com/ で始まる URL) を記述すると、 MSXplay の
+        サイトでそのファイルを開くことができます。拡張子が .mgs 以外（.mml など）の URL を指定した場合は、MML エディタ画面で開きます。
       </p>
       <p lang="en">
-        To open raw file on GitHub directly from this site, add open parameter like following. If .mml or .mus file
-        extension is given, MML editor page is open instead of top page.
+        The following URL scheme with 'id' query parameter can be used to open an raw file on GitHub directly from this site.
+        If 'id' value ends with an extension other than .mgs (ex .mml) is given, MML editor page will open instead of the top page.
       </p>
-
       <ul>
         <li>
           <a
             class="incomplete"
-            data-href="${host_path}?open=https://raw.githubusercontent.com/digital-sound-antiques/msxplay-js/master/demo/es59.mgs"
-          ></a>
-        </li>
-        <li>
-          <a
-            class="incomplete"
-            data-href="${host_path}?open=https://raw.githubusercontent.com/digital-sound-antiques/msxplay-js/master/demo/es59.mml"
+            data-href="https://f.msxplay.com?id=https://raw.githubusercontent.com/digital-sound-antiques/msxplay-js/master/demo/es59.mml"
           ></a>
         </li>
       </ul>
@@ -211,14 +203,14 @@
         The following software binaries are embedded to MSXplay. We thank the authors for their great artifacts.
       </p>
       <ul>
-        <li>MGSDRV (c) Ain./Gigamix</li>
+        <li><a href="https://gigamix.hatenablog.com/entry/mgsdrv/">MGSDRV</a> (c) Ain./Gigamix</li>
         <li>KINROU5 (c) Keiichi Kuroda</li>
         <li>MPK (c) K-KAZ</li>
         <li>OPLLDriver (c) Ring</li>
       </ul>
       <footer>
         <hr />
-        <p>MSXPlay - Copyright &copy; 2016-2019 Digital Sound Antiques.</p>
+        <p>MSXPlay - Copyright &copy; 2016-2021 Digital Sound Antiques.</p>
       </footer>
     </section>
     <div id="modal-player-stage">
