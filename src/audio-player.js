@@ -128,7 +128,7 @@ export default class AudioPlayer {
   play(maxPlayTime) {
     this.setMaxPlayTime(maxPlayTime || this.maxPlayTime || 60 * 5 * 1000);
     this._recycle();
-    this.scriptNode = this.audioCtx.createScriptProcessor(8192, 1, 1);
+    this.scriptNode = this.audioCtx.createScriptProcessor(16384, 1, 1);
     this.scriptNode.onaudioprocess = this._onAudioProcess.bind(this);
     this.scriptNode.connect(this.scriptNodeDestination);
     this.dummyNode = this.audioCtx.createOscillator();
