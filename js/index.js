@@ -107,6 +107,7 @@ window.addEventListener("DOMContentLoaded", function () {
       makeDnDable(elems[i]);
     }
     if (target) {
+      window.history.replaceState(null, null, `${location.pathname}`);
       showModalPlayer(target);
     }
   });
