@@ -22,7 +22,8 @@ async function showModalPlayer(obj, name) {
   await MSXPlayUI.attach(player);
 
   const ua = window.navigator.userAgent.toLowerCase();
-  if (ua.indexOf("chrome") >= 0 || ua.indexOf("firefox") >= 0 || ua.indexOf("edge") >= 0) {
-    MSXPlayUI.play(player);
-  }
+
+  // if (ua.indexOf("chrome") >= 0 || ua.indexOf("firefox") >= 0 || ua.indexOf("edge") >= 0) {
+  //   MSXPlayUI.play(player);
+  // }
 }
