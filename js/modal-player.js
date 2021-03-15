@@ -7,6 +7,23 @@ function closeModalPlayer() {
   window.history.replaceState(null, null, `${location.pathname}`);
 }
 
+function onPlayerCoverClick() {
+  document.getElementById("modal-player-cover").style.display = "none";
+  var player = document.getElementById("modal-player");
+  MSXPlayUI.play(player);
+}
+
+function createPlayerCover() {
+  const root = document.createElement('div');
+  const button = document.createElement('div');
+  root.id = 'modal-player-cover';
+  button.classList.add('button');
+  button.innerHTML = '<i class="material-icons" style="vertical-align:middle;">play_circle_outline</i> TAP to PLAY';
+  button.addEventListener('click', onPlayerCoverClick);
+  root.append(button)
+  return root;
+}
+
 async function showModalPlayer(obj, name) {
   let player;
   if (typeof obj === "string") {
@@ -16,14 +33,10 @@ async function showModalPlayer(obj, name) {
   }
 
   player.setAttribute("id", "modal-player");
-  let stage = document.getElementById("modal-player-stage");
+  const stage = document.getElementById("modal-player-stage");
+  const cover = createPlayerCover();
   stage.append(player);
+  stage.append(cover);
   stage.style.display = "block";
   await MSXPlayUI.attach(player);
-
-  const ua = window.navigator.userAgent.toLowerCase();
-
-  // if (ua.indexOf("chrome") >= 0 || ua.indexOf("firefox") >= 0 || ua.indexOf("edge") >= 0) {
-  //   MSXPlayUI.play(player);
-  // }
 }
