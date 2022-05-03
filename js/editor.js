@@ -129,10 +129,10 @@ ace.define(DARK_THEME_PATH, function (require, exports, module) {
   background-color: #bfbfbf;
 }
 .ace_mgsc_dark .ace_marker-layer .ace_active-line {
-  background-color: rgba(255,255,255,0.071);
+  background-color: rgba(255,255,255,0.14);
 }
 .ace_mgsc_dark .ace_gutter-active-line {
-  background-color: rgba(255,255,255,0.071);
+  background-color: rgba(255,255,255,0.14);
 }
 .ace_mgsc_dark .ace_comment {
   color: #aaa;
