@@ -10,7 +10,7 @@ ace.define('ace/mode/mgsc_highlight_rules', function (require, exports, module) 
         regex: ";.*$"
       }, {
         token: "channel",
-        regex: "^\\s*[1-9a-hA-H]+",
+        regex: "^\\s*[1-9a-hrA-HR]+",
         next: "mml",
       }, {
         token: "paren.lparen",
@@ -67,34 +67,93 @@ ace.define('ace/mode/mgsc', function (require, exports, module) {
   exports.Mode = Mode;
 });
 
-ace.define("ace/theme/mgsc", function (require, exports, module) {
+const LIGHT_THEME_ID = 'light';
+const DARK_THEME_ID = 'dark';
+const LIGHT_THEME_PATH = 'ace/theme/mgsc';
+const DARK_THEME_PATH = 'ace/theme/mgsc-dark';
+
+ace.define(LIGHT_THEME_PATH, function (require, exports, module) {
   exports.isDark = false;
-  exports.cssClass = "ace-mgsc";
+  exports.cssClass = "ace_mgsc";
   exports.cssText = `
-.ace-mgsc .ace_marker-layer .ace_bracket {
+.ace_editor.ace_mgsc {
+  color: rgba(0,0,0,0.87);
+  background-color: #f0f0f0;
+}
+.ace_mgsc .ace_marker-layer .ace_bracket {
   margin: -1px 0 0 -1px;
   background-color: #bfbfbf;
 }
-.ace-mgsc .ace_comment {
+.ace_mgsc .ace_marker-layer .ace_active-line {
+  background-color: rgba(0,0,0,0.071);
+}
+.ace_mgsc .ace_gutter-active-line {
+  background-color: rgba(0,0,0,0.071);
+}
+.ace_mgsc .ace_comment {
   color: #888;
 }
-.ace-mgsc .ace_directive {
+.ace_mgsc .ace_directive {
   color: #606;
 }
-.ace-mgsc .ace_channel {
+.ace_mgsc .ace_channel {
   color: #088;
 }
-.ace-mgsc .ace_jump {
-  color: #c0c;
+.ace_mgsc .ace_jump {
+  color: #d00;
 }
-.ace-mgsc .ace_selection {
-  background-color: #aaf;
+.ace_mgsc .ace_selection {
+  background-color: #ACCEF7;
 }
-.ace-mgsc .ace_selected-word {
+.ace_mgsc .ace_selected-word {
   background-color: #ddd;
 }
-.ace-mgsc .ace_gutter-cell {
+.ace_mgsc .ace_gutter {
   background-color: #eee;
+}
+`;
+  const dom = require("../lib/dom");
+  dom.importCssString(exports.cssText, exports.cssClass);
+});
+
+ace.define(DARK_THEME_PATH, function (require, exports, module) {
+  exports.isDark = true;
+  exports.cssClass = "ace_mgsc_dark";
+  exports.cssText = `
+.ace_editor.ace_mgsc_dark {
+  color: #f0f0f0;
+  background-color: #000;
+}
+.ace_mgsc_dark .ace_marker-layer .ace_bracket {
+  margin: -1px 0 0 -1px;
+  background-color: #bfbfbf;
+}
+.ace_mgsc_dark .ace_marker-layer .ace_active-line {
+  background-color: rgba(255,255,255,0.071);
+}
+.ace_mgsc_dark .ace_gutter-active-line {
+  background-color: rgba(255,255,255,0.071);
+}
+.ace_mgsc_dark .ace_comment {
+  color: #aaa;
+}
+.ace_mgsc_dark .ace_directive {
+  color: #ee0;
+}
+.ace_mgsc_dark .ace_channel {
+  color: #0ee;
+}
+.ace_mgsc_dark .ace_jump {
+  color: #ff0;
+}
+.ace_mgsc_dark .ace_selection {
+  background-color: #ACCEF7;
+}
+.ace_mgsc_dark .ace_selected-word {
+  background-color: #666;
+}
+.ace_mgsc_dark .ace_gutter {
+  background-color: #444;
 }
 `;
   const dom = require("../lib/dom");
@@ -204,21 +263,63 @@ window.addEventListener("beforeunload", function (event) {
   }
 });
 
+function _themeIdToPath(id) {
+  switch (id) {
+    case DARK_THEME_ID:
+      return DARK_THEME_PATH;
+    case LIGHT_THEME_ID:
+    default:
+      return LIGHT_THEME_PATH;
+  }
+}
+
+function _pathToThemeId(theme) {
+  switch (theme) {
+    case DARK_THEME_PATH:
+      return DARK_THEME_ID;
+    case LIGHT_THEME_PATH:
+    default:
+      return LIGHT_THEME_ID;
+  }
+}
+
+function loadEditorOptions() {
+  const defaultEditorOptions = {
+    theme: LIGHT_THEME_PATH,
+    fontSize: 12,
+  };
+  const options = JSON.parse(window.localStorage.getItem(EDITOR_OPTIONS_KEY) || "{}");
+  return {
+    ...defaultEditorOptions,
+    ...options,
+  };
+}
+
+function saveEditorOptions() {
+  const options = editor.getOptions();
+  window.localStorage.setItem(EDITOR_OPTIONS_KEY, JSON.stringify({
+    theme: options["theme"],
+    fontSize: options["fontSize"],
+  }));
+}
+
 var editor;
+
 function createAceEditor() {
   try {
     editor = ace.edit("editor");
-    editor.setTheme("ace/theme/mgsc");
-    editor.getSession().setMode("ace/mode/mgsc");
     editor.commands.bindKey("Ctrl-P", "golineup");
     editor.$blockScrolling = Infinity;
     editor.getSession().setUseWrapMode(true);
     editor.setShowPrintMargin(false);
     editor.resize(true);
     editor.setOptions({
+      mode: "ace/mode/mgsc",
       useWorker: false,
-      indentedSoftWrap: false
+      indentedSoftWrap: false,
+      ...loadEditorOptions(),
     });
+    console.log(editor.getOptions());
     editor.on("change", function () {
       contentChanged = true;
     });
@@ -434,7 +535,8 @@ function clearFile(e) {
   });
 }
 
-var AUTOBACKUP_KEY = "mgsc.editor.autobackup";
+const AUTOBACKUP_KEY = "mgsc.editor.autobackup";
+const EDITOR_OPTIONS_KEY = "mgsc.editor.options";
 
 function clearLocalStorage() {
   localStorage.removeItem(AUTOBACKUP_KEY);
@@ -738,3 +840,35 @@ window.addEventListener("DOMContentLoaded", function () {
     }
   });
 });
+
+
+function openSettings() {
+  const themeSel = document.querySelector("#settings select[name='theme']");
+  themeSel.value = _pathToThemeId(editor.getOption("theme"));
+  const fontSel = document.querySelector("#settings select[name='font-size']");
+  fontSel.value = editor.getOption("fontSize");
+  showDialog("settings", (value) => {
+    console.log(value);
+    if (value == "reset") {
+      resetSettings();
+    }
+  });
+}
+
+function onThemeChange(event) {
+  const id = event.srcElement.value;
+  editor.setTheme(_themeIdToPath(id));
+  saveEditorOptions();
+}
+
+function onFontSizeChange(event) {
+  const fontSize = event.srcElement.value;
+  editor.setOption("fontSize", parseInt(fontSize));
+  saveEditorOptions();
+}
+
+function resetSettings() {
+  localStorage.removeItem(EDITOR_OPTIONS_KEY);
+  editor.setOptions(loadEditorOptions());
+  openSettings();
+}

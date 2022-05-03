@@ -24,8 +24,7 @@
     <link href="css/style.css" rel="stylesheet" type="text/css" />
     <link href="css/lds-ripple.css" rel="stylesheet" type="text/css" />
     <link href="css/editor.css" rel="stylesheet" type="text/css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/theme-xcode.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.14/ace.js"></script>
 
     <script>
       (function(i, s, o, g, r, a, m) {
@@ -82,6 +81,9 @@
         </button>
         <button onclick="share()" class="foldable">
           <p><i class="material-icons">share</i><span> Share</span></p>
+        </button>
+        <button onclick="openSettings()" class="foldable">
+          <p><i class="material-icons">settings</i></p>
         </button>
       </section>
       <div id="editor"></div>
@@ -290,6 +292,40 @@
         <div class="button-area">
           <div class="button" lang="ja" data-value="close">閉じる</div>
           <div class="button" lang="en" data-value="close">CLOSE</div>
+        </div>
+      </div>
+
+      <div id="settings" class="dialog" style="width:336px">
+        <div class="content">
+          <table>
+            <tr>
+              <td><label for="theme"><span lang="ja">エディタの色</span><span lang="en">Editor Color</span></label></td>
+              <td>
+                <select name="theme" onchange="onThemeChange(event)">
+                  <option value="light">Light</option>
+                  <option value="dark">Dark</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td><label for="font-size"><span lang="ja">文字のサイズ</span><span lang="en">Font Size</span></label></td>
+              <td>
+                <select name="font-size" onchange="onFontSizeChange(event)">
+                  <option value="10">XS</option>
+                  <option value="12">S</option>
+                  <option value="14">M</option>
+                  <option value="16">L</option>
+                  <option value="20">XL</option>
+              </select>
+              </td>
+            </tr>
+          </table>          
+        </div>
+        <div class="button-area">
+          <div class="button" lang="ja" data-value="close">閉じる</div>
+          <div class="button" lang="en" data-value="close">CLOSE</div>
+          <div class="button" lang="ja" data-value="reset">リセット</div>
+          <div class="button" lang="en" data-value="reset">RESET</div>
         </div>
       </div>
 

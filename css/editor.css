@@ -350,3 +350,13 @@ ul.item-list li .subtext {
   line-height: 18px;
   color: rgba(0, 0, 0, 0.4);
 }
+
+#settings table {
+  font-size: 12px;
+  border: 0px;
+}
+
+#settings td {
+  text-align: left;
+  border: 0px;
+}
