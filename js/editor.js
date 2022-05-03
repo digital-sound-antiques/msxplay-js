@@ -319,7 +319,6 @@ function createAceEditor() {
       indentedSoftWrap: false,
       ...loadEditorOptions(),
     });
-    console.log(editor.getOptions());
     editor.on("change", function () {
       contentChanged = true;
     });
@@ -848,7 +847,6 @@ function openSettings() {
   const fontSel = document.querySelector("#settings select[name='font-size']");
   fontSel.value = editor.getOption("fontSize");
   showDialog("settings", (value) => {
-    console.log(value);
     if (value == "reset") {
       resetSettings();
     }
