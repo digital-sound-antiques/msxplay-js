@@ -147,7 +147,7 @@ ace.define(DARK_THEME_PATH, function (require, exports, module) {
   color: #ff0;
 }
 .ace_mgsc_dark .ace_selection {
-  background-color: #ACCEF7;
+  background-color: rgba(88,172,247,0.5);
 }
 .ace_mgsc_dark .ace_selected-word {
   background-color: #666;
