@@ -7,7 +7,7 @@
 ; cpu     : CPU speed ratio. 0:auto, 1:3.58MHz (default: 0)
 #opll_mode 1
 #tempo 120
-#title { "No Title"}
+#title {"No Title"}
 
 @v15 = { ; Brass
 ;       TL FB
