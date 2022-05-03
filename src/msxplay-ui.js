@@ -28,6 +28,12 @@ function parseTime(str) {
   return null;
 }
 
+async function loadKSSFromUrl(url) {
+  const res = await fetch(url);
+  const ab = await res.arrayBuffer();
+  return KSS.createUniqueInstance(new Uint8Array(ab), url);
+}
+
 class MSXPlayUI {
   constructor() {
     this.msxplay = new MSXPlay();
@@ -194,7 +200,7 @@ class MSXPlayUI {
       setKSSToPlayerElement(playerElement, kss, playerElement.dataset.url);
     } else {
       const url = playerElement.dataset.url;
-      const kss = await KSS.loadFromUrl(url);
+      const kss = await loadKSSFromUrl(url);
       setKSSToPlayerElement(playerElement, kss, url);
     }
   }
