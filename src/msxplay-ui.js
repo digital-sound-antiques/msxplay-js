@@ -252,6 +252,15 @@ class MSXPlayUI {
     const gain = parseFloat(playerElement.dataset.gain);
     const debug_mgs = parseInt(playerElement.dataset.debug_mgs);
     const cpu = parseInt(playerElement.dataset.cpu);
+    let rcf;
+    if (playerElement.dataset.rcf != null) {
+      try {
+        rcf = JSON.parse(playerElement.dataset.rcf);
+      } catch(e) {
+        console.error(e);
+      }
+    }
+
     const kss = KSS.hashMap[hash];
     if (kss) {
       this.unmute();
@@ -261,6 +270,7 @@ class MSXPlayUI {
         gain,
         debug_mgs,
         cpu,
+        rcf,
       });
       this.msxplay.play();
       this.currentPlayerElement = playerElement;

@@ -390,6 +390,13 @@ function getMetaMMLInfo(mml) {
     result.cpu = m[1];
   }
 
+  m = mml.match(/^;\[.*lpf=([0-9]).*\]/im);
+  if (m) {
+    if (m[1] != 0) {
+      result.rcf = { resistor: 3870, capacitor: 15 };
+    }
+  }
+
   return result;
 }
 
@@ -433,15 +440,21 @@ function compile(autoplay) {
   lastCompiledMGS = result.mgs;
   lastCompiledName = info.name || "" + Date.now();
 
-  player.dataset.duration = null;
-  player.dataset.gain = 1.0;
-  player.dataset.cpu = 0;
-  MSXPlayUI.setDataToPlayer(player, result.mgs, lastCompiledName);
+  player.dataset.duration = info.duration;
+  player.dataset.gain = (info.gain != null) ? info.gain : 1.0;
+  if (info.fade) {
+    player.dataset.fade = info.fade;
+  } else {
+    delete player.dataset.fade;
+  }
+  player.dataset.cpu = (info.cpu != null) ? info.cpu : 0;
+  if (info.rcf != null) {
+    player.dataset.rcf = JSON.stringify(info.rcf);
+  } else {
+    delete player.dataset.rcf;
+  }
 
-  if (info.duration) player.dataset.duration = info.duration;
-  if (info.fade) player.dataset.fade = info.fade;
-  if (info.gain) player.dataset.gain = info.gain;
-  if (info.cpu) player.dataset.cpu = info.cpu;
+  MSXPlayUI.setDataToPlayer(player, result.mgs, lastCompiledName);
 
   let toArrayBuffer = u8a => u8a.buffer.slice(u8a.byteOffset);
 
@@ -655,13 +668,13 @@ function downloadAudio(type, rate, kbps, quality) {
   abortEncode = false;
 
   var opts = {
-    gain: info.gain || 1.0,
-    playTime: info.duration || 600 * 1000,
-    fadeTime: info.fade || 3000,
+    gain: (info.gain != null) ? info.gain : 1.0,
+    playTime: (info.duration != null) ? info.duration : 600 * 1000,
+    fadeTime: (info.fade != null) ? info.fade : 3000,
     sampleRate: rate,
     bitRate: kbps,
-    quality: quality
-    // rcf: { registor: 3870, capacitor: 15 },
+    quality: quality,
+    rcf: info.rcf,
   };
 
   var filename;

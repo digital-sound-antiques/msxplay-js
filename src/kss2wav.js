@@ -51,7 +51,7 @@ export default class KSS2WAV {
    * @prop {number} [fadeTime=3000]
    * @prop {number} [cpuSpeed=0]
    * @prop {Object} [rcf]
-   * @prop {number} [rcf.registor=0]
+   * @prop {number} [rcf.resistor=0]
    * @prop {number} [rcf.capacitor=0]
    * @prop {Object} [quality]
    * @prop {Object} [quality.psg=1]
@@ -66,7 +66,7 @@ export default class KSS2WAV {
   encode(kss, song, callback, opts) {
     opts = opts || {};
     var assign = require("object-assign");
-    var rcf = assign({ registor: 0, capacitor: 0 }, opts.rcf);
+    var rcf = assign({ resistor: 0, capacitor: 0 }, opts.rcf);
     var quality = assign({ psg: 1, scc: 0, opll: 1, opl: 1 }, opts.quality);
     this.opts = assign(
       {
@@ -86,8 +86,8 @@ export default class KSS2WAV {
     }
     this.kssplay = new KSSPlay(this.sampleRate);
     this.kssplay.setDeviceQuality(quality);
-    this.kssplay.setSilentLimit(this.opts.slientLimit);
-    this.kssplay.setRCF(rcf.registor, rcf.capacitor);
+    this.kssplay.setSilentLimit(this.opts.silentLimit);
+    this.kssplay.setRCF(rcf.resistor, rcf.capacitor);
     this.kssplay.setData(kss);
     this.kssplay.reset(song, this.opts.cpuSpeed);
     this.callbackFunc = callback || function() {};

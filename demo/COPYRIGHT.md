@@ -7,4 +7,5 @@ grider.mgs/mml   : Copyright (C) J. and Brezza
 contrail.mgs/mml : Copyright (C) DRM
 es56.mgs/mml : Copyright (C) DRM and Brezza
 es59.mgs/mml : Copyright (C) DRM and Brezza
+psg_fm.mgs/mml : Public Domain
 
