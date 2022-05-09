@@ -287,6 +287,7 @@ function loadEditorOptions() {
   const defaultEditorOptions = {
     theme: LIGHT_THEME_PATH,
     fontSize: 12,
+    wrap: "free", // "free" | "off"
   };
   const options = JSON.parse(window.localStorage.getItem(EDITOR_OPTIONS_KEY) || "{}");
   return {
@@ -300,6 +301,7 @@ function saveEditorOptions() {
   window.localStorage.setItem(EDITOR_OPTIONS_KEY, JSON.stringify({
     theme: options["theme"],
     fontSize: options["fontSize"],
+    wrap: options["wrap"],
   }));
 }
 
@@ -859,6 +861,9 @@ function openSettings() {
   themeSel.value = _pathToThemeId(editor.getOption("theme"));
   const fontSel = document.querySelector("#settings select[name='font-size']");
   fontSel.value = editor.getOption("fontSize");
+  const wrapSel = document.querySelector("#settings select[name='wrap']");
+  wrapSel.value = editor.getOption("wrap");
+
   showDialog("settings", (value) => {
     if (value == "reset") {
       resetSettings();
@@ -875,6 +880,13 @@ function onThemeChange(event) {
 function onFontSizeChange(event) {
   const fontSize = event.srcElement.value;
   editor.setOption("fontSize", parseInt(fontSize));
+  saveEditorOptions();
+}
+
+function onWrapChange(event) {
+  const wrap = event.srcElement.value;
+  editor.setOption("wrap", wrap);
+  console.log(editor.getOption("wrap"));
   saveEditorOptions();
 }
 
