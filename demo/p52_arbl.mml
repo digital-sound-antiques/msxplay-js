@@ -1,3 +1,4 @@
+;[name=p52_arbl lpf=1]
 #opll_mode 1
 #machine_id 2		; Panasonic machine
 

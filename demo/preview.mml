@@ -1,0 +1,227 @@
+;[name=preview lpf=1]
+#opll_mode 1
+#tempo 60
+#title { "ROM Instrument Preview - Air on G String"}
+
+9ABC @2v14
+
+9 o5
+A o5
+B o4
+C o3
+
+9ABC >
+
+9ABC @0
+
+9 f+1&          f+1
+A d1&           d1
+B a1            b1
+C d4>d4c+4<c+4< b4>b4a4<a4
+
+9ABC @1 
+
+9 r4b8g8e8d8c+8d8 c+2<b64a4....
+A r1               r1
+B r2e2             e1
+C g4>g4g+4<g+4     a4>a4g4<g4
+
+9ABC @2 
+
+9 r4c8<b8>c4a8c8 <b4r4r4r4>
+A a1&            a8f+8c8<b8>e8d+8a8g8  
+B r4r8r8r4r8r8   f+4r4r4r4
+C f+4>f+4e4<e4   d+4>d+4<b4>b4
+
+9ABC @3 
+
+9 b4e8d8e8f+8g8e8< a4r4r2>
+A g1&              g8e8<b8a8>d8c+8g8f+8
+B r1               r1
+C <e4>e4d4<d4      c+4>c+4<a4>a4
+
+9ABC @4
+
+9 a1            a4g+8a8     b4g+4
+A f+2.g+8a8     d4d16e16f+8&f+8e8e8d8
+B r4r4r4e4<     f+4>d4<b4>e4&
+C d4>d4c+4<c+4< b4>b4g+4e4
+
+9ABC @5 
+
+9 a4a2g+4                   e1 >
+A c+8<b8b16>c+16d8&d4c+8<b8 a1 >
+B e4f+2d4                   c+1 
+C a4d4e4<e4                 a8b8>c+8d8e8g8f+8e8
+
+9ABC @6 
+
+9 f+1&          f+1
+A d1&           d1
+B a1            b1
+C d4>d4c+4<c+4< b4>b4a4<a4
+
+9ABC @7 
+
+9 r4b8g8e8d8c+8d8 c+2<b64a4....
+A r1               r1
+B r2e2             e1
+C g4>g4g+4<g+4     a4>a4g4<g4
+
+9ABC @8
+
+9 r4c8<b8>c4a8c8 <b4r4r4r4>
+A a1&            a8f+8c8<b8>e8d+8a8g8  
+B r4r8r8r4r8r8   f+4r4r4r4
+C f+4>f+4e4<e4   d+4>d+4<b4>b4
+
+9ABC @9 
+
+9 b4e8d8e8f+8g8e8< a4r4r2>
+A g1&              g8e8<b8a8>d8c+8g8f+8
+B r1               r1
+C <e4>e4d4<d4      c+4>c+4<a4>a4
+
+9ABC @10
+
+9 a1            a4g+8a8     b4g+4
+A f+2.g+8a8     d4d16e16f+8&f+8e8e8d8
+B r4r4r4e4<     f+4>d4<b4>e4&
+C d4>d4c+4<c+4< b4>b4g+4e4
+
+9ABC @11 
+
+9 a4a2g+4                   e1 >
+A c+8<b8b16>c+16d8&d4c+8<b8 a1 >
+B e4f+2d4                   c+1 
+C a4d4e4<e4                 a1 >
+
+9ABC @12
+
+9 f+1&          f+1
+A d1&           d1
+B a1            b1
+C d4>d4c+4<c+4< b4>b4a4<a4
+
+9ABC @13
+
+9 r4b8g8e8d8c+8d8 c+2<b64a4....
+A r1               r1
+B r2e2             e1
+C g4>g4g+4<g+4     a4>a4g4<g4
+
+9ABC @14
+
+9 r4c8<b8>c4a8c8 <b4r4r4r4>
+A a1&            a8f+8c8<b8>e8d+8a8g8  
+B r4r8r8r4r8r8   f+4r4r4r4
+C f+4>f+4e4<e4   d+4>d+4<b4>b4
+
+9ABC @0 
+
+9 b4e8d8e8f+8g8e8< a4r4r2>
+A g1&              g8e8<b8a8>d8c+8g8f+8
+B r1               r1
+C <e4>e4d4<d4      c+4>c+4<a4>a4
+
+9ABC @1
+
+9 a1            a4g+8a8     b4g+4
+A f+2.g+8a8     d4d16e16f+8&f+8e8e8d8
+B r4r4r4e4<     f+4>d4<b4>e4&
+C d4>d4c+4<c+4< b4>b4g+4e4
+
+9ABC @2
+
+9 a4a2g+4                   e1 >
+A c+8<b8b16>c+16d8&d4c+8<b8 a1 >
+B e4f+2d4                   c+1 
+C a4d4e4<e4                 a8b8>c+8d8e8g8f+8e8
+
+9ABC @3 
+
+9 f+1&          f+1
+A d1&           d1
+B a1            b1
+C d4>d4c+4<c+4< b4>b4a4<a4
+
+9ABC @4 
+
+9 r4b8g8e8d8c+8d8 c+2<b64a4....
+A r1               r1
+B r2e2             e1
+C g4>g4g+4<g+4     a4>a4g4<g4
+
+9ABC @5
+
+9 r4c8<b8>c4a8c8 <b4r4r4r4>
+A a1&            a8f+8c8<b8>e8d+8a8g8  
+B r4r8r8r4r8r8   f+4r4r4r4
+C f+4>f+4e4<e4   d+4>d+4<b4>b4
+
+9ABC @6 
+
+9 b4e8d8e8f+8g8e8< a4r4r2>
+A g1&              g8e8<b8a8>d8c+8g8f+8
+B r1               r1
+C <e4>e4d4<d4      c+4>c+4<a4>a4
+
+9ABC @7
+
+9 a1            a4g+8a8     b4g+4
+A f+2.g+8a8     d4d16e16f+8&f+8e8e8d8
+B r4r4r4e4<     f+4>d4<b4>e4
+C d4>d4c+4<c+4< b4>b4g+4e4
+
+9ABC @8 
+
+9 a4a2g+4                   e1 >
+A c+8<b8b16>c+16d8&d4c+8<b8 a1 >
+B r4f+2d4                   c+1 
+C a4d4e4<e4                 a1 >
+
+9ABC @9
+
+9 f+1&          f+1
+A d1&           d1
+B a1            b1
+C d4>d4c+4<c+4< b4>b4a4<a4
+
+9ABC @10
+
+9 r4b8g8e8d8c+8d8 c+2<b64a4....
+A r1               r1
+B r2e2             e1
+C g4>g4g+4<g+4     a4>a4g4<g4
+
+9ABC @11
+
+9 r4c8<b8>c4a8c8 <b4r4r4r4>
+A a1&            a8f+8c8<b8>e8d+8a8g8  
+B r4r8r8r4r8r8   f+4r4r4r4
+C f+4>f+4e4<e4   d+4>d+4<b4>b4
+
+9ABC @12 
+
+9 b4e8d8e8f+8g8e8< a4r4r2>
+A g1&              g8e8<b8a8>d8c+8g8f+8
+B r1               r1
+C <e4>e4d4<d4      c+4>c+4<a4>a4
+
+9ABC @13
+
+9 a1            a4g+8a8     b4g+4
+A f+2.g+8a8     d4d16e16f+8&f+8e8e8d8
+B r4r4r4e4<     f+4>d4<b4>e4
+C d4>d4c+4<c+4< b4>b4g+4e4
+
+9ABC @14
+
+9 a4a2g+4                   e1 >
+A c+8<b8b16>c+16d8&d4c+8<b8 a1 >
+B r4f+2d4                   c+1 
+C a4d4e4<e4                 a8b8>c+8d8e8g8f+8e8
+
+
+
+

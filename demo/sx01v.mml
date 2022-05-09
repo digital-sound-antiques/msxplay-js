@@ -1,0 +1,200 @@
+;[name=sx01v lpf=1]
+#opll_mode 1
+#tempo 160
+#title { "Senxin Aleste / ACES -Array of Stars- (Vanilla 2413 Edition)" }
+; https://m2stg.com/senxin-aleste/mml.php
+
+@v15 = { ; Strings / Lead
+;       TL FB
+        27, 4,
+; AR DR SL RR KL MT AM VB EG KR DT
+  12, 2,15, 0, 0, 1, 0, 0, 1, 0, 0,
+   7, 4, 1, 1, 0, 1, 0, 0, 0, 0, 1 }
+
+@v16 = { ; Vibraphone Long
+;       TL FB
+        36, 7,
+; AR DR SL RR KL MT AM VB EG KR WF
+  15, 8, 2, 2, 0, 7, 0, 0, 1, 1, 0,
+  15, 8, 1, 1, 0, 1, 1, 1, 0, 0, 0 }
+
+
+9 @5 v14 o2 l16 q8 l1
+9 f g g+ a  
+9 a+4.f4.d4.<a+4.>f4a+4   b4.f+4.d4 e2.g+8b8
+
+9 l16 @14 ( ;@bassC q4
+9 o2
+9 [ a2.. g+&a f2.. e&f e2.. f16&e16 d+2.. e&d+ d2.. d&d+ e2.. d+&e f4. f+8^4. f&f+ g4. | g+8^4. g&g+ ]2
+9 g+4.e4
+
+9 l1
+9 o2 @6 ) ;@bassD
+9 g+ g_>d+8.&d+2.^16 d+_<a+8.&a+2.^16 a+_>f8.&f2.^16 f_c8.&c2.^16  c_<g8.&g2.^16  g_>d8.&d2.^16  d_<a8.&a2.^16 a_>e8.&e2.^16& e e& e 
+9 (
+
+9 l2 o2 @14 ;@bassA
+9 [
+9   f4r8f+8 g4f8 e4 e8g8g+8 a8>a8<e8d+8 d4r8d+8 e4r8a4a8a8g+8 g8>c8<g8f+8
+9   f4r8f+8 g4e8g+4e8g+8a4e8a8 | a+4f8f8d8d8<a+8r8>b4f+8d8e4g+8b4
+9 ]2
+9 a+4. f4.d4.<a+4.>f4a+4 b4.f+4.d4.e4.g+4.b4
+
+9 [a8a8a8a8a8a8a8a8 | a8a8a8a8a8a8g8g+8 ]4 a8a8a8a8 a8a8g+8g8
+
+9 [	f+2.a4>c+2f+2 f2.c4<a2f2 ]0
+
+CD @6 v13
+D r8. (3
+
+CD o6
+CD c4.<a4.>e4d2d8c8<b8a8g+4.e4.b8>c8^2 c8d8e4f4.e4.c4.<a4.>c4 d4 e2^8f8e8d8^1
+
+CD l16 ;@meloB l16
+CD [ c4.<a4.b4>c4.<g4.>c4 e2.g8d+8d2.. cd c4.<a4.b4>c4.<g8^4b4> c4.d8^2c4.<b8^2> ]2
+
+CD o5 ;P8. @synth q0
+CD @16
+CD a+2^8. a+_>f8.&f f_c8.&c2.^16
+CD c_d+8.&d+4^16 d+_<a+8.&a+4^16 a+_>g8.&g2.^16
+
+CD g_c8.&c2^16 c_g8.&g g_d8.&d2.^16
+CD d_a8.&a4^16 a_e8.&e4^16 e_<b8.&b4^16 b_>c8.&c4^16
+CD c_d8.&d2.^16&d1r1r1
+CD r16
+
+CD @9 l16  
+C o6 )
+D o5
+CD [
+CD a4c4<b4>a8g4c8<b8>c4d8e8 f4<a4g+8>d8e8f8e4c8<b8>c8^2
+CD a4c4<b4>a8 g+4a8b8>c4 d8e8 | f4e8e8c8c8<a4>d2^8e2<
+CD ]2
+CD f4. e4.c4<a8>c2^8 d8e8 g1^8g+1
+CD b1&b1a1&a2.a4 b1&b1 a1&a1
+
+CD @0 o5 ; @strings (4
+CD [ [aaf+f+]8 [aaff]8 ]0
+
+AB ; TR1,2 @backC o4 q0 l1 q1 MPD24 MP2,8,12
+AB o5 q8 l1 @15 v12
+A ;TD2 o4c  TD2 o4c  TD3 o4d  TD4 o4c  TD2 o4c  c TD2 o4c  TD2 o4c  
+A c c d c  c c c d
+B ;TD5 o4e  TD6 o4f  TD3 o4g+ TD4 o4g  TD4 o4f  f TD3 o4f+  TD3 o4f
+B e f g+g  f f f+g+
+
+AB ;@backD MA2,12,3 MP2,7,12 MAD0 MPD24
+AB v13
+AB [
+A ;TD4 o4c  TD2 o4c  TD2 o4c  TD2 o4c | TD4 o4c  TD3 o4d TD2 o4c4.  TD3 o4c8^2  TD3 o4d4.  TD3 o4d4.   TD4 o4c4   
+A c c c c  c d c4. c8^2  d4.d4. c4
+B ;TD4 o4g  TD5 o4e  TD4 o4g  TD2 o4f | TD4 o4f  TD4 o4g TD5 o4e4.  TD5 o4e8^2  TD2 o4a4.  TD3 o4g+4.  TD3 o4g+4  
+B g e g f  f g e4. e8^2  a4.g+4.g+4
+AB ]2
+
+AB @0 ; @backB P8.
+A ; TD3 o4d+ TD4 o4c+ TD1 o4c  TD3 o4c | TD1 o4d  TD3 o4d  TD4 o4c  TD4 o4c
+A d+ c+ c c  d d c c
+B ; TD1 o4a+ TD4 o4f+ TD3 o4f  TD1 o4g | TD3 o4g  TD1 o4a  TD4 o4f  TD4 o4g
+B a+ f+ f g  g a f g
+
+A ; TD4 o4d d TD3 o4d  d
+A d d d d
+B ; TD4 o4g g TD3 o4g+ g+
+B g g g+g+
+
+AB l2 @15 [
+A ;TD2 o4c  TD2 o4d  TD2 o4c  TD4 o4c | TD4 o4c  TD3 o4d  TD4 o4c  TD2 o4d  
+A c d c c   c d c d
+B ;TD5 o4e  TD6 o4f  TD4 o4g  TD4 o4g | TD4 o4f  TD3 o4g+ TD4 o4g  TD5 o4f  
+B e f g g   f g+g f
+A ;TD4 o4c  TD3 o4d  TD3 o4d  TD4 o4c || TD2 o4c  c TD2 o4c  TD2 o4c
+A c d d c | c c d d
+B ;TD2 o4g  TD2 o4a  TD3 o4g+ TD4 o4g || TD2 o4g  g TD3 o4f  TD3 o4f
+B g a g+g | g g g+g+
+AB ]2
+AB l1
+A ; TD2 o4c1  c1 TD2 o4c  TD3 o3b
+A c c c <b>
+B ; TD2 o4g1  g1 TD3 o4f  TD4 o4f2 T3 f2
+B g g f f2 g+2
+
+A ; [T2 o4 d1^1 T4 c1^1]2
+A [e1&e1 e1&e1]2
+B ; [T4 o4 g1^1 T4 f1^1]2
+B [b1&b1 a1&a1]2
+
+AB [
+A ; T4 o3 a^ T3 a^
+A c+1&c+1 c1&c1
+B ; T4 o4 e^ T3e^
+B g+1&g+1 g1&g1
+AB ]0
+
+E @11v12q3 ;@arp l16 q1
+E l16 
+E ;	EC1,32,-8,1
+E o6
+E c e f a e f a >c <f a >c e <a >c e f <d f g b f g b >d <g b >d f <b >d f g <d f g+b f g+b >d <g+b >d 
+E f <b >d f g+<c e g a e g a >c <g a >c e <a >c e g 
+E a+a f d a f d <a+>f d <a+a >d <a+a f a+f a a+>d <a a+>d f <a+>d f a d f a 
+E bafd afd<b >fd<ba >d<baf
+E eg+b>d <g+b>de <b>deg+ deg+b
+
+E ;@strings o5 _0 v127 EC* (4 q1 MPD4 MP2,4,12 vr-3
+E o6 @9 v12 q8 
+E [ ;_0
+E	e2g2e2c4d4g2b2a+2g2
+E   a8<fa>c<ra>cfr  c fa8(2a8)2 <
+E   r8 gb>d<rb>dgr d gb8(2b8)2  < 
+E   c2 f2 > | dd<bbggdd bbg+g+ffdd >
+E ]2
+E dd<bbggdd bbeeg+g+bb
+
+E ;@triangle 
+E o6 @4 q2 v11 l16 ;MP* MA0,96,18 MD0
+E ; _7 [g+]16 >[d+]16 <[a+]16 >[f]16  [c]16  <[g]16  >[d]16  <[a]16 >[e]16  [e]16 [e]16 [e]16
+E  [d+]16 [a+]16 [f]16 >[c]16 < [g]16  [d]16  [a]16  [e]16 [b]16  [b]16 [b]16 [b]16
+
+E ;@strings o6 _0 v127 EC* (6 q1 MPD4 MP2,4,12 vr-3
+E @9 q8 v12 o6
+E [c4e4d2<b4g4>c2 g4e4d4<b4>d4<b4a+4>c4 <c4d4e4f8g+4a8b8>c4<b8>c8 | d4c8c8<a8a8f8r8 b4a8g+8f8e8d8c8<b8>> ]2
+E d4. c4.<a4f8a2^8 b8>c8 e1^8d1
+E d1&d1c1&c2.c4 d1&d1c1&c1
+
+E @0
+E [ v11 o6 [c+c+<aa>]8 [cc<aa>]8 ]0
+
+F l16 v15vh12vc12vs15
+F [ [ hb:vh-3vb-3hb:vh+3vb+3 hb:vh-3vb-3hb:vh+3vb+2 ]7 vb+7 s:vs-2s:vs-2s:vs-2s:vs+6 ]4
+F [
+F   [ 
+F     bh:vh-3h:vh+3 h:vh-3bh:vh+3 h:vh-3h:vh+3 bh:vh-3h32h32vh+3 h:vh-3h:vh+3 bh:vh-3h:vh+3          sh:vh-3h:vh+3 c8 
+F     bh:vh-3h:vh+3 h:vh-3bh:vh+3 h:vh-3h:vh+3 bh:vh-3h32h32vh+3 h:vh-3h:vh+3 bh:vh-3vb-1bh:vb+1vh+3 sh:vh-3h:vh+3 c8 
+F   ]3 
+F   bh:vh-3h:vh+3 h:vh-3bh:vh+3 h:vh-3h:vh+3 sh:vh-3h32h32vh+3 h:vh-3h:vh+3 bh:vh-3h:vh+3          sh:vh-3h:vh+3 c8
+F   bh:vh-3h:vh+3 h:vh-3bh:vh+3 h:vh-3h:vh+3 sh:vh-3h32h32vh+3 h:vh-3h:vh+3 bh:vh-3vb-1bh:vb+1vh+3 sh:vh-3h:vh+3 bc:h:
+F ]2
+
+F [ 
+F   bh:vh-3h:vh+3 vb-2bh:vb+2vh-3h:vh+3 h:vh-3bh:vh+3 h:vh-3bh32h32vh+3 h:vh-3h:vh+3 vb-1bh:vb+1vh-3bh:vh+3 h:vh-3h:vh+3 sh:vh-3h:vh+3 |
+F   h: vh-3h:vh+3 bh:vh-3h:vh+3 h:vh-3h:vh+3 sh:vh-3h32h32vh+3 h:vh-3h:vh+3 bc8 sh:vh-3h:vh+3 h:vh-3vs-1sh:vh+3vs+1 
+F ]6
+F   bh:vh-3h:vh+3 sh:vh-3h:vh+3 sh:vh-3h:vh+3 sh:vh-3h:vh+3 sc:s: bh:vh-3bh:vh+3 sh:vh-3h:vh+3 h:vh-3h:vh+3
+
+F [ 
+F  bh:vh-3h:vh+3 h:vh-3h:vh+3  sh:vh-3h:vh+3 h:vh-3h32h32vh+3 bh:vh-3h:vh+3 bh:vh-3h:vh+3   sh:vh-3h:vh+3 bc8
+F  h:vh-3h:vh+3  bh:vh-3h:vh+3 sh:vh-3h:vh+3 h:vh-3h32h32vh+3 bc8           bh:vh-3h:vh+3 | sh:vh-3h:vh+3 c8 
+F ]4 sh:vh-3h:vh+3cs:s:
+
+F [ 
+F  bh:vh-3h:vh+3 h:vh-3h:vh+3  sh:vh-3h:vh+3 h:vh-3h32h32vh+3 bh:vh-3h:vh+3 bh:vh-3h:vh+3   sh:vh-3h:vh+3 bc8
+F  h:vh-3h:vh+3  bh:vh-3h:vh+3 sh:vh-3h:vh+3 h:vh-3h32h32vh+3 bc8           bh:vh-3h:vh+3 | sh:vh-3h:vh+3 c8 
+F ]5 sh:vh-3h:vh+3cs:s:
+
+F [
+F [ 
+F  bh:vh-3h:vh+3 h:vh-3h:vh+3  sh:vh-3h:vh+3 h:vh-3h32h32vh+3 bh:vh-3h:vh+3 bh:vh-3h:vh+3   sh:vh-3h:vh+3 bc8
+F  h:vh-3h:vh+3  bh:vh-3h:vh+3 sh:vh-3h:vh+3 h:vh-3h32h32vh+3 bc8           bh:vh-3h:vh+3 | sh:vh-3h:vh+3 c8 
+F ]4 sh:vh-3h:vh+3cs:s:
+F ]0

@@ -1,0 +1,144 @@
+;[name=preview lpf=1]
+#opll_mode 1
+#tempo 120
+#title { "ROM Instrument Preview - Sarabande"}
+
+9ABC @1 v14 l4
+
+9 o4
+A o4
+B o3
+C o3
+D o2
+
+9ABCD > 
+
+9ABCD @0
+
+9 q7 f2f2rq8gq7 e2e2r2
+A q7 d2d2rq8eq7 c+2c+2r2
+B q7 a2a2r2     a2a2r2 
+C q7 d2<d2r2    a2.q8b-ag>
+D r1r2          r1r2
+
+9ABCD @1
+
+9 q7 a2a2rq8b-q7 g2g2rq8a
+A q7 f2f2rq8g q7 e2e2rq8f+
+B q7>c2c2r2      c2c2r2
+C q7 f2f2r2      c2.q8c<b-a
+D q7 f2f2r2      r2r2r2
+
+9ABCD @2
+
+9 q7 b-2b-2r>q8c<q7 a2a2rq8a
+A q7 g2g2rq8aq7     f2f2r2
+B q7 d2d2r2         d2d2r2
+C q7 g2>g2<g2>      d2d2rc
+D    r2r2r2         r2r2r2
+
+9ABCD @3
+
+9 q7>d2d2rq8eq7 c+2c+2r2 <
+A q7 a2g2r2      a2a2r2
+B q7 r2r2r2      r2r2r2 <
+C q7<b-2>b-2r2  a2rq8gfe
+D q7 r2r2r2     a1r2
+
+9ABCD @4
+
+9 q7 f2f2rq8gq7 e2e2r2
+A q7 d2d2rq8eq7 c+2c+2r2
+B q7 a2a2r2     a2a2r2 
+C q7 d2<d2r2    a2.q8b-ag>
+D q7 r1r2       r1r2
+
+9ABCD @5
+
+9 q7 a2a2rq8b-q7 g2g2rq8a
+A q7 f2f2rq8gq7  e2e2rq8f+
+B q7>c2c2r2      c2c2r2
+C q7 f2f2r2      c2.q8c<b-a
+D q7 f2f2r2      r2r2r2
+
+9ABCD @6
+
+9 q7 b-2b-2r>c< a2.a>dc+
+A q7 g2g2r2     f2.rrr
+B q7 d2c2r2     c2.rrr
+C q8 g>gegceq7   f2.q8dq8b-2
+D    r2r2r2 r2r2r2
+
+9ABCD @7
+
+9 q8 deq7f2q8edq7 d2d2r2 <
+A q7 r2r2r2       a2a2r2
+B q7 r2r2r2       f2f2r2 <
+C q7 g2a2<a2>     d2<d2r2>
+D q7 r2r2r2       r2r2r2
+
+; FINE
+
+9ABCD @8
+
+9 q7 f2f2rq8gq7 e2e2r2
+A q7 d2d2rq8eq7 c+2c+2r2
+B q7 a2a2r2     a2a2r2 
+C q7 d2<d2r2    a2.q8b-ag>
+D r1r2          r1r2
+
+9ABCD @9
+
+9 q7 a2a2rq8b-q7 g2g2rq8a
+A q7 f2f2rq8g q7 e2e2rq8f+
+B q7>c2c2r2      c2c2r2
+C q7 f2f2r2      c2.q8c<b-a
+D q7 f2f2r2      r2r2r2
+
+9ABCD @10
+
+9 q7 b-2b-2r>q8c<q7 a2a2rq8a
+A q7 g2g2rq8aq7     f2f2r2
+B q7 d2d2r2         d2d2r2
+C q7 g2>g2<g2>      d2d2rc
+D    r2r2r2         r2r2r2
+
+9ABCD @11
+
+9 q7>d2d2rq8eq7 c+2c+2r2 <
+A q7 a2g2r2      a2a2r2
+B q7 r2r2r2      r2r2r2 <
+C q7<b-2>b-2r2  a2rq8gfe
+D q7 r2r2r2     a1r2
+
+9ABCD @12
+
+9 q7 f2f2rq8gq7 e2e2r2
+A q7 d2d2rq8eq7 c+2c+2r2
+B q7 a2a2r2     a2a2r2 
+C q7 d2<d2r2    a2.q8b-ag>
+D q7 r1r2       r1r2
+
+9ABCD @13
+
+9 q7 a2a2rq8b-q7 g2g2rq8a
+A q7 f2f2rq8gq7  e2e2rq8f+
+B q7>c2c2r2      c2c2r2
+C q7 f2f2r2      c2.q8c<b-a
+D q7 f2f2r2      r2r2r2
+
+9ABCD @14
+
+9 q7 b-2b-2r>c< a2.a>dc+
+A q7 g2g2r2     f2.rrr
+B q7 d2c2r2     c2.rrr
+C q8 g>gegceq7   f2.q8dq8b-2
+D    r2r2r2 r2r2r2
+
+9ABCD @0
+
+9 q8 deq7f2q8edq7 d2d2r2 <
+A q7 r2r2r2       a2a2r2
+B q7 r2r2r2       f2f2r2 <
+C q7 g2a2<a2>     d2<d2r2>
+D q7 r2r2r2       r2r2r2

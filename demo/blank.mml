@@ -1,4 +1,4 @@
-;[gain=1.0 name=blank duration=300s fade=5s cpu=0 lpf=0]
+;[gain=1.0 name=blank duration=300s fade=5s cpu=0 lpf=1]
 ; The line above defines extra options, works only on msxplay.com 
 ; name    : Name of mml, use as the base download filename.
 ; gain    : Volume gain. (default: 1.0)

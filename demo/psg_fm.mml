@@ -1,4 +1,4 @@
-;[gain=1.0 name=sample duration=300s fade=5s]
+;[name=sample lpf=1]
 #opll_mode 1
 #tempo 120
 #title { "PSG+FM Tiny Sample"}

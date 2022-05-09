@@ -1,9 +1,4 @@
-;[gain=1.0 name=blank duration=300s fade=5s]
-; The line above defines the extra options for MSXplay.
-; gain    : The volume gain of the playback. It is just linear multiplier, not dB.
-; name    : The name of the mml, use as the base download filename.
-; duration: The length of the song.
-; fade    : The time of fade out.
+;[name=scc lpf=1]
 #opll_mode 1
 #tempo 100
 #title { "SCC Voice Sample"}

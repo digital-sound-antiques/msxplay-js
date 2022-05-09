@@ -1,3 +1,4 @@
+;[name=rom lpf=1]
 #opll_mode 0
 #tempo 120
 
