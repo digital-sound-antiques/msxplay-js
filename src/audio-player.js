@@ -12,7 +12,7 @@ export default class AudioPlayer {
     this.masterVolumeNode.connect(this.destination);
     this.scriptNodeDestination = this.gainNode;
     this.renderer = renderer;
-    this.maxRenderingLoad = 0.5;
+    this.maxRenderingLoad = 1.0;
   }
   getTotalTime() {
     return Math.round((this.waveTotalSize / this.sampleRate) * 1000);
