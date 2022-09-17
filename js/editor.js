@@ -704,6 +704,41 @@ function downloadMGS() {
   }
 }
 
+function downloadVGM() {
+  MSXPlayUI.stop();
+
+  if (compile(false)) {
+    showDialog("to-vgm");
+    setTimeout(() => {
+      let hasError = false;
+      try {
+        const mml = getEditorMML();
+        const info = getMetaMMLInfo(mml);
+        let duration = 300 * 1000;
+        if (info.duration) {
+          duration = info.duration * 1000;
+        }
+        const vgm = MSXPlayUI.toVGM(lastCompiledMGS, duration);
+        const blob = new Blob([vgm], {
+          type: "application/octet-stream"
+        });
+        saveAs(blob, lastCompiledName + ".vgm");
+      } catch (e) {
+        hasError = true;
+      } finally {
+        hideDialog("to-vgm");
+      }
+
+      if (hasError) {
+        showDialog('unknown-error');
+      }
+
+    }, 0);
+  } else {
+    showDialog("no-mgs");
+  }
+}
+
 function download() {
   if (editor.getValue().match(/^\s*$/)) {
     showDialog("no-mgs");
@@ -715,6 +750,8 @@ function download() {
       downloadMML();
     } else if (e === "mgs") {
       downloadMGS();
+    } else if (e === "vgm") {
+      downloadVGM();
     } else if (e === "mp3low") {
       downloadAudio("mp3", 44100, 128, { psg: 1, scc: 0, opll: 1, opl: 1 });
     } else if (e === "mp3mid") {

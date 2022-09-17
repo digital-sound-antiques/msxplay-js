@@ -16,6 +16,14 @@ export default class MSXPlay {
     this.kss = null;
     this.maxCalcSamples = this.sampleRate;
   }
+
+  toVGM(data, duration) {
+    const kss = new KSS(data);
+    const vgm = kss.toVGM({duration: duration})
+    kss.release();
+    return vgm;
+  }
+
   audio_encode(type, data, song, callback, opts) {
     opts = opts || {};
 
