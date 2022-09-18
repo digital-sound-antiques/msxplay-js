@@ -17,9 +17,11 @@ export default class MSXPlay {
     this.maxCalcSamples = this.sampleRate;
   }
 
-  toVGM(data, duration) {
+  async toVGM(data, duration, callback) {
     const kss = new KSS(data);
-    const vgm = kss.toVGM({duration: duration})
+    const vgm = await kss.toVGMAsync({
+      duration: duration, callback: callback
+    });
     kss.release();
     return vgm;
   }

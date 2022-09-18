@@ -704,36 +704,46 @@ function downloadMGS() {
   }
 }
 
-function downloadVGM() {
+async function downloadVGM() {
   MSXPlayUI.stop();
+  const progs = document.querySelectorAll("#to-vgm .progress");
 
   if (compile(false)) {
-    showDialog("to-vgm");
-    setTimeout(() => {
-      let hasError = false;
-      try {
-        const mml = getEditorMML();
-        const info = getMetaMMLInfo(mml);
-        let duration = 300 * 1000;
-        if (info.duration) {
-          duration = info.duration * 1000;
+    let abortEncode = false;
+    showDialog("to-vgm", () => {
+      abortEncode = true;
+    });
+
+    let hasError = false;
+    try {
+      const mml = getEditorMML();
+      const info = getMetaMMLInfo(mml);
+      let duration = 300 * 1000;
+      if (info.duration) {
+        duration = info.duration * 1000;
+      }
+      const vgm = await MSXPlayUI.toVGM(lastCompiledMGS, duration, (progress, total) => {
+        for (let i = 0; i < progs.length; i++) {
+          progs[i].innerText = (progress / 1000).toFixed(0)
         }
-        const vgm = MSXPlayUI.toVGM(lastCompiledMGS, duration);
+        return abortEncode;
+      });
+      if (vgm != null) {
         const blob = new Blob([vgm], {
           type: "application/octet-stream"
         });
         saveAs(blob, lastCompiledName + ".vgm");
-      } catch (e) {
-        hasError = true;
-      } finally {
-        hideDialog("to-vgm");
       }
+    } catch (e) {
+      hasError = true;
+    } finally {
+      hideDialog("to-vgm");
+    }
 
-      if (hasError) {
-        showDialog('unknown-error');
-      }
+    if (hasError) {
+      showDialog('unknown-error');
+    }
 
-    }, 0);
   } else {
     showDialog("no-mgs");
   }

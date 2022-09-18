@@ -42,8 +42,8 @@ class MSXPlayUI {
     setInterval(this.updateDisplay.bind(this), 100);
   }
 
-  toVGM(data, duration) {
-    return this.msxplay.toVGM(data, duration);
+  async toVGM(data, duration, callback) {
+    return this.msxplay.toVGM(data, duration, callback);
   }
 
   audio_encode(type, data, song, callback, opts) {

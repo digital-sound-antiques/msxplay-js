@@ -438,13 +438,17 @@
     <div id="to-vgm" class="dialog" style="width:360px">
       <div class="content">
         <p lang="ja">
-          VGMデータを生成しています...
+          VGMデータを生成しています...<br />
+          <span class="progress"></span>秒 生成済み
         </p>
         <p lang="en">
-          Generating VGM Stream ...
+          Generating VGM Stream...<br />
+          <span class="progress"></span>s rendered.
         </p>
       </div>
       <div class="button-area">
+        <div lang="ja" class="button" data-value="abort">中断</div>
+        <div lang="en" class="button" data-value="abort">ABORT</div>
       </div>
     </div>
 

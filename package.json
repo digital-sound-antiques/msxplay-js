@@ -1,12 +1,11 @@
 {
   "name": "msxplay-js",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "",
   "main": "src/entry.js",
   "engines": {
-    "node": "16.x"
+    "node": ">=14.18.0"
   },
-  "dependencies": {},
   "devDependencies": {
     "encoding-japanese": "^1.0.30",
     "eslint": "^6.5.1",
@@ -14,7 +13,7 @@
     "eslint-plugin-prettier": "^3.1.1",
     "http-server": "^14.1.1",
     "lamejs": "^1.2.0",
-    "libkss-js": "^1.6.0",
+    "libkss-js": "^1.6.2",
     "mgsc-js": "^1.1.1",
     "mgsrc-js": "^1.4.1",
     "object-assign": "^4.1.1",
