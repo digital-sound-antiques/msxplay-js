@@ -12,7 +12,10 @@ module.exports = {
     libraryTarget: "var",
     libraryExport: "default"
   },
-  node: {
-    fs: "empty"
+  resolve: {
+    fallback: {
+      fs: false,
+      path: require.resolve("path-browserify")
+    }
   }
 };
