@@ -1,9 +1,9 @@
 import { KSSPlay } from "libkss-js";
-import Lamejs from "lamejs";
+// import Lamejs from "lamejs";
 
 export default class KSS2MP3 {
   constructor(sampleRate, kbps) {
-    this.mp3encoder = new Lamejs.Mp3Encoder(1, sampleRate, kbps);
+    // this.mp3encoder = new Lamejs.Mp3Encoder(1, sampleRate, kbps);
     this.sampleRate = sampleRate;
     this.bitRate = kbps;
     this.kssplay = null;
@@ -38,7 +38,15 @@ export default class KSS2MP3 {
   /**
    * @param {EncodeOptions} [opts]
    */
-  encode(kss, song, callback, opts) {
+  async encode(kss, song, callback, opts) {
+
+    if (this.mp3encoder == null) {
+      // Note zhuker/lamejs#582bbba6a12f981b984d8fb9e1874499fed85675 (based on lamejs 1.2.1) is required for dynamic import. 
+      // See https://github.com/zhuker/lamejs/pull/87
+      const { Mp3Encoder } = await import(/* webpackChunkName: "lamejs" */'lamejs');
+      this.mp3encoder = new Mp3Encoder(1, this.sampleRate, this.bitRate);
+    }
+
     opts = opts || {};
     var assign = require("object-assign");
     var rcf = assign({ resistor: 0, capacitor: 0 }, opts.rcf);

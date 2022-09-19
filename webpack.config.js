@@ -1,3 +1,5 @@
+const path = require('path');
+
 module.exports = {
   mode: "production",
   context: __dirname + "/src",
@@ -6,7 +8,7 @@ module.exports = {
   },
   // devtool: "source-map",
   output: {
-    path: __dirname + "/dist",
+    path: path.resolve(__dirname, 'dist'),
     filename: "[name].js",
     library: "MSXPlayUI",
     libraryTarget: "var",
