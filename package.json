@@ -1,6 +1,6 @@
 {
   "name": "msxplay-js",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "",
   "main": "src/entry.js",
   "engines": {
@@ -12,7 +12,7 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
     "http-server": "^14.1.1",
-    "lamejs": "^1.2.1",
+    "lamejs": "zhuker/lamejs#582bbba6a12f981b984d8fb9e1874499fed85675",
     "libkss-js": "^1.6.2",
     "mgsc-js": "^1.1.1",
     "mgsrc-js": "^1.4.1",
