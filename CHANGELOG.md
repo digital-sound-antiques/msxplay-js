@@ -1,3 +1,6 @@
+# 1.3.0
+- Improve PSG emulation quality.
+
 # 1.2.3
 - Update libkss (again) to fix [emu2413 issue #12](https://github.com/digital-sound-antiques/emu2413/issues/12)
 
