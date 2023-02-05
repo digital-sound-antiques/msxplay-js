@@ -3,6 +3,7 @@ import MGSC from "mgsc-js";
 import MSXPlay from "./msxplay";
 import mgs2mml, { getJumpMarkerCount } from "mgsrc-js";
 import Encoding from "encoding-japanese";
+import { unmute } from "./unmute.js";
 
 function zeroPadding(num) {
   return ("00" + num).slice(-2);
@@ -36,9 +37,10 @@ async function loadKSSFromUrl(url) {
 
 class MSXPlayUI {
   constructor() {
-    this.msxplay = new MSXPlay();
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    unmute(audioCtx);
+    this.msxplay = new MSXPlay(audioCtx);
     this.playerElements = [];
-    this._audioTag = null;
     setInterval(this.updateDisplay.bind(this), 100);
   }
 
@@ -230,23 +232,6 @@ class MSXPlayUI {
     }
   }
 
-  // unmute for mobile browsers
-  // https://stackoverflow.com/questions/21122418/ios-webaudio-only-works-on-headphones/46839941#46839941
-  unmute() {
-    if (this._audioTag) {
-      // dispose audio tag.
-      this._audioTag.removeAttribute('src');
-    }
-    const silenceDataURL = "data:audio/mp3;base64,//MkxAAHiAICWABElBeKPL/RANb2w+yiT1g/gTok//lP/W/l3h8QO/OCdCqCW2Cw//MkxAQHkAIWUAhEmAQXWUOFW2dxPu//9mr60ElY5sseQ+xxesmHKtZr7bsqqX2L//MkxAgFwAYiQAhEAC2hq22d3///9FTV6tA36JdgBJoOGgc+7qvqej5Zu7/7uI9l//MkxBQHAAYi8AhEAO193vt9KGOq+6qcT7hhfN5FTInmwk8RkqKImTM55pRQHQSq//MkxBsGkgoIAABHhTACIJLf99nVI///yuW1uBqWfEu7CgNPWGpUadBmZ////4sL//MkxCMHMAH9iABEmAsKioqKigsLCwtVTEFNRTMuOTkuNVVVVVVVVVVVVVVVVVVV//MkxCkECAUYCAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV";
-    const tag = document.createElement('audio');
-    tag.controls = false;
-    tag.preload = "auto";
-    tag.loop = false;
-    tag.src = silenceDataURL;
-    tag.play();
-    this._audioTag = tag;
-  }
-
   play(playerElement) {
     this.stop();
     const hash = playerElement.dataset.hash;
@@ -267,7 +252,6 @@ class MSXPlayUI {
 
     const kss = KSS.hashMap[hash];
     if (kss) {
-      this.unmute();
       this.msxplay.setData(kss, song, {
         duration,
         fade,
