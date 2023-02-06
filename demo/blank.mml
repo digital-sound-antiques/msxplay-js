@@ -2,10 +2,12 @@
 ; The line above defines extra options, works only on msxplay.com 
 ; name    : Name of mml, use as the base download filename.
 ; gain    : Volume gain. (default: 1.0)
-; duration: Length of the song. (default: 300s)
+; duration: Maxiumum play duration. (default: 300s)
 ; fade    : Time of fading out. (default: 5s)
 ; cpu     : CPU speed ratio. 0:auto, 1:3.58MHz (default: 0)
 ; lpf     : Low-pass filter. 0:off, 1:on (default: 0)
+; loop    : Number of global loops. (default: 2). 
+;           Note that duration takes precedence over loop.
 #opll_mode 1
 #tempo 120
 #title {"No Title"}

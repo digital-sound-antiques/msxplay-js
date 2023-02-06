@@ -368,13 +368,18 @@ function getMetaMMLInfo(mml) {
   m = mml.match(/^;\[.*duration=(auto|[0-9a-z]+).*\]/im);
   if (m) {
     if (m[1] != "auto") {
-      result.duration = m[1];
+      result.duration = MSXPlayUI.parseTime(m[1]);
     }
   }
 
   m = mml.match(/^;\[.*fade=([0-9a-z]+).*\]/im);
   if (m) {
-    result.fade = m[1];
+    result.fade = MSXPlayUI.parseTime(m[1]);
+  }
+  
+  m = mml.match(/^;\[.*loop=([0-9a-z]+).*\]/im);
+  if (m) {
+    result.loop = parseInt(m[1]);
   }
 
   m = mml.match(/^;\[.*gain=([0-9]+(?:\.[0-9]+)).*\]/im);
@@ -448,6 +453,11 @@ function compile(autoplay) {
     player.dataset.fade = info.fade;
   } else {
     delete player.dataset.fade;
+  }
+  if (info.loop) {
+    player.dataset.loop = info.loop;
+  } else {
+    delete player.dataset.loop;
   }
   player.dataset.cpu = (info.cpu != null) ? info.cpu : 0;
   if (info.rcf != null) {
@@ -671,6 +681,7 @@ function downloadAudio(type, rate, kbps, quality) {
 
   var opts = {
     gain: (info.gain != null) ? info.gain : 1.0,
+    loop: (info.loop) ? info.loop : 2,
     playTime: (info.duration != null) ? info.duration : 600 * 1000,
     fadeTime: (info.fade != null) ? info.fade : 3000,
     sampleRate: rate,
@@ -722,7 +733,7 @@ async function downloadVGM() {
       if (info.duration) {
         duration = info.duration * 1000;
       }
-      const vgm = await MSXPlayUI.toVGM(lastCompiledMGS, duration, (progress, total) => {
+      const vgm = await MSXPlayUI.toVGM(lastCompiledMGS, duration, info.loop, (progress, total) => {
         for (let i = 0; i < progs.length; i++) {
           progs[i].innerText = (progress / 1000).toFixed(0)
         }

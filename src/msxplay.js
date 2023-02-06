@@ -17,10 +17,12 @@ export default class MSXPlay {
     this.maxCalcSamples = this.sampleRate;
   }
 
-  async toVGM(data, duration, callback) {
+  async toVGM(data, duration, loop, callback) {
     const kss = new KSS(data);
     const vgm = await kss.toVGMAsync({
-      duration: duration, callback: callback
+      duration: duration, 
+      callback: callback,
+      loop: loop,
     });
     kss.release();
     return vgm;
@@ -87,7 +89,7 @@ export default class MSXPlay {
     options = options || {};
     this.kss = kss;
     this.song = song;
-    this.loopCount = options.loopCount || 2;
+    this.loopCount = options.loop || 2;
     this.fadeTime = options.fadeTime || 5000;
     if (this.kssplay != null) {
       this.kssplay.release();
