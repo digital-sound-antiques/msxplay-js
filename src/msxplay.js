@@ -102,7 +102,7 @@ export default class MSXPlay {
       this.kssplay.setRCF(0, 0);
     }
     this.kssplay.setSilentLimit(5000);
-    this.kssplay.setDeviceQuality({ psg: 1, scc: 0, opll: 1, opl: 1 });
+    this.kssplay.setDeviceQuality({ psg: 1, scc: 1, opll: 1, opl: 1 });
     this.kssplay.setData(kss);
     this.kssplay.reset(song, options.cpu || 0);
     this.maxPlayTime = Math.min(20 * 60 * 1000, options.duration || 5 * 60 * 1000);
