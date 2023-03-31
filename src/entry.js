@@ -1,1 +1,2 @@
-export { default } from "./msxplay-ui";
+import { MSXPlayUI } from "./msxplay-ui.js";
+export default new MSXPlayUI();

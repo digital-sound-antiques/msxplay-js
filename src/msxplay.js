@@ -1,16 +1,16 @@
 import { KSS, KSSPlay } from "libkss-js";
-import KSS2MP3 from "./kss2mp3";
-import KSS2WAV from "./kss2wav";
-import AudioPlayer from "./audio-player";
+import KSS2MP3 from "./kss2mp3.js";
+import KSS2WAV from "./kss2wav.js";
+import { AudioPlayer } from "./audio-player.js";
 
-export default class MSXPlay {
+export class MSXPlay {
 
   static async initialize() {
     return KSSPlay.initialize();
   }
 
   constructor(audioCtx, destination) {
-    this.audioPlayer = new AudioPlayer(audioCtx, destination, this._generateWave.bind(this));
+    this.audioPlayer = new AudioPlayer(audioCtx, destination);
     this.sampleRate = this.audioPlayer.sampleRate;
     this.kssplay = null;
     this.kss = null;
@@ -129,7 +129,7 @@ export default class MSXPlay {
   }
 
   play() {
-    this.audioPlayer.play(this.maxPlayTime);
+    this.audioPlayer.play(this.kss.data, this.maxPlayTime);
   }
   stop() {
     this.audioPlayer.stop();
