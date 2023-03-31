@@ -17,13 +17,4 @@ export class KSSPlayer extends AudioPlayer {
       numberOfChannels: 1,
     });
   }
-
-  async play(args) {
-    console.log(args);
-    try {
-      await super.play(args);
-    } catch (e) {
-      console.error(e);     
-    }
-  }
 }

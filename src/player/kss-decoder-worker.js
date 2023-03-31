@@ -1,5 +1,5 @@
-import { KSS, KSSPlay } from 'libkss-js';
-import { AudioDecoderWorker } from 'webaudio-stream-player';
+import { KSS, KSSPlay } from "libkss-js";
+import { AudioDecoderWorker } from "webaudio-stream-player";
 
 class KSSDecoderWorker extends AudioDecoderWorker {
   constructor(worker) {
@@ -11,23 +11,22 @@ class KSSDecoderWorker extends AudioDecoderWorker {
   _maxDuration = 60 * 1000 * 5;
   _fadeDuration = 5 * 1000;
   _decodeFrames = 0;
+  _maxLoop = 2;
 
   async init(args) {
     await KSSPlay.initialize();
-    console.log('KSSPlay.initialized');
+    console.debug("KSSPlay.initialized");
   }
 
   async start(args) {
-    const options = args;
-
-    let data;
-    if (options.data instanceof Uint8Array) {
-      data = options.data;
+    if (args.data instanceof Uint8Array) {
+      this._kss = new KSS(args.data, args.lebel ?? "");
+    } else if (args.data instanceof ArrayBuffer) {
+      const u8a = new Uint8Array(args.data);
+      this._kss = new KSS(u8a, args.label ?? "");
     } else {
-      data = new Uint8Array(options.data);
+      throw new Error(`Invalid data type=${typeof args.data}`);
     }
-
-    this._kss = new KSS(data, options.label ?? "");
 
     if (this._kssplay == null) {
       this._kssplay = new KSSPlay(this.sampleRate);
@@ -35,13 +34,37 @@ class KSSDecoderWorker extends AudioDecoderWorker {
 
     this._kssplay.setData(this._kss);
     this._kssplay.setDeviceQuality({ psg: 1, opll: 1, scc: 0, opl: 1 });
-    this._kssplay.reset(options.song ?? 0, options.cpu ?? 0);
-    this._fadeDuration = options.fadeDuration ?? this._fadeDuration;
-    this._maxDuration = options.duration ?? this._maxDuration;
+    this._kssplay.reset(args.song ?? 0, args.cpu ?? 0);
+    if (args.rcf != null) {
+      this._kssplay.setRCF(args.rcf.resistor, args.rcf.capacitor);
+    } else {
+      this._kssplay.setRCF(0, 0);
+    }
+    this._fadeDuration = args.fade ?? this._fadeDuration;
+    this._maxDuration = args.duration ?? this._maxDuration;
+    this._hasDebugMarker = args.debug ?? false;
+    this._maxLoop = args.loop ?? this._maxLoop;
     this._decodeFrames = 0;
   }
 
+  _skipToDebugMarker() {
+    const interval = Math.floor(this.sampleRate / 60);
+    const maxTick = (this.sampleRate * this._maxDuration) / 1000;
+    let tick = 0;
+    while (tick <= maxTick) {
+      this._kssplay.calcSilent(interval);
+      const jumpct = this._kssplay.getMGSJumpCount();
+      if (jumpct != 0) {
+        break;
+      }
+      tick += interval;
+    }
+  }
+
   async process() {
+    if (this._hasDebugMarker) {
+      this._skipToDebugMarker();
+    }
 
     if (this._kssplay?.getFadeFlag() == 2 || this._kssplay?.getStopFlag() != 0) {
       return null;
@@ -49,7 +72,7 @@ class KSSDecoderWorker extends AudioDecoderWorker {
 
     const time = this._decodeFrames / this.sampleRate / 1000;
 
-    if (this._kssplay?.getLoopCount() >= 2 || this._maxDuration - this._fadeDuration < time) {
+    if (this._kssplay?.getLoopCount() >= this._maxLoop || this._maxDuration - this._fadeDuration < time) {
       if (this._kssplay?.getFadeFlag() == 0) {
         this._kssplay?.fadeStart(this._fadeDuration);
       }
@@ -75,8 +98,7 @@ class KSSDecoderWorker extends AudioDecoderWorker {
   }
 }
 
-console.log('kss-decoder-worker');
+console.debug("kss-decoder-worker");
 
 /* `self as any` is workaround. See: [issue#20595](https://github.com/microsoft/TypeScript/issues/20595) */
 const decoder = new KSSDecoderWorker(self);
-

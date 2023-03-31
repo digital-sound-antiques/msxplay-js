@@ -5,16 +5,13 @@ export class AudioPlayer {
     this.audioCtx = audioCtx || new AudioContext();
     this.player = new KSSPlayer("worklet");
     this.destination = destination || this.audioCtx.destination;
-
     this.sampleRate = this.audioCtx.sampleRate;
-
     this.gainNode = this.audioCtx.createGain();
     this.gainNode.gain.value = 1.0;
     this.masterVolumeNode = this.audioCtx.createGain();
     this.masterVolumeNode.gain.value = 3.0;
     this.gainNode.connect(this.masterVolumeNode);
     this.masterVolumeNode.connect(this.destination);
-
     this.player.connect(this.gainNode);
   }
 
@@ -26,13 +23,13 @@ export class AudioPlayer {
     if (this.player.progress?.renderer?.isFulFilled) {
       return this.player.progress?.renderer?.bufferedTime;
     }
-    return 60 * 5 * 1000;
+    return Math.max(60 * 5 * 1000, this.player.progress?.renderer?.bufferedTime ?? 0);
   }
   getPlayedTime() {
-    return this.player.progress?.renderer?.currentTime;
+    return this.player.progress?.renderer?.currentTime ?? 0;
   }
   getBufferedTime() {
-    return this.player.progress?.renderer?.bufferedTime;
+    return this.player.progress?.renderer?.bufferedTime ?? 0;
   }
 
   getState() {
@@ -65,14 +62,14 @@ export class AudioPlayer {
     this.maxPlayTime = time;
   }
 
-  async play(data, maxPlayTime) {
-    this.setMaxPlayTime(maxPlayTime || this.maxPlayTime || 60 * 5 * 1000);
-    console.log(this.audioCtx.state);
+  async play(data, args) {
+    this.setMaxPlayTime(args.duration);
+    console.debug(`AudioContext.state=${this.audioCtx.state}`);
     if (this.audioCtx.state != "running") {
       await this.audioCtx.resume();
-      console.log(this.audioCtx.state);
+      console.debug(`AudioContext.state=${this.audioCtx.state}`);
     }
-    this.player.play({ data });
+    this.player.play({ data, ...args });
   }
   stop() {
     this.player.abort();
@@ -93,7 +90,7 @@ export class AudioPlayer {
     this.player.seekInTime(posInMs);
   }
   release() {
-    console.log("AudioPlayer.release()");
+    console.debug("AudioPlayer.release()");
     this.player.dispose();
     this.audioCtx.close();
     this.audioCtx = null;

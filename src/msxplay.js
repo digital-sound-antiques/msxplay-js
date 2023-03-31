@@ -85,6 +85,17 @@ export class MSXPlay {
     return this.kss ? this.kss.getTitle() : "";
   }
 
+  /**
+   * type DataOptions = {
+   *   duration: number; 
+   *   fade: number;
+   *   gain: number;
+   *   debug_mgs: boolean;
+   *   cpu: number;
+   *   rcf: { resistor: number; capacitor: number; }
+   *   loop: number;
+   * };
+   */
   setData(kss, song, options) {
     options = options || {};
     this.kss = kss;
@@ -112,6 +123,16 @@ export class MSXPlay {
     if (options.debug_mgs) {
       this._skipToDebugMarker();
     }
+
+    this.playArgs = {
+      duration: Math.min(20 * 60 * 1000, options.duration || 5 * 60 * 1000),
+      song: song,
+      fade: options.fade ?? 5000,
+      loop: options.loop ?? 2,
+      cpu: options.cpu,
+      rcf: options.rcf,
+      debug: options.debug_mgs,
+    };
   }
 
   _skipToDebugMarker() {
@@ -129,7 +150,7 @@ export class MSXPlay {
   }
 
   play() {
-    this.audioPlayer.play(this.kss.data, this.maxPlayTime);
+    this.audioPlayer.play(this.kss.data, this.playArgs);
   }
   stop() {
     this.audioPlayer.stop();
