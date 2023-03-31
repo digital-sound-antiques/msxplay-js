@@ -1,26 +1,27 @@
 {
   "name": "msxplay-js",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "",
-  "main": "src/entry.js",
+  "type": "module",
   "engines": {
     "node": ">=14.18.0"
   },
   "devDependencies": {
     "encoding-japanese": "^1.0.30",
-    "eslint": "^8.23.1",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-prettier": "^4.2.1",
+    "eslint": "^8.37.0",
+    "eslint-config-prettier": "^8.8.0",
     "http-server": "^14.1.1",
     "lamejs": "zhuker/lamejs#582bbba6a12f981b984d8fb9e1874499fed85675",
-    "libkss-js": "^1.7.0",
+    "libkss-js": "^1.7.3",
     "mgsc-js": "^1.1.1",
     "mgsrc-js": "^1.4.1",
     "object-assign": "^4.1.1",
     "path-browserify": "^1.0.1",
-    "prettier": "^2.7.1",
-    "webpack": "^5.74.0",
-    "webpack-cli": "^4.10.0"
+    "prettier": "^2.8.4",
+    "webaudio-stream-player": "file:../webaudio-stream-player",
+    "webpack": "^5.76.2",
+    "webpack-cli": "^5.0.1",
+    "worker-url": "^1.1.0"
   },
   "repository": {
     "typo": "git",
@@ -31,7 +32,7 @@
     "prepare": "npm run build",
     "build": "webpack",
     "build-dev": "webpack --mode=\"development\"",
-    "start": "http-server -c-1"
+    "server": "http-server -c-1 ./www"
   },
   "keywords": [],
   "author": "Mitsutaka Okazaki",

@@ -21,7 +21,10 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <link href="css/msxplay.css" rel="stylesheet" type="text/css" />
     <link href="css/style.css" rel="stylesheet" type="text/css" />
-    <script src="dist/msxplay-bundle.js"></script>
+    <script type="module">
+      import MSXPlayUI from "./dist/msxplay-bundle.js";
+      window.MSXPlayUI = MSXPlayUI;
+    </script>
     <script src="js/lang-switcher.js"></script>
     <script src="js/query-parser.js"></script>
     <script src="js/modal-player.js"></script>

@@ -1,36 +1,50 @@
-export default class AudioPlayer {
-  constructor(audioCtx, destination, renderer) {
-    this.audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+import { KSSPlayer } from "./player/kss-player.js";
+
+export class AudioPlayer {
+  constructor(audioCtx, destination) {
+    this.audioCtx = audioCtx || new AudioContext();
+    this.player = new KSSPlayer("worklet");
     this.destination = destination || this.audioCtx.destination;
+
     this.sampleRate = this.audioCtx.sampleRate;
+
     this.gainNode = this.audioCtx.createGain();
     this.gainNode.gain.value = 1.0;
     this.masterVolumeNode = this.audioCtx.createGain();
     this.masterVolumeNode.gain.value = 3.0;
-    // Note: Chrome and FireFox compress overflow in GainNode. Safari does not.
     this.gainNode.connect(this.masterVolumeNode);
     this.masterVolumeNode.connect(this.destination);
-    this.scriptNodeDestination = this.gainNode;
-    this.renderer = renderer;
-    this.maxRenderingLoad = 1.0;
+
+    this.player.connect(this.gainNode);
   }
+
+  get renderSpeed() {
+    return this.player.progress?.decoder?.decodeSpeed ?? 0;
+  }
+
   getTotalTime() {
-    return Math.round((this.waveTotalSize / this.sampleRate) * 1000);
+    if (this.player.progress?.renderer?.isFulFilled) {
+      return this.player.progress?.renderer?.bufferedTime;
+    }
+    return 60 * 5 * 1000;
   }
   getPlayedTime() {
-    return Math.round((this.waveReadPos / this.sampleRate) * 1000);
+    return this.player.progress?.renderer?.currentTime;
   }
   getBufferedTime() {
-    return Math.round((this.waveWritePos / this.sampleRate) * 1000);
+    return this.player.progress?.renderer?.bufferedTime;
   }
-  _changeState(newState) {
-    if (this._state != newState) {
-      this._state = newState;
-      // TODO issue stateChanged event;
-    }
-  }
+
   getState() {
-    return this._state;
+    switch (this.player.state) {
+      case "initial":
+        return "standby";
+      case "playing":
+      case "paused":
+        return this.player.state;
+      default:
+        return "finished";
+    }
   }
   getMasterVolume() {
     return this.masterVolumeNode.gain.value;
@@ -45,132 +59,42 @@ export default class AudioPlayer {
     this.gainNode.gain.value = gain;
   }
   _recycle() {
-    if (this.scriptNode) {
-      if (this.dummyNode) {
-        this.dummyNode.disconnect();
-        this.dummyNode = null;
-      }
-      // Since Firefox 57 seems to call onaudioprocess after disconnect() if multiple
-      // ScriptNodes are instanceated, onaudioprocess property should be cleared before
-      // release the ScriptNode.
-      this.scriptNode.onaudioprocess = null;
-      this.scriptNode.disconnect();
-      this.scriptNode = null;
-    }
-    if (this.timerId) {
-      clearInterval(this.timerId);
-      this.timerId = null;
-    }
-    this.renderedTime = 0;
-    this.consumedTime = 0;
-    this.waveWritePos = 0;
-    this.waveReadPos = 0;
-    this._state = "standby";
+    this.player.abort();
   }
   setMaxPlayTime(time) {
     this.maxPlayTime = time;
-    this.waveBuffer = new Float32Array(Math.round((this.sampleRate * time) / 1000));
-    this.waveTotalSize = this.waveBuffer.length;
   }
-  _render(samples) {
-    var start = Date.now();
-    var waves = this.renderer(this.renderedTime, samples);
-    if (waves == null) {
-      this.waveTotalSize = this.waveWritePos;
-      return false;
-    }
-    for (var i = 0; i < samples; i++) {
-      this.waveBuffer[this.waveWritePos++] = waves[i] / 32768;
-    }
-    this.renderedTime = (this.waveWritePos / this.sampleRate) * 1000;
-    this.consumedTime += Date.now() - start;
-    this.renderSpeed = this.renderedTime / this.consumedTime * this.maxRenderingLoad;
-    return true;
-  }
-  onRender() {
-    var interval = Date.now() - this.lastOnRenderAt;
-    var samples = Math.round(((this.sampleRate * interval) / 1000) * Math.max(1.0, this.renderSpeed));
-    if (!this._render(samples)) {
-      if (this.timerId != null) {
-        clearInterval(this.timerId);
-        this.timerId = null;
-      }
-    }
-    this.lastOnRenderAt = Date.now();
-  }
-  _onAudioProcess(event) {
-    var i;
-    var samples = event.outputBuffer.length;
-    var outData = event.outputBuffer.getChannelData(0);
-    if (this._state == "playing") {
-      // Do not generate wave in this handler because if this handler consume longer time,
-      // the browser often stop to fire the `audioprocess` event. (may be a bug of the browser).
-      var bufferRemains = this.waveWritePos - this.waveReadPos;
-      if (this.waveWritePos < this.waveTotalSize) {
-        if (bufferRemains < this.sampleRate) {
-          // return;
-        }
-      }
-      for (i = 0; i < samples; i++) {
-        outData[i] = this.waveBuffer[this.waveReadPos];
-        if (this.waveReadPos < this.waveWritePos - 1) {
-          this.waveReadPos++;
-        }
-      }
-      if (this.waveReadPos == this.waveTotalSize - 1) {
-        this._changeState("finished");
-      }
-    } else {
-      for (i = 0; i < samples; i++) {
-        outData[i] = 0;
-      }
-    }
-  }
-  play(maxPlayTime) {
+
+  async play(data, maxPlayTime) {
     this.setMaxPlayTime(maxPlayTime || this.maxPlayTime || 60 * 5 * 1000);
-    this._recycle();
-    this.scriptNode = this.audioCtx.createScriptProcessor(16384, 1, 1);
-    this.scriptNode.onaudioprocess = this._onAudioProcess.bind(this);
-    this.scriptNode.connect(this.scriptNodeDestination);
-    this.dummyNode = this.audioCtx.createOscillator();
-    this.dummyNode.frequency.value = 0;
-    this.dummyNode.start(0);
-    this.dummyNode.connect(this.scriptNode);
-    this.renderSpeed = 0.0;
-    this._render(this.sampleRate * 2); // pre-buffer 2.0s
-    this.lastOnRenderAt = Date.now();
-    this.timerId = setInterval(this.onRender.bind(this), 0);
-    this._changeState("playing");
+    console.log(this.audioCtx.state);
+    if (this.audioCtx.state != "running") {
+      await this.audioCtx.resume();
+      console.log(this.audioCtx.state);
+    }
+    this.player.play({ data });
   }
   stop() {
-    this._recycle();
+    this.player.abort();
   }
   pause() {
-    if (this._state == "playing") {
-      this.scriptNode.disconnect();
-      this._changeState("paused");
-    }
+    this.player.pause();
   }
   resume() {
-    if (this._state == "paused") {
-      this.scriptNode.connect(this.scriptNodeDestination);
-      this._changeState("playing");
-    }
+    this.player.resume();
   }
   isPlaying() {
-    return this._state == "playing";
+    return this.player.state == "playing";
   }
   isPaused() {
-    return this._state == "paused";
+    return this.player.state == "paused";
   }
   seekTo(posInMs) {
-    var seekPos = Math.round((this.sampleRate * posInMs) / 1000);
-    if (seekPos < this.waveWritePos) {
-      this.waveReadPos = seekPos;
-    }
+    this.player.seekInTime(posInMs);
   }
   release() {
-    this._recycle();
+    console.log("AudioPlayer.release()");
+    this.player.dispose();
     this.audioCtx.close();
     this.audioCtx = null;
   }

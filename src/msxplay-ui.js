@@ -1,9 +1,10 @@
 import { KSS } from "libkss-js";
 import MGSC from "mgsc-js";
-import MSXPlay from "./msxplay";
+import { MSXPlay } from "./msxplay.js";
 import mgs2mml, { getJumpMarkerCount } from "mgsrc-js";
 import Encoding from "encoding-japanese";
 import { unmute } from "./unmute.js";
+import packageJson from "../package.json";
 
 function zeroPadding(num) {
   return ("00" + num).slice(-2);
@@ -44,7 +45,7 @@ async function _loadKSSFromUrl(url) {
   return KSS.createUniqueInstance(new Uint8Array(ab), url);
 }
 
-class MSXPlayUI {
+export class MSXPlayUI {
 
   parseTime(s) {
     return _parseTime(s);
@@ -55,8 +56,8 @@ class MSXPlayUI {
   }
 
   constructor() {
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    unmute(audioCtx);
+    const audioCtx = new AudioContext();
+    unmute(audioCtx, true);
     this.msxplay = new MSXPlay(audioCtx);
     this.playerElements = [];
     setInterval(this.updateDisplay.bind(this), 100);
@@ -325,8 +326,7 @@ class MSXPlayUI {
   }
 
   getVersion() {
-    const json = require("../package.json");
-    return json.version;
+    return packageJson.version;
   }
 }
 
@@ -353,4 +353,3 @@ function setPlayerState(playerElement, state) {
   playerElement.classList.add(state);
 }
 
-export default new MSXPlayUI();
