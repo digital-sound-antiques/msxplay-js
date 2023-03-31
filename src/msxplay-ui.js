@@ -17,7 +17,7 @@ function timeToString(timeInMs) {
 function _parseTime(s) {
   if (!s) return null;
 
-  if ((typeof s) == "number") {
+  if (typeof s == "number") {
     return s;
   }
 
@@ -25,7 +25,7 @@ function _parseTime(s) {
   if (m) {
     return parseInt(m);
   }
-  
+
   m = s.match(/^(.*)ms$/);
   if (m) {
     return parseFloat(m[1]);
@@ -45,7 +45,6 @@ async function _loadKSSFromUrl(url) {
 }
 
 class MSXPlayUI {
-
   parseTime(s) {
     return _parseTime(s);
   }
@@ -56,7 +55,7 @@ class MSXPlayUI {
 
   constructor() {
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    unmute(audioCtx);
+    unmute(audioCtx, true);
     this.msxplay = new MSXPlay(audioCtx);
     this.playerElements = [];
     setInterval(this.updateDisplay.bind(this), 100);
@@ -185,23 +184,23 @@ class MSXPlayUI {
     playerElement.insertAdjacentHTML(
       "afterbegin",
       '<div class="leftbox"></div>' +
-      '<div class="rightbox">' +
-      '    <div class="title"></div>' +
-      '    <div class="spinner">' +
-      '       <div class="button next"></div>' +
-      '       <div class="number"></div>' +
-      '       <div class="button prev"></div>' +
-      "    </div>" +
-      '    <div class="slider">' +
-      '	    <div class="playtime">0:00</div>' +
-      '       <div class="duration">?:??</div>' +
-      '		<div class="track">' +
-      '			<div class="buffered"></div>' +
-      ' 		    <div class="progress"></div>' +
-      "		</div>" +
-      "	 </div>" +
-      "</div>" +
-      '<div class="footer"></div>'
+        '<div class="rightbox">' +
+        '    <div class="title"></div>' +
+        '    <div class="spinner">' +
+        '       <div class="button next"></div>' +
+        '       <div class="number"></div>' +
+        '       <div class="button prev"></div>' +
+        "    </div>" +
+        '    <div class="slider">' +
+        '	    <div class="playtime">0:00</div>' +
+        '       <div class="duration">?:??</div>' +
+        '		<div class="track">' +
+        '			<div class="buffered"></div>' +
+        ' 		    <div class="progress"></div>' +
+        "		</div>" +
+        "	 </div>" +
+        "</div>" +
+        '<div class="footer"></div>'
     );
 
     if (playerElement.dataset.url) {
