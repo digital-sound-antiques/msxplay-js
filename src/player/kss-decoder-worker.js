@@ -40,7 +40,8 @@ class KSSDecoderWorker extends AudioDecoderWorker {
     } else {
       this._kssplay.setRCF(0, 0);
     }
-    this._fadeDuration = args.fade ?? this._fadeDuration;
+    
+    this._fadeDuration = args.fadeDuration ?? this._fadeDuration;
     this._maxDuration = args.duration ?? this._maxDuration;
     this._hasDebugMarker = args.debug ?? false;
     this._maxLoop = args.loop ?? this._maxLoop;
@@ -70,18 +71,21 @@ class KSSDecoderWorker extends AudioDecoderWorker {
       return null;
     }
 
-    const time = this._decodeFrames / this.sampleRate / 1000;
+    const currentTimeInMs = this._decodeFrames / this.sampleRate * 1000;
 
-    if (this._kssplay?.getLoopCount() >= this._maxLoop || this._maxDuration - this._fadeDuration < time) {
+    // console.log(`${currentTimeInMs} ${this._maxDuration} ${this._fadeDuration}`);
+
+    if (this._kssplay?.getLoopCount() >= this._maxLoop || this._maxDuration - this._fadeDuration <= currentTimeInMs) {
       if (this._kssplay?.getFadeFlag() == 0) {
         this._kssplay?.fadeStart(this._fadeDuration);
       }
     }
 
-    if (this._maxDuration < time) {
+    if (this._maxDuration < currentTimeInMs) {
       return null;
     }
 
+    this._decodeFrames += this.sampleRate;
     return [this._kssplay.calc(this.sampleRate)];
   }
 

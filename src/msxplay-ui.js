@@ -3,7 +3,6 @@ import MGSC from "mgsc-js";
 import { MSXPlay } from "./msxplay.js";
 import mgs2mml, { getJumpMarkerCount } from "mgsrc-js";
 import Encoding from "encoding-japanese";
-import { unmute } from "./unmute.js";
 import packageJson from "../package.json";
 
 function zeroPadding(num) {
@@ -18,7 +17,7 @@ function timeToString(timeInMs) {
 function _parseTime(s) {
   if (!s) return null;
 
-  if ((typeof s) == "number") {
+  if (typeof s == "number") {
     return s;
   }
 
@@ -26,7 +25,7 @@ function _parseTime(s) {
   if (m) {
     return parseInt(m);
   }
-  
+
   m = s.match(/^(.*)ms$/);
   if (m) {
     return parseFloat(m[1]);
@@ -45,8 +44,61 @@ async function _loadKSSFromUrl(url) {
   return KSS.createUniqueInstance(new Uint8Array(ab), url);
 }
 
-export class MSXPlayUI {
+export const isIOS = (() => {
+  const _ua = navigator.userAgent.toLowerCase();
+  return (
+    (_ua.indexOf("iphone") >= 0 && _ua.indexOf("like iphone") < 0) ||
+    (_ua.indexOf("ipad") >= 0 && _ua.indexOf("like ipad") < 0) ||
+    (_ua.indexOf("ipod") >= 0 && _ua.indexOf("like ipod") < 0) ||
+    (_ua.indexOf("mac os x") >= 0 && navigator.maxTouchPoints > 0) // New iPads
+  );
+})();
 
+export const isSafari = (() => {
+  const maybeSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  if (maybeSafari) {
+    if (/google/i.test(navigator.vendor)) {
+      // A fake Safari that may be a mobile simulator on Chrome.
+      return false;
+    }
+    return true;
+  }
+  return false;
+})();
+
+let _audioTagForUnmute;
+// unmute for mobile browsers
+// https://stackoverflow.com/questions/21122418/ios-webaudio-only-works-on-headphones/46839941#46839941
+function _unmute() {
+  if (_audioTagForUnmute) {
+    // dispose dummy audio tag.
+    _audioTagForUnmute.src = "about:blank";
+    _audioTagForUnmute.load();
+  }
+  const silenceDataURL =
+    "data:audio/mp3;base64,//MkxAAHiAICWABElBeKPL/RANb2w+yiT1g/gTok//lP/W/l3h8QO/OCdCqCW2Cw//MkxAQHkAIWUAhEmAQXWUOFW2dxPu//9mr60ElY5sseQ+xxesmHKtZr7bsqqX2L//MkxAgFwAYiQAhEAC2hq22d3///9FTV6tA36JdgBJoOGgc+7qvqej5Zu7/7uI9l//MkxBQHAAYi8AhEAO193vt9KGOq+6qcT7hhfN5FTInmwk8RkqKImTM55pRQHQSq//MkxBsGkgoIAABHhTACIJLf99nVI///yuW1uBqWfEu7CgNPWGpUadBmZ////4sL//MkxCMHMAH9iABEmAsKioqKigsLCwtVTEFNRTMuOTkuNVVVVVVVVVVVVVVVVVVV//MkxCkECAUYCAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV";
+  const tag = document.createElement("audio");
+  tag.controls = false;
+  tag.preload = "auto";
+  tag.loop = true;
+  tag.src = silenceDataURL;
+  tag.play();
+  _audioTagForUnmute = tag;
+}
+
+function _autoResumeAudioContext(audioContext) {
+  if (isIOS && isSafari) {
+    document.addEventListener("visibilitychange", () => {
+      console.debug(`${audioContext.state}`);
+      if (/*document.visibilityState === "visible" &&*/ audioContext.state == "interrupted") {
+        console.debug("resume AudioContext");
+        /* unawaited */ audioContext.resume();
+      }
+    });
+  }
+}
+
+export class MSXPlayUI {
   parseTime(s) {
     return _parseTime(s);
   }
@@ -57,7 +109,9 @@ export class MSXPlayUI {
 
   constructor() {
     const audioCtx = new AudioContext();
-    unmute(audioCtx, true);
+
+    _autoResumeAudioContext(audioCtx);
+
     this.msxplay = new MSXPlay(audioCtx);
     this.playerElements = [];
     setInterval(this.updateDisplay.bind(this), 100);
@@ -186,23 +240,23 @@ export class MSXPlayUI {
     playerElement.insertAdjacentHTML(
       "afterbegin",
       '<div class="leftbox"></div>' +
-      '<div class="rightbox">' +
-      '    <div class="title"></div>' +
-      '    <div class="spinner">' +
-      '       <div class="button next"></div>' +
-      '       <div class="number"></div>' +
-      '       <div class="button prev"></div>' +
-      "    </div>" +
-      '    <div class="slider">' +
-      '	    <div class="playtime">0:00</div>' +
-      '       <div class="duration">?:??</div>' +
-      '		<div class="track">' +
-      '			<div class="buffered"></div>' +
-      ' 		    <div class="progress"></div>' +
-      "		</div>" +
-      "	 </div>" +
-      "</div>" +
-      '<div class="footer"></div>'
+        '<div class="rightbox">' +
+        '    <div class="title"></div>' +
+        '    <div class="spinner">' +
+        '       <div class="button next"></div>' +
+        '       <div class="number"></div>' +
+        '       <div class="button prev"></div>' +
+        "    </div>" +
+        '    <div class="slider">' +
+        '	    <div class="playtime">0:00</div>' +
+        '       <div class="duration">?:??</div>' +
+        '		<div class="track">' +
+        '			<div class="buffered"></div>' +
+        ' 		    <div class="progress"></div>' +
+        "		</div>" +
+        "	 </div>" +
+        "</div>" +
+        '<div class="footer"></div>'
     );
 
     if (playerElement.dataset.url) {
@@ -281,6 +335,7 @@ export class MSXPlayUI {
     };
     const kss = KSS.hashMap[hash];
     if (kss) {
+      _unmute();
       this.msxplay.setData(kss, song, options);
       this.msxplay.play();
       this.currentPlayerElement = playerElement;
@@ -352,4 +407,3 @@ function setPlayerState(playerElement, state) {
   playerElement.classList.remove("standby");
   playerElement.classList.add(state);
 }
-

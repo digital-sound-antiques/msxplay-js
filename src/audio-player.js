@@ -58,12 +58,8 @@ export class AudioPlayer {
   _recycle() {
     this.player.abort();
   }
-  setMaxPlayTime(time) {
-    this.maxPlayTime = time;
-  }
 
   async play(data, args) {
-    this.setMaxPlayTime(args.duration);
     console.debug(`AudioContext.state=${this.audioCtx.state}`);
     if (this.audioCtx.state != "running") {
       await this.audioCtx.resume();

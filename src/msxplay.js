@@ -125,10 +125,10 @@ export class MSXPlay {
     }
 
     this.playArgs = {
-      duration: Math.min(20 * 60 * 1000, options.duration || 5 * 60 * 1000),
       song: song,
-      fade: options.fade ?? 5000,
-      loop: options.loop ?? 2,
+      duration: Math.min(20 * 60 * 1000, options.duration || 5 * 60 * 1000),
+      fadeDuration: options.fadeTime ?? 5000,
+      loop: options.loop || 2,
       cpu: options.cpu,
       rcf: options.rcf,
       debug: options.debug_mgs,
