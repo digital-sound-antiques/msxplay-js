@@ -32,7 +32,7 @@
     "prepare": "npm run build",
     "build": "webpack",
     "build:dev": "webpack -w --mode=\"development\"",
-    "server": "http-server -c-1 ./www"
+    "server": "http-server -c-1 ./www --ssl --key ./cert/localhost+2-key.pem --cert ./cert/localhost+2.pem"
   },
   "keywords": [],
   "author": "Mitsutaka Okazaki",

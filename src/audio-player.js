@@ -1,9 +1,10 @@
 import { KSSPlayer } from "./player/kss-player.js";
+import { isSafari } from "./utils.js";
 
 export class AudioPlayer {
   constructor(audioCtx, destination) {
     this.audioCtx = audioCtx || new AudioContext();
-    this.player = new KSSPlayer("worklet");
+    this.player = new KSSPlayer(isSafari ? 'script' : 'worklet');
     this.destination = destination || this.audioCtx.destination;
     this.sampleRate = this.audioCtx.sampleRate;
     this.gainNode = this.audioCtx.createGain();

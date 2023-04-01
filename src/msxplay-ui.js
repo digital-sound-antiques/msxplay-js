@@ -4,6 +4,7 @@ import { MSXPlay } from "./msxplay.js";
 import mgs2mml, { getJumpMarkerCount } from "mgsrc-js";
 import Encoding from "encoding-japanese";
 import packageJson from "../package.json";
+import { isSafari, isIOS } from "./utils.js";
 
 function zeroPadding(num) {
   return ("00" + num).slice(-2);
@@ -44,46 +45,24 @@ async function _loadKSSFromUrl(url) {
   return KSS.createUniqueInstance(new Uint8Array(ab), url);
 }
 
-export const isIOS = (() => {
-  const _ua = navigator.userAgent.toLowerCase();
-  return (
-    (_ua.indexOf("iphone") >= 0 && _ua.indexOf("like iphone") < 0) ||
-    (_ua.indexOf("ipad") >= 0 && _ua.indexOf("like ipad") < 0) ||
-    (_ua.indexOf("ipod") >= 0 && _ua.indexOf("like ipod") < 0) ||
-    (_ua.indexOf("mac os x") >= 0 && navigator.maxTouchPoints > 0) // New iPads
-  );
-})();
-
-export const isSafari = (() => {
-  const maybeSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-  if (maybeSafari) {
-    if (/google/i.test(navigator.vendor)) {
-      // A fake Safari that may be a mobile simulator on Chrome.
-      return false;
-    }
-    return true;
-  }
-  return false;
-})();
-
 let _audioTagForUnmute;
 // unmute for mobile browsers
 // https://stackoverflow.com/questions/21122418/ios-webaudio-only-works-on-headphones/46839941#46839941
 function _unmute() {
-  if (_audioTagForUnmute) {
-    // dispose dummy audio tag.
-    _audioTagForUnmute.src = "about:blank";
-    _audioTagForUnmute.load();
+  if (isIOS) {
+    if (_audioTagForUnmute) {
+      _audioTagForUnmute.src = '';
+    }
+    const silenceDataURL =
+      "data:audio/mp3;base64,//MkxAAHiAICWABElBeKPL/RANb2w+yiT1g/gTok//lP/W/l3h8QO/OCdCqCW2Cw//MkxAQHkAIWUAhEmAQXWUOFW2dxPu//9mr60ElY5sseQ+xxesmHKtZr7bsqqX2L//MkxAgFwAYiQAhEAC2hq22d3///9FTV6tA36JdgBJoOGgc+7qvqej5Zu7/7uI9l//MkxBQHAAYi8AhEAO193vt9KGOq+6qcT7hhfN5FTInmwk8RkqKImTM55pRQHQSq//MkxBsGkgoIAABHhTACIJLf99nVI///yuW1uBqWfEu7CgNPWGpUadBmZ////4sL//MkxCMHMAH9iABEmAsKioqKigsLCwtVTEFNRTMuOTkuNVVVVVVVVVVVVVVVVVVV//MkxCkECAUYCAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV";
+    const tag = _audioTagForUnmute ?? document.createElement("audio");
+    tag.controls = false;
+    tag.preload = "auto";
+    tag.loop = true;
+    tag.src = silenceDataURL;
+    tag.play();
+    _audioTagForUnmute = tag;
   }
-  const silenceDataURL =
-    "data:audio/mp3;base64,//MkxAAHiAICWABElBeKPL/RANb2w+yiT1g/gTok//lP/W/l3h8QO/OCdCqCW2Cw//MkxAQHkAIWUAhEmAQXWUOFW2dxPu//9mr60ElY5sseQ+xxesmHKtZr7bsqqX2L//MkxAgFwAYiQAhEAC2hq22d3///9FTV6tA36JdgBJoOGgc+7qvqej5Zu7/7uI9l//MkxBQHAAYi8AhEAO193vt9KGOq+6qcT7hhfN5FTInmwk8RkqKImTM55pRQHQSq//MkxBsGkgoIAABHhTACIJLf99nVI///yuW1uBqWfEu7CgNPWGpUadBmZ////4sL//MkxCMHMAH9iABEmAsKioqKigsLCwtVTEFNRTMuOTkuNVVVVVVVVVVVVVVVVVVV//MkxCkECAUYCAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV";
-  const tag = document.createElement("audio");
-  tag.controls = false;
-  tag.preload = "auto";
-  tag.loop = true;
-  tag.src = silenceDataURL;
-  tag.play();
-  _audioTagForUnmute = tag;
 }
 
 function _autoResumeAudioContext(audioContext) {
