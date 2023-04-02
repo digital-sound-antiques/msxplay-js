@@ -68,7 +68,7 @@ function _autoResumeAudioContext(audioContext) {
   if (isIOS && isSafari) {
     document.addEventListener("visibilitychange", () => {
       console.debug(`${audioContext.state}`);
-      if (/*document.visibilityState === "visible" &&*/ audioContext.state == "interrupted") {
+      if (document.visibilityState === "visible" && audioContext.state == "interrupted") {
         console.debug("resume AudioContext");
         /* unawaited */ audioContext.resume();
       }
