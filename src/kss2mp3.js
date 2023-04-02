@@ -39,29 +39,38 @@ export default class KSS2MP3 {
    * @param {EncodeOptions} [opts]
    */
   async encode(kss, song, callback, opts) {
-
     if (this.mp3encoder == null) {
-      // Note zhuker/lamejs#582bbba6a12f981b984d8fb9e1874499fed85675 (based on lamejs 1.2.1) is required for dynamic import. 
+      // Note zhuker/lamejs#582bbba6a12f981b984d8fb9e1874499fed85675 (based on lamejs 1.2.1) is required for dynamic import.
       // See https://github.com/zhuker/lamejs/pull/87
-      const { Mp3Encoder } = await import(/* webpackChunkName: "lamejs" */'lamejs');
+      const { Mp3Encoder } = await import(/* webpackChunkName: "lamejs" */ "lamejs");
       this.mp3encoder = new Mp3Encoder(1, this.sampleRate, this.bitRate);
     }
 
     opts = opts || {};
-    var assign = require("object-assign");
-    var rcf = assign({ resistor: 0, capacitor: 0 }, opts.rcf);
-    var quality = assign({ psg: 1, scc: 0, opll: 1, opl: 1 }, opts.quality);
-    this.opts = assign(
-      {
-        gain: 1.0,
-        silentLimit: 3000,
-        loop: 2,
-        playTime: 600 * 1000,
-        fadeTime: 3000,
-        cpuSpeed: 0
-      },
-      opts
-    );
+
+    const rcf = {
+      resistor: 0,
+      capacitor: 0,
+      ...(opts.rcf ?? {}),
+    };
+
+    const quality = {
+      psg: 1,
+      scc: 0,
+      opll: 1,
+      opl: 1,
+      ...(opts.quality ?? {}),
+    };
+
+    this.opts = {
+      gain: 1.0,
+      silentLimit: 3000,
+      loop: 2,
+      playTime: 600 * 1000,
+      fadeTime: 3000,
+      cpuSpeed: 0,
+      ...opts,
+    };
 
     if (this.kssplay) {
       this.kssplay.release();
@@ -73,7 +82,7 @@ export default class KSS2MP3 {
     this.kssplay.setRCF(rcf.resistor, rcf.capacitor);
     this.kssplay.setData(kss);
     this.kssplay.reset(song, this.opts.cpuSpeed);
-    this.callbackFunc = callback || function() {};
+    this.callbackFunc = callback || function () {};
     this.elapsed = 0;
     this.maxDuration = this.opts.playTime - this.opts.fadeTime;
     this.mp3data = [];
@@ -108,7 +117,10 @@ export default class KSS2MP3 {
       return;
     }
     if (this.kssplay.getFadeFlag() === 0) {
-      if (this.maxDuration - this.elapsed < this.opts.fadeTime || this.opts.loop <= this.kssplay.getLoopCount()) {
+      if (
+        this.maxDuration - this.elapsed < this.opts.fadeTime ||
+        this.opts.loop <= this.kssplay.getLoopCount()
+      ) {
         this.kssplay.fadeStart(this.opts.fadeTime);
       }
     }

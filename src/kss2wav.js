@@ -65,20 +65,24 @@ export default class KSS2WAV {
    */
   encode(kss, song, callback, opts) {
     opts = opts || {};
-    var assign = require("object-assign");
-    var rcf = assign({ resistor: 0, capacitor: 0 }, opts.rcf);
-    var quality = assign({ psg: 1, scc: 0, opll: 1, opl: 1 }, opts.quality);
-    this.opts = assign(
-      {
-        gain: 1.0,
-        silentLimit: 3000,
-        loop: 2,
-        playTime: 600 * 1000,
-        fadeTime: 3000,
-        cpuSpeed: 0
-      },
-      opts
-    );
+
+    const rcf = { resistor: 0, capacitor: 0, ...(opts.rcf ?? {}) };
+    const quality = {
+      psg: 1,
+      scc: 0,
+      opll: 1,
+      opl: 1,
+      ...(opts.quality ?? {}),
+    };
+    this.opts = {
+      gain: 1.0,
+      silentLimit: 3000,
+      loop: 2,
+      playTime: 600 * 1000,
+      fadeTime: 3000,
+      cpuSpeed: 0,
+      ...opts,
+    };
 
     if (this.kssplay) {
       this.kssplay.release();
@@ -90,7 +94,7 @@ export default class KSS2WAV {
     this.kssplay.setRCF(rcf.resistor, rcf.capacitor);
     this.kssplay.setData(kss);
     this.kssplay.reset(song, this.opts.cpuSpeed);
-    this.callbackFunc = callback || function() {};
+    this.callbackFunc = callback || function () {};
     this.elapsed = 0;
     this.maxDuration = this.opts.playTime - this.opts.fadeTime;
     this.wavdata = [];
@@ -123,7 +127,10 @@ export default class KSS2WAV {
       return;
     }
     if (this.kssplay.getFadeFlag() === 0) {
-      if (this.maxDuration - this.elapsed < this.opts.fadeTime || this.opts.loop <= this.kssplay.getLoopCount()) {
+      if (
+        this.maxDuration - this.elapsed < this.opts.fadeTime ||
+        this.opts.loop <= this.kssplay.getLoopCount()
+      ) {
         this.kssplay.fadeStart(this.opts.fadeTime);
       }
     }
