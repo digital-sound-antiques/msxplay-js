@@ -33,7 +33,7 @@ export default {
       minChunks: 9999, // prevent to split chunk
     },
   },
-  plugins: [new WorkerUrlPlugin(), new BundleAnalyzerPlugin()],
+  plugins: [new WorkerUrlPlugin()/*, new BundleAnalyzerPlugin()*/],
   stats: {
     modules: false,
     children: false,
