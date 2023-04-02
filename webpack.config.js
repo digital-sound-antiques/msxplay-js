@@ -1,23 +1,42 @@
-const path = require('path');
+import path from "path";
+import WorkerUrlPlugin from "worker-url/plugin.js";
+import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
 
-module.exports = {
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
+
+export default {
   mode: "production",
   context: __dirname + "/src",
   entry: {
-    "msxplay-bundle": "./entry.js"
+    "msxplay-bundle": "./entry.js",
   },
   // devtool: "source-map",
+  experiments: {
+    outputModule: true,
+  },
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    publicPath: "/dist/",
+    path: path.resolve(__dirname, "public/dist"),
     filename: "[name].js",
-    library: "MSXPlayUI",
-    libraryTarget: "var",
-    libraryExport: "default"
+    library: {
+      type: "module",
+    },
   },
   resolve: {
     fallback: {
       fs: false,
-      path: require.resolve("path-browserify")
-    }
-  }
+      path: false,
+    },
+  },
+  optimization: {
+    splitChunks: {
+      minChunks: 9999, // prevent to split chunk
+    },
+  },
+  plugins: [new WorkerUrlPlugin()/*, new BundleAnalyzerPlugin()*/],
+  stats: {
+    modules: false,
+    children: false,
+    entrypoints: false,
+  },
 };

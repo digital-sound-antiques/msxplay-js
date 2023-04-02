@@ -505,6 +505,7 @@ function convertFromMGS(buffer) {
   try {
     return MSXPlayUI.decompile(buffer);
   } catch (e) {
+    console.error(e);
     document.querySelector("#generic-error .message").innerText = e.message;
     showDialog("generic-error");
   }
@@ -517,7 +518,8 @@ async function loadFromFile(file) {
     reader.onloadend = async () => {
       const u = new Uint8Array(reader.result);
       let version = 6 < u.length ? String.fromCharCode(u[0], u[1], u[2], u[3], u[4], u[5]) : null;
-      if (version && version.indexOf("MGS") === 0) {
+      console.log(version);
+      if (version && /^MGS[3A]/.test(version)) {
         if (/[3A](00|01|02|03)$/.test(version)) {
           const ret = await showDialogAsync("mgsrc-legacy-warn");
           if (ret !== "ok") {
@@ -525,16 +527,20 @@ async function loadFromFile(file) {
             return;
           }
         }
+        console.log('mgsrc');
         const mml = convertFromMGS(reader.result);
         if (mml) {
           loadText(`;[gain=1.0 name=${file.name} duration=300s fade=5s]\n${mml}`);
           resolve(true);
+        } else {
+          console.log('failed');
         }
       } else {
         const mml = MSXPlayUI.decode_text(u);
         if (mml) {
           loadText(mml);
           resolve(true);
+          return;
         }
       }
       resolve(false);

@@ -1,9 +1,9 @@
 import { KSS } from "libkss-js";
-import MGSC from "mgsc-js";
-import MSXPlay from "./msxplay";
-import mgs2mml, { getJumpMarkerCount } from "mgsrc-js";
-import Encoding from "encoding-japanese";
-import { unmute } from "./unmute.js";
+import { MGSC } from "mgsc-js";
+import { MSXPlay } from "./msxplay.js";
+import { mgs2mml, getJumpMarkerCount } from "mgsrc-js";
+import packageJson from "../package.json";
+import { isSafari, isIOS } from "./utils.js";
 
 function zeroPadding(num) {
   return ("00" + num).slice(-2);
@@ -44,7 +44,39 @@ async function _loadKSSFromUrl(url) {
   return KSS.createUniqueInstance(new Uint8Array(ab), url);
 }
 
-class MSXPlayUI {
+let _audioTagForUnmute;
+// unmute for mobile browsers
+// https://stackoverflow.com/questions/21122418/ios-webaudio-only-works-on-headphones/46839941#46839941
+function _unmute() {
+  if (isIOS) {
+    if (_audioTagForUnmute) {
+      _audioTagForUnmute.src = "";
+    }
+    const silenceDataURL =
+      "data:audio/mp3;base64,//MkxAAHiAICWABElBeKPL/RANb2w+yiT1g/gTok//lP/W/l3h8QO/OCdCqCW2Cw//MkxAQHkAIWUAhEmAQXWUOFW2dxPu//9mr60ElY5sseQ+xxesmHKtZr7bsqqX2L//MkxAgFwAYiQAhEAC2hq22d3///9FTV6tA36JdgBJoOGgc+7qvqej5Zu7/7uI9l//MkxBQHAAYi8AhEAO193vt9KGOq+6qcT7hhfN5FTInmwk8RkqKImTM55pRQHQSq//MkxBsGkgoIAABHhTACIJLf99nVI///yuW1uBqWfEu7CgNPWGpUadBmZ////4sL//MkxCMHMAH9iABEmAsKioqKigsLCwtVTEFNRTMuOTkuNVVVVVVVVVVVVVVVVVVV//MkxCkECAUYCAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV";
+    const tag = _audioTagForUnmute ?? document.createElement("audio");
+    tag.controls = false;
+    tag.preload = "auto";
+    tag.loop = true;
+    tag.src = silenceDataURL;
+    tag.play();
+    _audioTagForUnmute = tag;
+  }
+}
+
+function _autoResumeAudioContext(audioContext) {
+  if (isIOS && isSafari) {
+    document.addEventListener("visibilitychange", () => {
+      console.debug(`${audioContext.state}`);
+      if (document.visibilityState === "visible" && audioContext.state == "interrupted") {
+        console.debug("resume AudioContext");
+        /* unawaited */ audioContext.resume();
+      }
+    });
+  }
+}
+
+export class MSXPlayUI {
   parseTime(s) {
     return _parseTime(s);
   }
@@ -54,8 +86,10 @@ class MSXPlayUI {
   }
 
   constructor() {
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    unmute(audioCtx, true);
+    const audioCtx = new AudioContext();
+
+    _autoResumeAudioContext(audioCtx);
+
     this.msxplay = new MSXPlay(audioCtx);
     this.playerElements = [];
     setInterval(this.updateDisplay.bind(this), 100);
@@ -70,8 +104,7 @@ class MSXPlayUI {
   }
 
   decode_text(data) {
-    const encode = Encoding.detect(data);
-    return Encoding.convert(data, { to: "UNICODE", from: encode, type: "string" });
+    return MGSC.decodeText(data);
   }
 
   compile(mml) {
@@ -279,6 +312,7 @@ class MSXPlayUI {
     };
     const kss = KSS.hashMap[hash];
     if (kss) {
+      _unmute();
       this.msxplay.setData(kss, song, options);
       this.msxplay.play();
       this.currentPlayerElement = playerElement;
@@ -324,8 +358,7 @@ class MSXPlayUI {
   }
 
   getVersion() {
-    const json = require("../package.json");
-    return json.version;
+    return packageJson.version;
   }
 }
 
@@ -351,5 +384,3 @@ function setPlayerState(playerElement, state) {
   playerElement.classList.remove("standby");
   playerElement.classList.add(state);
 }
-
-export default new MSXPlayUI();

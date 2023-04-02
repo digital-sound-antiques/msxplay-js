@@ -1,16 +1,16 @@
 import { KSS, KSSPlay } from "libkss-js";
-import KSS2MP3 from "./kss2mp3";
-import KSS2WAV from "./kss2wav";
-import AudioPlayer from "./audio-player";
+import KSS2MP3 from "./kss2mp3.js";
+import KSS2WAV from "./kss2wav.js";
+import { AudioPlayer } from "./audio-player.js";
 
-export default class MSXPlay {
+export class MSXPlay {
 
   static async initialize() {
     return KSSPlay.initialize();
   }
 
   constructor(audioCtx, destination) {
-    this.audioPlayer = new AudioPlayer(audioCtx, destination, this._generateWave.bind(this));
+    this.audioPlayer = new AudioPlayer(audioCtx, destination);
     this.sampleRate = this.audioPlayer.sampleRate;
     this.kssplay = null;
     this.kss = null;
@@ -85,6 +85,17 @@ export default class MSXPlay {
     return this.kss ? this.kss.getTitle() : "";
   }
 
+  /**
+   * type DataOptions = {
+   *   duration: number; 
+   *   fade: number;
+   *   gain: number;
+   *   debug_mgs: boolean;
+   *   cpu: number;
+   *   rcf: { resistor: number; capacitor: number; }
+   *   loop: number;
+   * };
+   */
   setData(kss, song, options) {
     options = options || {};
     this.kss = kss;
@@ -102,7 +113,7 @@ export default class MSXPlay {
       this.kssplay.setRCF(0, 0);
     }
     this.kssplay.setSilentLimit(5000);
-    this.kssplay.setDeviceQuality({ psg: 1, scc: 0, opll: 1, opl: 1 });
+    this.kssplay.setDeviceQuality({ psg: 1, scc: 1, opll: 1, opl: 1 });
     this.kssplay.setData(kss);
     this.kssplay.reset(song, options.cpu || 0);
     this.maxPlayTime = Math.min(20 * 60 * 1000, options.duration || 5 * 60 * 1000);
@@ -112,6 +123,16 @@ export default class MSXPlay {
     if (options.debug_mgs) {
       this._skipToDebugMarker();
     }
+
+    this.playArgs = {
+      song: song,
+      duration: Math.min(20 * 60 * 1000, options.duration || 5 * 60 * 1000),
+      fadeDuration: options.fadeTime ?? 5000,
+      loop: options.loop || 2,
+      cpu: options.cpu,
+      rcf: options.rcf,
+      debug: options.debug_mgs,
+    };
   }
 
   _skipToDebugMarker() {
@@ -129,7 +150,7 @@ export default class MSXPlay {
   }
 
   play() {
-    this.audioPlayer.play(this.maxPlayTime);
+    this.audioPlayer.play(this.kss.data, this.playArgs);
   }
   stop() {
     this.audioPlayer.stop();
