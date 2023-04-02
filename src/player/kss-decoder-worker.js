@@ -40,7 +40,7 @@ class KSSDecoderWorker extends AudioDecoderWorker {
     } else {
       this._kssplay.setRCF(0, 0);
     }
-    
+
     this._fadeDuration = args.fadeDuration ?? this._fadeDuration;
     this._maxDuration = args.duration ?? this._maxDuration;
     this._hasDebugMarker = args.debug ?? false;
@@ -71,7 +71,7 @@ class KSSDecoderWorker extends AudioDecoderWorker {
       return null;
     }
 
-    const currentTimeInMs = this._decodeFrames / this.sampleRate * 1000;
+    const currentTimeInMs = (this._decodeFrames / this.sampleRate) * 1000;
 
     // console.log(`${currentTimeInMs} ${this._maxDuration} ${this._fadeDuration}`);
 

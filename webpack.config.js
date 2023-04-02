@@ -1,5 +1,6 @@
 import path from "path";
 import WorkerUrlPlugin from "worker-url/plugin.js";
+import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
@@ -15,7 +16,7 @@ export default {
   },
   output: {
     publicPath: "/dist/",
-    path: path.resolve(__dirname, "www/dist"),
+    path: path.resolve(__dirname, "public/dist"),
     filename: "[name].js",
     library: {
       type: "module",
@@ -27,7 +28,12 @@ export default {
       path: false,
     },
   },
-  plugins: [new WorkerUrlPlugin()],
+  optimization: {
+    splitChunks: {
+      minChunks: 9999, // prevent to split chunk
+    },
+  },
+  plugins: [new WorkerUrlPlugin(), new BundleAnalyzerPlugin()],
   stats: {
     modules: false,
     children: false,
