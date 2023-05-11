@@ -20,7 +20,7 @@ class KSSDecoderWorker extends AudioDecoderWorker {
 
   async start(args) {
     if (args.data instanceof Uint8Array) {
-      this._kss = new KSS(args.data, args.lebel ?? "");
+      this._kss = new KSS(args.data, args.label ?? "");
     } else if (args.data instanceof ArrayBuffer) {
       const u8a = new Uint8Array(args.data);
       this._kss = new KSS(u8a, args.label ?? "");

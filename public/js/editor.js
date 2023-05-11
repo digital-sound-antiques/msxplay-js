@@ -1,57 +1,71 @@
 "use strict";
 
-ace.define('ace/mode/mgsc_highlight_rules', function (require, exports, module) {
+ace.define("ace/mode/mgsc_highlight_rules", function (require, exports, module) {
   const oop = require("ace/lib/oop");
   const TextHighlightRules = require("ace/mode/text_highlight_rules").TextHighlightRules;
   let MGSCHighlightRules = function () {
     this.$rules = {
-      "start": [{
-        token: "comment",
-        regex: ";.*$"
-      }, {
-        token: "channel",
-        regex: "^\\s*[1-9a-hrA-HR]+",
-        next: "mml",
-      }, {
-        token: "paren.lparen",
-        regex: "{",
-        next: "block",
-      }, {
-        token: "directive",
-        regex: "^#[a-zA-Z_]+",
-      }],
-      "block": [{
-        token: "comment",
-        regex: ";.*$"
-      }, {
-        token: "paren.rparen",
-        regex: "}",
-        next: "start",
-      }, {
-        defaultToken: "block_body",
-      }],
-      "mml": [{
-        token: "comment",
-        regex: ";.*$",
-        next: "start"
-      }, {
-        token: "jump",
-        regex: "\\$"
-      }, {
-        token: "voice",
-        regex: "@e?[0-9]+"
-      }, {
-        token: "eol",
-        regex: "$",
-        next: "start"
-      }],
+      start: [
+        {
+          token: "comment",
+          regex: ";.*$",
+        },
+        {
+          token: "channel",
+          regex: "^\\s*[1-9a-hrA-HR]+",
+          next: "mml",
+        },
+        {
+          token: "paren.lparen",
+          regex: "{",
+          next: "block",
+        },
+        {
+          token: "directive",
+          regex: "^#[a-zA-Z_]+",
+        },
+      ],
+      block: [
+        {
+          token: "comment",
+          regex: ";.*$",
+        },
+        {
+          token: "paren.rparen",
+          regex: "}",
+          next: "start",
+        },
+        {
+          defaultToken: "block_body",
+        },
+      ],
+      mml: [
+        {
+          token: "comment",
+          regex: ";.*$",
+          next: "start",
+        },
+        {
+          token: "jump",
+          regex: "\\$",
+        },
+        {
+          token: "voice",
+          regex: "@e?[0-9]+",
+        },
+        {
+          token: "eol",
+          regex: "$",
+          next: "start",
+        },
+      ],
     };
-  }
+  };
   oop.inherits(MGSCHighlightRules, TextHighlightRules);
   exports.MGSCHighlightRules = MGSCHighlightRules;
 });
 
-ace.define('ace/mode/mgsc', function (require, exports, module) {
+ace.define("ace/mode/mgsc", function (require, exports, module) {
   const oop = require("ace/lib/oop");
   const TextMode = require("ace/mode/text").Mode;
   const MGSCHighlightRules = require("ace/mode/mgsc_highlight_rules").MGSCHighlightRules;
@@ -67,10 +81,10 @@ ace.define('ace/mode/mgsc', function (require, exports, module) {
   exports.Mode = Mode;
 });
 
-const LIGHT_THEME_ID = 'light';
-const DARK_THEME_ID = 'dark';
-const LIGHT_THEME_PATH = 'ace/theme/mgsc';
-const DARK_THEME_PATH = 'ace/theme/mgsc-dark';
+const LIGHT_THEME_ID = "light";
+const DARK_THEME_ID = "dark";
+const LIGHT_THEME_PATH = "ace/theme/mgsc";
+const DARK_THEME_PATH = "ace/theme/mgsc-dark";
 
 ace.define(LIGHT_THEME_PATH, function (require, exports, module) {
   exports.isDark = false;
@@ -165,8 +179,8 @@ async function loadTextFromUrl(url, complete) {
     method: "GET",
     mode: "cors",
     headers: {
-      Accept: "text/plain"
-    }
+      Accept: "text/plain",
+    },
   });
   if (res.ok) {
     const buf = await res.arrayBuffer();
@@ -175,14 +189,19 @@ async function loadTextFromUrl(url, complete) {
   throw new Error(res.statusText);
 }
 
-function getPastebinUrl(key) {
-  return `https://firebasestorage.googleapis.com/v0/b/msxplay-63a7a.appspot.com/o/pastebin%2F${key}?alt=media`;
-}
+const apiSet = {
+  production: {
+    uploadEndpoint: "https://asia-northeast1-msxplay-63a7a.cloudfunctions.net/pastebin",
+    getDownloadUrl: (key) =>
+      `https://firebasestorage.googleapis.com/v0/b/msxplay-63a7a.appspot.com/o/pastebin%2F${key}?alt=media`,
+  },
+  develop: {
+    uploadEndpoint: "http://localhost:5001/msxplay-63a7a/asia-northeast1/pastebin",
+    getDownloadUrl: (key) => `http://localhost:9199/msxplay-63a7a.appspot.com/pastebin%2F${key}`,
+  },
+};
 
-function getShareUrl(id) {
-  //return `http://${location.host}?open=${id}`;
-  return `https://msxplay.com?open=${id}`;
-}
+const api = apiSet.production;
 
 async function openExternalMML(key) {
   try {
@@ -190,7 +209,7 @@ async function openExternalMML(key) {
     if (key.indexOf("http") === 0) {
       await loadFromUrl(key);
     } else {
-      await loadFromUrl(getPastebinUrl(key));
+      await loadFromUrl(api.getDownloadUrl(key));
     }
     hideDialog("loading");
     if (!compile(false)) {
@@ -206,21 +225,17 @@ async function openExternalMML(key) {
 }
 
 async function getShareLink(mml) {
-  const res = await fetch("https://asia-northeast1-msxplay-63a7a.cloudfunctions.net/pastebin", {
+  const res = await fetch(api.uploadEndpoint, {
     method: "POST",
     mode: "cors",
     headers: {
       Accept: "application/json",
-      "Content-Type": "text/plain"
+      "Content-Type": "text/plain",
     },
-    body: mml
+    body: mml,
   });
-  const { id, url } = await res.json();
-  if (url != null) {
-    return url;
-  }
-  // old version
-  return getShareUrl(id);
+  const { id } = await res.json();
+  return `https://f.msxplay.com/${id}`
 }
 
 async function share() {
@@ -298,11 +313,14 @@ function loadEditorOptions() {
 
 function saveEditorOptions() {
   const options = editor.getOptions();
-  window.localStorage.setItem(EDITOR_OPTIONS_KEY, JSON.stringify({
-    theme: options["theme"],
-    fontSize: options["fontSize"],
-    wrap: options["wrap"],
-  }));
+  window.localStorage.setItem(
+    EDITOR_OPTIONS_KEY,
+    JSON.stringify({
+      theme: options["theme"],
+      fontSize: options["fontSize"],
+      wrap: options["wrap"],
+    })
+  );
 }
 
 var editor;
@@ -332,13 +350,17 @@ function createAceEditor() {
 var marker = null;
 function addErrorMarker(line, message) {
   var range = ace.require("ace/range");
-  editor.getSession().setAnnotations([{
-    row: line,
-    column: 0,
-    text: message,
-    type: "error"
-  }]);
-  marker = editor.getSession().addMarker(new range.Range(line, 0, line, 2000), "mml-error", "line", true);
+  editor.getSession().setAnnotations([
+    {
+      row: line,
+      column: 0,
+      text: message,
+      type: "error",
+    },
+  ]);
+  marker = editor
+    .getSession()
+    .addMarker(new range.Range(line, 0, line, 2000), "mml-error", "line", true);
 }
 
 function removeErrorMarker() {
@@ -376,7 +398,7 @@ function getMetaMMLInfo(mml) {
   if (m) {
     result.fade = MSXPlayUI.parseTime(m[1]);
   }
-  
+
   m = mml.match(/^;\[.*loop=([0-9a-z]+).*\]/im);
   if (m) {
     result.loop = parseInt(m[1]);
@@ -448,7 +470,7 @@ function compile(autoplay) {
   lastCompiledName = info.name || "" + Date.now();
 
   player.dataset.duration = info.duration;
-  player.dataset.gain = (info.gain != null) ? info.gain : 1.0;
+  player.dataset.gain = info.gain != null ? info.gain : 1.0;
   if (info.fade) {
     player.dataset.fade = info.fade;
   } else {
@@ -459,7 +481,7 @@ function compile(autoplay) {
   } else {
     delete player.dataset.loop;
   }
-  player.dataset.cpu = (info.cpu != null) ? info.cpu : 0;
+  player.dataset.cpu = info.cpu != null ? info.cpu : 0;
   if (info.rcf != null) {
     player.dataset.rcf = JSON.stringify(info.rcf);
   } else {
@@ -468,7 +490,7 @@ function compile(autoplay) {
 
   MSXPlayUI.setDataToPlayer(player, result.mgs, lastCompiledName);
 
-  let toArrayBuffer = u8a => u8a.buffer.slice(u8a.byteOffset);
+  let toArrayBuffer = (u8a) => u8a.buffer.slice(u8a.byteOffset);
 
   try {
     const jumps = MSXPlayUI.checkMGSJumpMarker(toArrayBuffer(result.mgs));
@@ -527,13 +549,13 @@ async function loadFromFile(file) {
             return;
           }
         }
-        console.log('mgsrc');
+        console.log("mgsrc");
         const mml = convertFromMGS(reader.result);
         if (mml) {
           loadText(`;[gain=1.0 name=${file.name} duration=300s fade=5s]\n${mml}`);
           resolve(true);
         } else {
-          console.log('failed');
+          console.log("failed");
         }
       } else {
         const mml = MSXPlayUI.decode_text(u);
@@ -686,10 +708,10 @@ function downloadAudio(type, rate, kbps, quality) {
   abortEncode = false;
 
   var opts = {
-    gain: (info.gain != null) ? info.gain : 1.0,
-    loop: (info.loop) ? info.loop : 2,
-    playTime: (info.duration != null) ? info.duration : 600 * 1000,
-    fadeTime: (info.fade != null) ? info.fade : 3000,
+    gain: info.gain != null ? info.gain : 1.0,
+    loop: info.loop ? info.loop : 2,
+    playTime: info.duration != null ? info.duration : 600 * 1000,
+    fadeTime: info.fade != null ? info.fade : 3000,
     sampleRate: rate,
     bitRate: kbps,
     quality: quality,
@@ -713,7 +735,7 @@ function downloadMML() {
 function downloadMGS() {
   if (compile(false)) {
     var blob = new Blob([lastCompiledMGS], {
-      type: "application/octet-stream"
+      type: "application/octet-stream",
     });
     saveAs(blob, lastCompiledName + ".mgs");
   } else {
@@ -741,13 +763,13 @@ async function downloadVGM() {
       }
       const vgm = await MSXPlayUI.toVGM(lastCompiledMGS, duration, info.loop, (progress, total) => {
         for (let i = 0; i < progs.length; i++) {
-          progs[i].innerText = (progress / 1000).toFixed(0)
+          progs[i].innerText = (progress / 1000).toFixed(0);
         }
         return abortEncode;
       });
       if (vgm != null) {
         const blob = new Blob([vgm], {
-          type: "application/octet-stream"
+          type: "application/octet-stream",
         });
         saveAs(blob, lastCompiledName + ".vgm");
       }
@@ -758,9 +780,8 @@ async function downloadVGM() {
     }
 
     if (hasError) {
-      showDialog('unknown-error');
+      showDialog("unknown-error");
     }
-
   } else {
     showDialog("no-mgs");
   }
@@ -918,7 +939,6 @@ window.addEventListener("DOMContentLoaded", function () {
     }
   });
 });
-
 
 function openSettings() {
   const themeSel = document.querySelector("#settings select[name='theme']");
