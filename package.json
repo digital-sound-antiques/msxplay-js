@@ -1,6 +1,6 @@
 {
   "name": "msxplay-js",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "",
   "type": "module",
   "engines": {
@@ -16,6 +16,7 @@
     "mgsrc-js": "^2.0.0",
     "prettier": "^2.8.4",
     "rimraf": "^4.4.1",
+    "utf16-to-sjis": "^1.1.1",
     "webaudio-stream-player": "github:digital-sound-antiques/webaudio-stream-player",
     "webpack": "^5.76.2",
     "webpack-bundle-analyzer": "^4.8.0",

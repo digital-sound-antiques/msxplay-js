@@ -729,7 +729,13 @@ function downloadAudio(type, rate, kbps, quality) {
 
 function downloadMML() {
   var blob = new Blob([editor.getValue()], { type: "text/plain" });
-  saveAs(blob, lastCompiledName || Date.now() + ".mml");
+  saveAs(blob, (lastCompiledName || Date.now()) + ".mml");
+}
+
+function downloadMMLforMSX() {
+  const mml4msx = MSXPlayUI.convertToMSXDOSText(editor.getValue());
+  var blob = new Blob([mml4msx], { type: "text/plain" });
+  saveAs(blob, (lastCompiledName || Date.now()) + ".mus");
 }
 
 function downloadMGS() {
@@ -796,6 +802,8 @@ function download() {
   showDialog("download-type", function (e) {
     if (e === "mml") {
       downloadMML();
+    } if (e === "mml-for-msx") {
+      downloadMMLforMSX();
     } else if (e === "mgs") {
       downloadMGS();
     } else if (e === "vgm") {

@@ -4,6 +4,7 @@ import { MSXPlay } from "./msxplay.js";
 import { mgs2mml, getJumpMarkerCount } from "mgsrc-js";
 import packageJson from "../package.json";
 import { isSafari, isIOS } from "./utils.js";
+import { convert as Utf16toSjis } from 'utf16-to-sjis';
 
 function zeroPadding(num) {
   return ("00" + num).slice(-2);
@@ -97,6 +98,14 @@ export class MSXPlayUI {
 
   async toVGM(data, duration, loop, callback) {
     return this.msxplay.toVGM(data, duration, loop, callback);
+  }
+
+  convertToMSXDOSText(text) {
+    const data = Utf16toSjis(text.replace(/\n/g, '\r\n'));
+    const res = new Uint8Array(data.length + 1);
+    res.set(data);
+    res.set([0x1A], data.length); // append EOF
+    return res;
   }
 
   audio_encode(type, data, song, callback, opts) {
