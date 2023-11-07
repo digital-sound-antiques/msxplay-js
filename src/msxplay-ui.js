@@ -4,7 +4,7 @@ import { MSXPlay } from "./msxplay.js";
 import { mgs2mml, getJumpMarkerCount } from "mgsrc-js";
 import packageJson from "../package.json";
 import { isSafari, isIOS } from "./utils.js";
-import { convert as Utf16toSjis } from 'utf16-to-sjis';
+import { convert as Utf16toSjis } from "utf16-to-sjis";
 
 function zeroPadding(num) {
   return ("00" + num).slice(-2);
@@ -101,11 +101,14 @@ export class MSXPlayUI {
   }
 
   convertToMSXDOSText(text) {
-    const data = Utf16toSjis(text.replace(/\n/g, '\r\n'));
-    const res = new Uint8Array(data.length + 1);
-    res.set(data);
-    res.set([0x1A], data.length); // append EOF
-    return res;
+    const data = Utf16toSjis(text.replace(/\r\n/g, "\n").replace(/\n/g, "\r\n"));
+    if (data[data.length] != 0x1a) {
+      const res = new Uint8Array(data.length + 1);
+      res.set(data);
+      res.set([0x1a], data.length); // append EOF
+      return res;
+    } 
+    return data;
   }
 
   audio_encode(type, data, song, callback, opts) {
@@ -194,7 +197,9 @@ export class MSXPlayUI {
       }
     } else if (event.target.classList.contains("track")) {
       if (playerElement == this.currentPlayerElement) {
-        const pos = Math.floor((this.msxplay.getTotalTime() * event.offsetX) / event.target.offsetWidth);
+        const pos = Math.floor(
+          (this.msxplay.getTotalTime() * event.offsetX) / event.target.offsetWidth
+        );
         this.msxplay.seekTo(pos);
       }
     } else if (event.target.classList.contains("next")) {
@@ -255,7 +260,9 @@ export class MSXPlayUI {
     if (!playerElement.dataset.song) {
       playerElement.dataset.song = 0;
     }
-    playerElement.querySelector(".number").textContent = zeroPadding(parseInt(playerElement.dataset.song).toString(16));
+    playerElement.querySelector(".number").textContent = zeroPadding(
+      parseInt(playerElement.dataset.song).toString(16)
+    );
   }
 
   async loadKSS(playerElement) {
@@ -347,13 +354,15 @@ export class MSXPlayUI {
     const renderSpeed = this.msxplay.getRenderSpeed().toFixed(1);
     playerElement.querySelector(".playtime").textContent = timeToString(played);
     if (buffered < total) {
-      playerElement.querySelector(".playtime").textContent += " buffering... (x" + renderSpeed + ") ";
+      playerElement.querySelector(".playtime").textContent +=
+        " buffering... (x" + renderSpeed + ") ";
     } else {
       playerElement.dataset.duration = total + "ms";
     }
     playerElement.querySelector(".duration").textContent = timeToString(total);
     playerElement.querySelector(".progress").style.width = Math.round((100 * played) / total) + "%";
-    playerElement.querySelector(".buffered").style.width = Math.round((100 * buffered) / total) + "%";
+    playerElement.querySelector(".buffered").style.width =
+      Math.round((100 * buffered) / total) + "%";
     setPlayerState(playerElement, this.msxplay.getState());
   }
 
