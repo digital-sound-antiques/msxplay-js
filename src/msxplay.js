@@ -98,10 +98,12 @@ export class MSXPlay {
    */
   setData(kss, song, options) {
     options = options || {};
+    
     this.kss = kss;
     this.song = song;
     this.loopCount = options.loop || 2;
-    this.fadeTime = options.fadeTime || 5000;
+    this.fadeTime = options.fade ?? options.fadeTime ?? 5000;
+
     if (this.kssplay != null) {
       this.kssplay.release();
       this.kssplay = null;
@@ -123,12 +125,11 @@ export class MSXPlay {
     if (options.debug_mgs) {
       this._skipToDebugMarker();
     }
-
     this.playArgs = {
       song: song,
       duration: Math.min(20 * 60 * 1000, options.duration || 5 * 60 * 1000),
-      fadeDuration: options.fadeTime ?? 5000,
-      loop: options.loop || 2,
+      fadeDuration: this.fadeTime,
+      loop: this.loop,
       cpu: options.cpu,
       rcf: options.rcf,
       debug: options.debug_mgs,
@@ -181,6 +182,9 @@ export class MSXPlay {
   }
   getRenderSpeed() {
     return this.audioPlayer.renderSpeed;
+  }
+  isFaded() {
+    return this.audioPlayer.player.progress.decoder.status?.isFaded ?? false;
   }
   release() {
     if (this.kss2mp3 != null) {

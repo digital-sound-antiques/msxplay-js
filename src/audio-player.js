@@ -27,7 +27,7 @@ export class AudioPlayer {
     return Math.max(60 * 5 * 1000, this.player.progress?.renderer?.bufferedTime ?? 0);
   }
   getPlayedTime() {
-    return this.player.progress?.renderer?.currentTime ?? 0;
+    return Math.min(this.player.progress?.renderer?.currentTime ?? 0, this.getBufferedTime());
   }
   getBufferedTime() {
     return this.player.progress?.renderer?.bufferedTime ?? 0;
@@ -61,10 +61,10 @@ export class AudioPlayer {
   }
 
   async play(data, args) {
-    console.debug(`AudioContext.state=${this.audioCtx.state}`);
+    // console.debug(`AudioContext.state=${this.audioCtx.state}`);
     if (this.audioCtx.state != "running") {
       await this.audioCtx.resume();
-      console.debug(`AudioContext.state=${this.audioCtx.state}`);
+      // console.debug(`AudioContext.state=${this.audioCtx.state}`);
     }
     this.player.play({ data, ...args });
   }
@@ -87,7 +87,7 @@ export class AudioPlayer {
     this.player.seekInTime(posInMs);
   }
   release() {
-    console.debug("AudioPlayer.release()");
+    // console.debug("AudioPlayer.release()");
     this.player.dispose();
     this.audioCtx.close();
     this.audioCtx = null;

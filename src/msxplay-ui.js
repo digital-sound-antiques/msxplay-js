@@ -303,7 +303,7 @@ export class MSXPlayUI {
     const hash = playerElement.dataset.hash;
     const song = parseInt(playerElement.dataset.song);
     const duration = _parseTime(playerElement.dataset.duration);
-    const fade = parseFloat(playerElement.dataset.fade);
+    const fade = _parseTime(playerElement.dataset.fade);
     const gain = parseFloat(playerElement.dataset.gain);
     const debug_mgs = parseInt(playerElement.dataset.debug_mgs);
     const cpu = parseInt(playerElement.dataset.cpu);
@@ -326,6 +326,7 @@ export class MSXPlayUI {
       rcf,
       loop,
     };
+
     const kss = KSS.hashMap[hash];
     if (kss) {
       _unmute();
@@ -358,6 +359,9 @@ export class MSXPlayUI {
         " buffering... (x" + renderSpeed + ") ";
     } else {
       playerElement.dataset.duration = total + "ms";
+      if (!this.msxplay.isFaded()) {
+        playerElement.dataset.fade = "0ms";
+      }
     }
     playerElement.querySelector(".duration").textContent = timeToString(total);
     playerElement.querySelector(".progress").style.width = Math.round((100 * played) / total) + "%";

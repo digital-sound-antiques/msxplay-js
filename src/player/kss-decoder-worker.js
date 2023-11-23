@@ -75,7 +75,10 @@ class KSSDecoderWorker extends AudioDecoderWorker {
 
     // console.log(`${currentTimeInMs} ${this._maxDuration} ${this._fadeDuration}`);
 
-    if (this._kssplay?.getLoopCount() >= this._maxLoop || this._maxDuration - this._fadeDuration <= currentTimeInMs) {
+    if (
+      this._kssplay?.getLoopCount() >= this._maxLoop ||
+      this._maxDuration - this._fadeDuration <= currentTimeInMs
+    ) {
       if (this._kssplay?.getFadeFlag() == 0) {
         this._kssplay?.fadeStart(this._fadeDuration);
       }
@@ -87,6 +90,10 @@ class KSSDecoderWorker extends AudioDecoderWorker {
 
     this._decodeFrames += this.sampleRate;
     return [this._kssplay.calc(this.sampleRate)];
+  }
+
+  status() {
+    return { isFaded: this._kssplay?.getFadeFlag() == 2 };
   }
 
   async abort() {
@@ -102,7 +109,7 @@ class KSSDecoderWorker extends AudioDecoderWorker {
   }
 }
 
-console.debug("kss-decoder-worker");
+console.debug("kss-decoder-worker is loaded.");
 
 /* `self as any` is workaround. See: [issue#20595](https://github.com/microsoft/TypeScript/issues/20595) */
 const decoder = new KSSDecoderWorker(self);
