@@ -1,3 +1,19 @@
+# 1.6.1 (2023/11/07)
+- Support MML export in MSX-DOS format.
+
+# 1.6.0 (2023/08/19)
+- Fix the problem where playback rate is ~1.7% higher than real hardware (thanks to @gcielniak).
+
+# 1.5.0 (2023/04/02)
+- Use AudioWorklet for playback.
+
+# 1.4.1 (2023/04/01)
+- Fix the problem where background audio playback is not allowed.
+- 
+# 1.4.0 (2023/02/06)
+- Add loop option as a meta MML property.
+- Fix the problem where fade time is always set zero when export.
+
 # 1.3.0
 - Improve PSG emulation quality.
 
