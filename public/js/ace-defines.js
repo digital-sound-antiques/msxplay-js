@@ -384,7 +384,7 @@ const DARK_THEME_PATH = "ace/theme/mgsc-dark";
     color: #aaa;
   }
   .ace_mgsc_dark .ace_channel {
-    color: #a8e;
+    color: #ee0;
   }
   .ace_mgsc_dark .ace_mml.ace_loop {
     color: #4ce;
@@ -399,7 +399,7 @@ const DARK_THEME_PATH = "ace/theme/mgsc-dark";
     color: #e8e;
   }
   .ace_mgsc_dark .ace_mml.ace_command {
-    color: #099;
+    color: #ae8;
   }
   .ace_mgsc_dark .ace_mml.ace_voice {
     color: #fbf;
