@@ -1,4 +1,7 @@
-# 1.6.1 (2023/11/07)
+# 1.6.3 (2023/11/24)
+- Fix the problem where finite-length music is unexpectedly fading on replay.
+
+# 1.6.2 (2023/11/07)
 - Support MML export in MSX-DOS format.
 
 # 1.6.0 (2023/08/19)
