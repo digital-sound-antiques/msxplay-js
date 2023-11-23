@@ -1,179 +1,5 @@
 "use strict";
 
-ace.define("ace/mode/mgsc_highlight_rules", function (require, exports, module) {
-  const oop = require("ace/lib/oop");
-  const TextHighlightRules = require("ace/mode/text_highlight_rules").TextHighlightRules;
-  let MGSCHighlightRules = function () {
-    this.$rules = {
-      start: [
-        {
-          token: "comment",
-          regex: ";.*$",
-        },
-        {
-          token: "channel",
-          regex: "^\\s*[1-9a-hrA-HR]+",
-          next: "mml",
-        },
-        {
-          token: "paren.lparen",
-          regex: "{",
-          next: "block",
-        },
-        {
-          token: "directive",
-          regex: "^#[a-zA-Z_]+",
-        },
-      ],
-      block: [
-        {
-          token: "comment",
-          regex: ";.*$",
-        },
-        {
-          token: "paren.rparen",
-          regex: "}",
-          next: "start",
-        },
-        {
-          defaultToken: "block_body",
-        },
-      ],
-      mml: [
-        {
-          token: "comment",
-          regex: ";.*$",
-          next: "start",
-        },
-        {
-          token: "jump",
-          regex: "\\$",
-        },
-        {
-          token: "voice",
-          regex: "@e?[0-9]+",
-        },
-        {
-          token: "eol",
-          regex: "$",
-          next: "start",
-        },
-      ],
-    };
-  };
-  oop.inherits(MGSCHighlightRules, TextHighlightRules);
-  exports.MGSCHighlightRules = MGSCHighlightRules;
-});
-
-ace.define("ace/mode/mgsc", function (require, exports, module) {
-  const oop = require("ace/lib/oop");
-  const TextMode = require("ace/mode/text").Mode;
-  const MGSCHighlightRules = require("ace/mode/mgsc_highlight_rules").MGSCHighlightRules;
-  // let MatchingBraceOutdent = require("ace/mode/matching_brace_outdent").MatchingBraceOutdent;
-  const Mode = function () {
-    this.HighlightRules = MGSCHighlightRules;
-    // this.$outdent = new MatchingBraceOutdent();
-  };
-  oop.inherits(Mode, TextMode);
-  (function () {
-    // Extra logic goes here.
-  }).call(Mode.prototype);
-  exports.Mode = Mode;
-});
-
-const LIGHT_THEME_ID = "light";
-const DARK_THEME_ID = "dark";
-const LIGHT_THEME_PATH = "ace/theme/mgsc";
-const DARK_THEME_PATH = "ace/theme/mgsc-dark";
-
-ace.define(LIGHT_THEME_PATH, function (require, exports, module) {
-  exports.isDark = false;
-  exports.cssClass = "ace_mgsc";
-  exports.cssText = `
-.ace_editor.ace_mgsc {
-  color: rgba(0,0,0,0.87);
-  background-color: #f0f0f0;
-}
-.ace_mgsc .ace_marker-layer .ace_bracket {
-  margin: -1px 0 0 -1px;
-  background-color: #bfbfbf;
-}
-.ace_mgsc .ace_marker-layer .ace_active-line {
-  background-color: rgba(0,0,0,0.071);
-}
-.ace_mgsc .ace_gutter-active-line {
-  background-color: rgba(0,0,0,0.071);
-}
-.ace_mgsc .ace_comment {
-  color: #888;
-}
-.ace_mgsc .ace_directive {
-  color: #606;
-}
-.ace_mgsc .ace_channel {
-  color: #088;
-}
-.ace_mgsc .ace_jump {
-  color: #d00;
-}
-.ace_mgsc .ace_selection {
-  background-color: #ACCEF7;
-}
-.ace_mgsc .ace_selected-word {
-  background-color: #ddd;
-}
-.ace_mgsc .ace_gutter {
-  background-color: #eee;
-}
-`;
-  const dom = require("../lib/dom");
-  dom.importCssString(exports.cssText, exports.cssClass);
-});
-
-ace.define(DARK_THEME_PATH, function (require, exports, module) {
-  exports.isDark = true;
-  exports.cssClass = "ace_mgsc_dark";
-  exports.cssText = `
-.ace_editor.ace_mgsc_dark {
-  color: #f0f0f0;
-  background-color: #000;
-}
-.ace_mgsc_dark .ace_marker-layer .ace_bracket {
-  margin: -1px 0 0 -1px;
-  background-color: #bfbfbf;
-}
-.ace_mgsc_dark .ace_marker-layer .ace_active-line {
-  background-color: rgba(255,255,255,0.14);
-}
-.ace_mgsc_dark .ace_gutter-active-line {
-  background-color: rgba(255,255,255,0.14);
-}
-.ace_mgsc_dark .ace_comment {
-  color: #aaa;
-}
-.ace_mgsc_dark .ace_directive {
-  color: #ee0;
-}
-.ace_mgsc_dark .ace_channel {
-  color: #0ee;
-}
-.ace_mgsc_dark .ace_jump {
-  color: #ff0;
-}
-.ace_mgsc_dark .ace_selection {
-  background-color: rgba(88,172,247,0.5);
-}
-.ace_mgsc_dark .ace_selected-word {
-  background-color: #666;
-}
-.ace_mgsc_dark .ace_gutter {
-  background-color: #444;
-}
-`;
-  const dom = require("../lib/dom");
-  dom.importCssString(exports.cssText, exports.cssClass);
-});
-
 async function loadTextFromUrl(url, complete) {
   const res = await fetch(url, {
     method: "GET",
@@ -329,6 +155,7 @@ function createAceEditor() {
   try {
     editor = ace.edit("editor");
     editor.commands.bindKey("Ctrl-P", "golineup");
+    editor.commands.removeCommand("showSettingsMenu");
     editor.$blockScrolling = Infinity;
     editor.getSession().setUseWrapMode(true);
     editor.setShowPrintMargin(false);
@@ -343,6 +170,7 @@ function createAceEditor() {
       contentChanged = true;
     });
   } catch (e) {
+    console.error(e);
     window.alert("Failed to create the Ace editor instance. Please check your network connection.");
   }
 }
