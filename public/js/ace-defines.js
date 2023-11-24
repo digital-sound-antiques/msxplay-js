@@ -268,7 +268,7 @@ const DARK_THEME_PATH = "ace/theme/mgsc-dark";
     exports.cssText = `
   .ace_editor.ace_mgsc {
     color: rgba(0,0,0,0.87);
-    background-color: #fafafa;
+    background-color: #f0f0f0;
   }
   .ace_mgsc .ace_marker-layer .ace_bracket {
     margin: -1px 0 0 -1px;
@@ -349,7 +349,7 @@ const DARK_THEME_PATH = "ace/theme/mgsc-dark";
     exports.cssText = `
   .ace_editor.ace_mgsc_dark {
     color: #f0f0f0;
-    background-color: #000;
+    background-color: #222222;
   }
   .ace_mgsc_dark .ace_marker-layer .ace_bracket {
     margin: -1px 0 0 -1px;
