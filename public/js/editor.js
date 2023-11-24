@@ -1,5 +1,10 @@
 "use strict";
 
+const LIGHT_THEME_ID = "light";
+const DARK_THEME_ID = "dark";
+const LIGHT_THEME_PATH = "ace/theme/mgsc";
+const DARK_THEME_PATH = "ace/theme/mgsc-dark";
+
 async function loadTextFromUrl(url, complete) {
   const res = await fetch(url, {
     method: "GET",

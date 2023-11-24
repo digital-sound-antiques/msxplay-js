@@ -1,8 +1,3 @@
-const LIGHT_THEME_ID = "light";
-const DARK_THEME_ID = "dark";
-const LIGHT_THEME_PATH = "ace/theme/mgsc";
-const DARK_THEME_PATH = "ace/theme/mgsc-dark";
-
 (function () {
   ace.define("ace/mode/mgsc_highlight_rules", function (require, exports, module) {
     const oop = require("ace/lib/oop");
@@ -262,7 +257,7 @@ const DARK_THEME_PATH = "ace/theme/mgsc-dark";
     exports.Mode = Mode;
   });
 
-  ace.define(LIGHT_THEME_PATH, function (require, exports, module) {
+  ace.define("ace/theme/mgsc", function (require, exports, module) {
     exports.isDark = false;
     exports.cssClass = "ace_mgsc";
     exports.cssText = `
@@ -295,17 +290,14 @@ const DARK_THEME_PATH = "ace/theme/mgsc-dark";
   .ace_mgsc .ace_macro_def {
     color: #606;
   }
-  .ace_mgsc .ace_paren.ace_lparen {
-    color: #999;
-  }
-  .ace_mgsc .ace_paren.ace_rparen {
+  .ace_mgsc .ace_paren {
     color: #999;
   }
   .ace_mgsc .ace_channel {
-    color: #088;
+    color: #06c;
   }
   .ace_mgsc .ace_mml.ace_loop {
-    color: #088;
+    color: #08c;
   }
   .ace_mgsc .ace_mml.ace_rel-volume {
     color: #999;
@@ -317,7 +309,7 @@ const DARK_THEME_PATH = "ace/theme/mgsc-dark";
     color: #606;
   }
   .ace_mgsc .ace_mml.ace_command {
-    color: #06c;
+    color: #084;
   }
   .ace_mgsc .ace_mml.ace_voice {
     color: #808;
@@ -343,7 +335,7 @@ const DARK_THEME_PATH = "ace/theme/mgsc-dark";
     dom.importCssString(exports.cssText, exports.cssClass);
   });
 
-  ace.define(DARK_THEME_PATH, function (require, exports, module) {
+  ace.define("ace/theme/mgsc-dark", function (require, exports, module) {
     exports.isDark = true;
     exports.cssClass = "ace_mgsc_dark";
     exports.cssText = `
@@ -384,7 +376,7 @@ const DARK_THEME_PATH = "ace/theme/mgsc-dark";
     color: #aaa;
   }
   .ace_mgsc_dark .ace_channel {
-    color: #ee0;
+    color: #4ef;
   }
   .ace_mgsc_dark .ace_mml.ace_loop {
     color: #4ce;
