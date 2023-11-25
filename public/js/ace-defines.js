@@ -6,7 +6,7 @@
       const commonMMLRules = [
         {
           token: "mml.loop",
-          regex: /(\[[0-9]?|\||\][0-9]?)/,
+          regex: /(\[[0-9]*|\||\][0-9]*)/,
         },
         {
           token: "mml.jump",
@@ -15,7 +15,6 @@
         {
           token: "mml.macro",
           regex: /\*[a-z]?[0-9]*/,
-          caseInsensitive: true,
         },
         {
           token: "mml.rel-volume",
@@ -24,12 +23,10 @@
         {
           token: "mml.command",
           regex: /([tqlv]|@[lmof])\s*[0-9]+/,
-          caseInsensitive: true,
         },
         {
           token: "mml.command",
           regex: /(y)(s*[0-9]+)(\s*,\s*[0-9]+)/,
-          caseInsensitive: true,
         },
         {
           token: "mml.ignore",
@@ -45,6 +42,10 @@
           regex: /$/,
           next: "root",
         },
+        {
+          defaultToken: "text",
+          caseInsensitive: true,
+        },
       ];
 
       function createCommonStates() {
@@ -56,50 +57,56 @@
             },
             {
               token: "directive",
+              regex: /(^\s*)(#end)(\s*)/,
+              next: "ignored",
+            },
+            {
+              token: "directive",
               regex: /(^\s*)(#[a-z_]+)(\s*)/,
-              caseInsensitive: true,
+              push: "directive_param",
             },
             {
               token: "voice_def",
               regex: /^(\s*)(@[ersv]?[0-9]+)(\s*)(=)(\s*)/,
-              caseInsensitive: true,
             },
             {
               token: "macro_def",
               regex: /^(\s*)(\*[a-z]?[0-9]*)(\s*)(=)(\s*)/,
-              caseInsensitive: true,
             },
+            { token: "string", start: '"', end: '"' },
             {
               token: "paren.lparen",
               regex: "{",
-              next: "block",
+              push: "block",
+            },
+            {
+              defaultToken: "text",
+              caseInsensitive: true,
             },
           ],
+          directive_param: [
+            { token: "comment", regex: /;.*$/ },
+            { token: "paren.lparen", regex: "{", push: "block" },
+            { token: "constant.string", start: '"', end: '"' },
+            { token: "constant.numeric", regex: /[0-9]+/ },
+            { regex: "$", next: "pop" },
+            { defaultToken: "block.body" },
+          ],
           block: [
-            {
-              token: "comment",
-              regex: /;.*$/,
-            },
-            {
-              token: "paren.rparen",
-              regex: "}",
-              next: "root",
-            },
-            {
-              defaultToken: "block_body",
-            },
+            { token: "comment", regex: /;.*$/ },
+            { token: "constant.string", start: '"', end: '"' },
+            { token: "paren.rparen", regex: "}", next: "pop" },
+            { defaultToken: "block.body" },
           ],
           mml: [
             ...commonMMLRules,
             {
               token: "mml.note",
               regex: /[a-gr](\+|\-)?(%?[0-9]+)?(\^%?[0-9]+)*/,
-              caseInsensitive: true,
             },
             {
               token: "mml.voice",
               regex: /@[ers]?[0-9]+/,
-              caseInsensitive: true,
             },
             {
               token: "mml.rel-octave",
@@ -112,12 +119,10 @@
             {
               token: "mml.command",
               regex: /(\\|@\\|@p)(\s*[+\-]\s*)?[0-9]+/,
-              caseInsensitive: true,
             },
             {
               token: "mml.command",
               regex: /v(\s*[+\-]\s*)?[0-9]+/,
-              caseInsensitive: true,
             },
             {
               token: "mml.command",
@@ -143,12 +148,10 @@
             {
               token: "mml.note",
               regex: /[bshcm]+(:|%?[0-9]+)?(\^:|\^%?[0-9]+)*/,
-              caseInsensitive: true,
             },
             {
               token: "mml.command",
               regex: /v[bshcm](\s*[+\-]\s*)?[0-9]+/,
-              caseInsensitive: true,
             },
             {
               token: "mml.command",
@@ -163,6 +166,12 @@
       }
 
       function addStatePrefix(states, prefix) {
+        const _p = (s) => {
+          if (typeof s == "string" && s != "pop") {
+            return `${prefix}$${s}`;
+          }
+          return s;
+        };
         const res = {};
         for (const key in states) {
           const rules = states[key];
@@ -170,9 +179,11 @@
           for (const rule of rules) {
             newRules.push({
               ...rule,
-              next: rule.next != null ? `${prefix}$${rule.next}` : undefined,
+              push: _p(rule.push),
+              next: _p(rule.next),
             });
           }
+          console.log(`${prefix}$${key}`);
           res[`${prefix}$${key}`] = newRules;
         }
         return res;
@@ -205,37 +216,42 @@
         return addStatePrefix(states, "mode1");
       }
 
+      const startRules = [
+        { token: "comment", regex: /;.*$/ },
+        {
+          token: ["text", "directive", "text"],
+          regex: /^(\s*)(#opll_mode)(\s+)/,
+          next: "mode_param",
+        },
+        { defaultToken: "comment", caseInsensitive: true },
+      ];
+
       this.$rules = {
-        start: [
-          {
-            token: "comment",
-            regex: /;.*$/,
-          },
-          {
-            token: ["space", "directive", "space"],
-            regex: /^(\s*)(#opll_mode)(\s+)/,
-            caseInsensitive: true,
-            next: "mode_param",
-          },
-          {
-            defaultToken: "comment",
-          },
-        ],
+        start: [{ token: "comment.meta", regex: /;\[.+\]/, next: "start1" }, ...startRules],
+        start1: startRules,
         mode_param: [
           {
-            token: "block",
+            token: "constant.numeric",
             regex: "0",
             next: "mode0$root",
           },
           {
-            token: "block",
+            token: "constant.numeric",
             regex: "1",
             next: "mode1$root",
           },
+          {
+            token: "text",
+            regex: /.*/,
+            next: "ignored",
+          },
         ],
+        ignored: [{ defaultToken: "comment" }],
         ...createMode0States(),
         ...createMode1States(),
       };
+      this.normalizeRules();
+      console.log(this.$rules);
     };
     oop.inherits(MGSCHighlightRules, TextHighlightRules);
     exports.MGSCHighlightRules = MGSCHighlightRules;
@@ -278,20 +294,29 @@
   .ace_mgsc .ace_comment {
     color: #888;
   }
+  .ace_mgsc .ace_comment.ace_meta {
+    color: #333;
+  }
   .ace_mgsc .ace_directive {
     color: #606;
+  }
+  .ace_mgsc .ace_constant {
+    color: #448;
+  }
+  .ace_mgsc .ace_variable {
+    color: #448;
   }
   .ace_mgsc .ace_voice_def {
     color: #606;
   }
-  .ace_mgsc .ace_block_body {
-    color: #643;
+  .ace_mgsc .ace_block {
+    color: #448;
   }
   .ace_mgsc .ace_macro_def {
     color: #606;
   }
   .ace_mgsc .ace_paren {
-    color: #999;
+    color: #643;
   }
   .ace_mgsc .ace_channel {
     color: #06c;
@@ -309,7 +334,7 @@
     color: #606;
   }
   .ace_mgsc .ace_mml.ace_command {
-    color: #084;
+    color: #086;
   }
   .ace_mgsc .ace_mml.ace_voice {
     color: #808;
@@ -320,7 +345,6 @@
   .ace_mgsc .ace_mml.ace_ignore {
     color: #d00;
   }
-
   .ace_mgsc .ace_selection {
     background-color: #ACCEF7;
   }
@@ -354,26 +378,28 @@
     background-color: rgba(255,255,255,0.14);
   }
   .ace_mgsc_dark .ace_comment {
-    color: #aaa;
+    color: #999;
+  }
+  .ace_mgsc_dark .ace_comment.ace_meta {
+    color: #e8e8ef;
   }
   .ace_mgsc_dark .ace_directive {
     color: #ee0;
   }
-
+  .ace_mgsc_dark .ace_constant {
+    color: #e8e8ef;
+  }
   .ace_mgsc_dark .ace_voice_def {
     color: #fbf;
   }
-  .ace_mgsc_dark .ace_block_body {
-    color: #ec8;
+  .ace_mgsc_dark .ace_block {
+    color: #e8e8ef;
   }
   .ace_mgsc_dark .ace_macro_def {
     color: #e8e;
   }
-  .ace_mgsc_dark .ace_paren.ace_lparen {
-    color: #aaa;
-  }
-  .ace_mgsc_dark .ace_paren.ace_rparen {
-    color: #aaa;
+  .ace_mgsc_dark .ace_paren {
+    color: #ccc;
   }
   .ace_mgsc_dark .ace_channel {
     color: #4ef;
@@ -382,10 +408,10 @@
     color: #4ce;
   }
   .ace_mgsc_dark .ace_mml.ace_rel-volume {
-    color: #999;
+    color: #aaa;
   }
   .ace_mgsc_dark .ace_mml.ace_rel-octave {
-    color: #999;
+    color: #aaa;
   }
   .ace_mgsc_dark .ace_mml.ace_macro {
     color: #e8e;
