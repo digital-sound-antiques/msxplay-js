@@ -1,3 +1,6 @@
+# 1.7.1 (2023/11/25)
+- Fix the problem where the background theme is not immediately changed on Safari.
+
 # 1.7.0 (2023/11/24)
 - Fix the problem where finite-length music is unexpectedly fading on replay.
 - Enhance syntax highlighting.

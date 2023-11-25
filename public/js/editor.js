@@ -799,6 +799,8 @@ function openSettings() {
 function onThemeChange(event) {
   const id = event.srcElement.value;
   editor.setTheme(_themeIdToPath(id));
+  // Workaround for Safari: focus to apply background color.
+  editor.focus(); 
   saveEditorOptions();
 }
 
@@ -811,7 +813,6 @@ function onFontSizeChange(event) {
 function onWrapChange(event) {
   const wrap = event.srcElement.value;
   editor.setOption("wrap", wrap);
-  console.log(editor.getOption("wrap"));
   saveEditorOptions();
 }
 
