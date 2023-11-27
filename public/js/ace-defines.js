@@ -283,7 +283,7 @@
     exports.cssText = `
   .ace_editor.ace_mgsc {
     color: rgba(0,0,0,0.87);
-    background-color: #f0f0f0;
+    background-color: #fafafa;
   }
   .ace_mgsc .ace_marker-layer .ace_bracket {
     margin: -1px 0 0 -1px;
