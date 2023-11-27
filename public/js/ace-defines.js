@@ -22,7 +22,11 @@
         },
         {
           token: "mml.command",
-          regex: /([tqlv]|@[lmof])\s*[0-9]+/,
+          regex: /([tqv]|@[lmof])\s*[0-9]+/,
+        },
+        {
+          token: "mml.command",
+          regex: /l\s*%?[0-9]+(\^%?[0-9]*)*/,
         },
         {
           token: "mml.command",

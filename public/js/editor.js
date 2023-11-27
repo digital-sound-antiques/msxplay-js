@@ -66,7 +66,7 @@ async function getShareLink(mml) {
     body: mml,
   });
   const { id } = await res.json();
-  return `https://f.msxplay.com/${id}`
+  return `https://f.msxplay.com/${id}`;
 }
 
 async function share() {
@@ -635,7 +635,8 @@ function download() {
   showDialog("download-type", function (e) {
     if (e === "mml") {
       downloadMML();
-    } if (e === "mml-for-msx") {
+    }
+    if (e === "mml-for-msx") {
       downloadMMLforMSX();
     } else if (e === "mgs") {
       downloadMGS();
@@ -800,7 +801,7 @@ function onThemeChange(event) {
   const id = event.srcElement.value;
   editor.setTheme(_themeIdToPath(id));
   // Workaround for Safari: focus to apply background color.
-  editor.focus(); 
+  editor.focus();
   saveEditorOptions();
 }
 

@@ -1,3 +1,6 @@
+# 1.7.2 (2023/11/27)
+- Fix the problem where `l%n` is not highlighted.
+
 # 1.7.1 (2023/11/25)
 - Fix the problem where the background theme is not immediately changed on Safari.
 
