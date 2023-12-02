@@ -269,10 +269,6 @@ function editorCoverButtonPressed() {
 }
 
 function compile(autoplay) {
-  if (autoplay === undefined) {
-    autoplay = document.getElementById("autoplay").checked;
-  }
-
   if (contentChanged) {
     storeToLocalStorage();
     contentChanged = false;
@@ -728,7 +724,7 @@ async function onDrop(e) {
   e.preventDefault();
   if (0 < e.dataTransfer.files.length) {
     if (await loadFromFile(e.dataTransfer.files[0])) {
-      compile();
+      compile(true);
     }
   }
 }

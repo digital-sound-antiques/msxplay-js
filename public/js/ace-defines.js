@@ -187,7 +187,6 @@
               next: _p(rule.next),
             });
           }
-          console.log(`${prefix}$${key}`);
           res[`${prefix}$${key}`] = newRules;
         }
         return res;
@@ -255,7 +254,6 @@
         ...createMode1States(),
       };
       this.normalizeRules();
-      console.log(this.$rules);
     };
     oop.inherits(MGSCHighlightRules, TextHighlightRules);
     exports.MGSCHighlightRules = MGSCHighlightRules;
