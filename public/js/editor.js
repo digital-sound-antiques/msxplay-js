@@ -557,14 +557,20 @@ function downloadAudio(type, rate, kbps, quality) {
 }
 
 function downloadMML() {
-  var blob = new Blob([editor.getValue()], { type: "text/plain" });
-  saveAs(blob, (lastCompiledName || Date.now()) + ".mml");
+  const mml = editor.getValue();
+  const info = getMetaMMLInfo(mml);
+  const name = info.name || "" + Date.now();
+  const blob = new Blob([mml], { type: "text/plain" });
+  saveAs(blob, name + ".mml");
 }
 
 function downloadMMLforMSX() {
-  const mml4msx = MSXPlayUI.convertToMSXDOSText(editor.getValue());
-  var blob = new Blob([mml4msx], { type: "text/plain" });
-  saveAs(blob, (lastCompiledName || Date.now()) + ".mus");
+  const mml = editor.getValue();
+  const info = getMetaMMLInfo(mml);
+  const mml4msx = MSXPlayUI.convertToMSXDOSText(mml);
+  const name = info.name || "" + Date.now();
+  const blob = new Blob([mml4msx], { type: "text/plain" });
+  saveAs(blob, name + ".mus");
 }
 
 function downloadMGS() {

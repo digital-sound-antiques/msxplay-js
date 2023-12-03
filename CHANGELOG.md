@@ -1,41 +1,48 @@
+# 1.7.4 (2023/12/04)
+- Fixed the problem when exporting MML for MSX-DOS where an extra `EOF` marker was added even if it already exists.
+- Fixed the problem where the name specified by the meta `name` directive was not reflected when exporting MML without pre-compiling.
+
+# 1.7.3 (2023/12/03)
+- Removed `play after compile` checkbox.
+
 # 1.7.2 (2023/11/27)
-- Fix the problem where `l%n` is not highlighted.
+- Fixed the problem where `l%n` was not highlighted.
 
 # 1.7.1 (2023/11/25)
-- Fix the problem where the background theme is not immediately changed on Safari.
+- Fixed the problem where the background theme was not immediately changed on Safari.
 
 # 1.7.0 (2023/11/24)
-- Fix the problem where finite-length music is unexpectedly fading on replay.
-- Enhance syntax highlighting.
+- Fixed the problem where finite-length music was unexpectedly fading on replay.
+- Enhanced MML syntax highlighting.
 
 # 1.6.2 (2023/11/07)
-- Support MML export in MSX-DOS format.
+- Added functionality for exporting MML in MSX-DOS format.
 
 # 1.6.0 (2023/08/19)
-- Fix the problem where playback rate is ~1.7% higher than real hardware (thanks to @gcielniak).
+- Fixed the problem where playback rate was ~1.7% higher than real hardware (thanks to @gcielniak).
 
 # 1.5.0 (2023/04/02)
-- Use AudioWorklet for playback.
+- Replaced the playback engine to use AudioWorklet.
 
 # 1.4.1 (2023/04/01)
-- Fix the problem where background audio playback is not allowed.
+- Fixed the problem where background audio playback was not allowed.
 - 
 # 1.4.0 (2023/02/06)
-- Add loop option as a meta MML property.
-- Fix the problem where fade time is always set zero when export.
+- Added `loop` property for meta MML params.
+- Fixed the problem where fade time was always set zero when export.
 
 # 1.3.0
-- Improve PSG emulation quality.
+- Improved PSG emulation quality.
 
 # 1.2.3
-- Update libkss (again) to fix [emu2413 issue #12](https://github.com/digital-sound-antiques/emu2413/issues/12)
+- Updated libkss (again) to fix [emu2413 issue #12](https://github.com/digital-sound-antiques/emu2413/issues/12)
 
 # 1.2.2
-- Load lamejs dynaimcally to reduce JS footprint.
-- Update libkss to fix [emu2413 issue #12](https://github.com/digital-sound-antiques/emu2413/issues/12)
+- Now loading lamejs dynaimcally to reduce JS footprint.
+- Updated libkss to fix [emu2413 issue #12](https://github.com/digital-sound-antiques/emu2413/issues/12)
 
 # 1.2.1
-- Add a progress indicator and an abort button on the VGM exporter modal.
+- Added a progress indicator and an abort button on the VGM exporter modal.
 
 # 1.2.0
-- Add VGM exporter.
+- Added VGM exporter.

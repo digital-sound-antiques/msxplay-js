@@ -102,7 +102,7 @@ export class MSXPlayUI {
 
   convertToMSXDOSText(text) {
     const data = Utf16toSjis(text.replace(/\r\n/g, "\n").replace(/\n/g, "\r\n"));
-    if (data[data.length] != 0x1a) {
+    if (data[data.length - 1] != 0x1a) {
       const res = new Uint8Array(data.length + 1);
       res.set(data);
       res.set([0x1a], data.length); // append EOF
