@@ -1,6 +1,7 @@
 # 1.7.4 (2023/12/04)
 - Fixed the problem when exporting MML for MSX-DOS where an extra `EOF` marker was added even if it already exists.
 - Fixed the problem where the name specified by the meta `name` directive was not reflected when exporting MML without pre-compiling.
+- Updated `mgsrc-js` (reverse compiler) to generate `l%2` instead of `l96` that often causes compilation error.
 
 # 1.7.3 (2023/12/03)
 - Removed `play after compile` checkbox.
