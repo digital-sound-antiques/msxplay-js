@@ -4,7 +4,6 @@ import KSS2WAV from "./kss2wav.js";
 import { AudioPlayer } from "./audio-player.js";
 
 export class MSXPlay {
-
   static async initialize() {
     return KSSPlay.initialize();
   }
@@ -20,7 +19,7 @@ export class MSXPlay {
   async toVGM(data, duration, loop, callback) {
     const kss = new KSS(data);
     const vgm = await kss.toVGMAsync({
-      duration: duration, 
+      duration: duration,
       callback: callback,
       loop: loop,
     });
@@ -58,10 +57,12 @@ export class MSXPlay {
       return null;
     }
     if (this.kssplay.getFadeFlag() == 0) {
-      var loop = this.kssplay.getLoopCount();
-      var remains = this.maxPlayTime - currentTime;
-      if (this.loopCount <= loop || (this.fadeTime && remains <= this.fadeTime)) {
-        this.kssplay.fadeStart(this.fadeTime);
+      const currentLoop = this.kssplay.getLoopCount();
+      const remains = this.maxPlayTime - currentTime;
+      if (this.kssplay.getFadeFlag() == 0) {
+        if (this.loop <= currentLoop || (this.fadeTime && remains <= this.fadeTime)) {
+          this.kssplay.fadeStart(this.fadeTime);
+        }
       }
     }
     return this.kssplay.calc(samples);
@@ -87,7 +88,7 @@ export class MSXPlay {
 
   /**
    * type DataOptions = {
-   *   duration: number; 
+   *   duration: number;
    *   fade: number;
    *   gain: number;
    *   debug_mgs: boolean;
@@ -101,7 +102,7 @@ export class MSXPlay {
     
     this.kss = kss;
     this.song = song;
-    this.loopCount = options.loop || 2;
+    this.loop = options.loop || 2;
     this.fadeTime = options.fade ?? options.fadeTime ?? 5000;
 
     if (this.kssplay != null) {

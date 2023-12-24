@@ -1,3 +1,6 @@
+# 1.7.5 (2023/12/25)
+- Fixed the problem where `loop` directive was ignored.
+
 # 1.7.4 (2023/12/04)
 - Fixed the problem when exporting MML for MSX-DOS where an extra `EOF` marker was added even if it already exists.
 - Fixed the problem where the name specified by the meta `name` directive was not reflected when exporting MML without pre-compiling.
