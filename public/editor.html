@@ -18,17 +18,19 @@
   <meta name="twitter:description" content="MSX sound player on the web." />
   <meta name="twitter:image" content="https://msxplay.com/img/ogp.png" />
 
-  <script src="register-sw.js"></script>        
-  <script type="module">
-    import MSXPlayUI from './dist/msxplay-bundle.js';
-    window.MSXPlayUI = MSXPlayUI;
-  </script>
+  <link rel="manifest" href="./manifest.webmanifest" />
   <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css" />
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
   <link href="css/msxplay.css" rel="stylesheet" type="text/css" />
   <link href="css/style.css" rel="stylesheet" type="text/css" />
   <link href="css/lds-ripple.css" rel="stylesheet" type="text/css" />
   <link href="css/editor.css" rel="stylesheet" type="text/css" />
+
+  <script src="register-sw.js"></script>        
+  <script type="module">
+    import MSXPlayUI from './dist/msxplay-bundle.js';
+    window.MSXPlayUI = MSXPlayUI;
+  </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.31.2/ace.min.js"></script>
 
   <script>
