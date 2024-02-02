@@ -1,3 +1,6 @@
+# 1.8.0 (2023/02/03)
+- Install ServiceWorker so that MSXplay works as a PWA.
+
 # 1.7.5 (2023/12/25)
 - Fixed the problem where `loop` directive was ignored.
 
