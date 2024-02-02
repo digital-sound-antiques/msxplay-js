@@ -73,7 +73,7 @@ export default {
       runtimeCaching: [
         {
           handler: "NetworkFirst",
-          urlPattern: /\.(jpe?g|png)$/,
+          urlPattern: /\.(jpe?g|png|mml)$/,
           options: {
             cacheName: cacheId + "-asset-cache",
           },
