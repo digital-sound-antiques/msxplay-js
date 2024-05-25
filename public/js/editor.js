@@ -134,6 +134,7 @@ function loadEditorOptions() {
     theme: LIGHT_THEME_PATH,
     fontSize: 12,
     wrap: "free", // "free" | "off"
+    showInvisibles: false,
   };
   const options = JSON.parse(window.localStorage.getItem(EDITOR_OPTIONS_KEY) || "{}");
   return {
@@ -144,12 +145,14 @@ function loadEditorOptions() {
 
 function saveEditorOptions() {
   const options = editor.getOptions();
+  console.log(options);
   window.localStorage.setItem(
     EDITOR_OPTIONS_KEY,
     JSON.stringify({
       theme: options["theme"],
       fontSize: options["fontSize"],
       wrap: options["wrap"],
+      showInvisibles: options["showInvisibles"],
     })
   );
 }
@@ -164,11 +167,13 @@ function createAceEditor() {
     editor.$blockScrolling = Infinity;
     editor.getSession().setUseWrapMode(true);
     editor.setShowPrintMargin(false);
+    editor.setDisplayIndentGuides(true);
     editor.resize(true);
     editor.setOptions({
       mode: "ace/mode/mgsc",
       useWorker: false,
       indentedSoftWrap: false,
+      useSoftTabs: false,
       ...loadEditorOptions(),
     });
     editor.on("change", function () {
@@ -791,6 +796,8 @@ function openSettings() {
   fontSel.value = editor.getOption("fontSize");
   const wrapSel = document.querySelector("#settings select[name='wrap']");
   wrapSel.value = editor.getOption("wrap");
+  const showInvisiblesSel = document.querySelector("#settings select[name='show-invisibles']");
+  showInvisiblesSel.value = editor.getOption("showInvisibles").toString();
 
   showDialog("settings", (value) => {
     if (value == "reset") {
@@ -816,6 +823,12 @@ function onFontSizeChange(event) {
 function onWrapChange(event) {
   const wrap = event.srcElement.value;
   editor.setOption("wrap", wrap);
+  saveEditorOptions();
+}
+
+function onShowInvisibleChange(event) {
+  const showInvisibles = event.srcElement.value == "true";
+  editor.setOption("showInvisibles", showInvisibles);
   saveEditorOptions();
 }
 

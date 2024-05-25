@@ -293,6 +293,9 @@
   .ace_mgsc .ace_gutter-active-line {
     background-color: rgba(0,0,0,0.071);
   }
+  .ace_mgsc .ace_invisible {
+    color: #bcd;
+  }
   .ace_mgsc .ace_comment {
     color: #888;
   }
@@ -378,6 +381,9 @@
   }
   .ace_mgsc_dark .ace_gutter-active-line {
     background-color: rgba(255,255,255,0.14);
+  }
+  .ace_mgsc_dark .ace_invisible {
+    color: #678;
   }
   .ace_mgsc_dark .ace_comment {
     color: #999;

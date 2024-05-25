@@ -1,4 +1,8 @@
-# 1.8.0 (2023/02/03)
+# 1.9.0 (2024/05/25)
+- MML Editor: Disable soft tabs.
+- MML Editor: Add `Show Invisibles` option to show spaces, tabs and CR/LF codes.
+
+# 1.8.0 (2024/02/03)
 - Install ServiceWorker so that MSXplay works as a PWA.
 
 # 1.7.5 (2023/12/25)
