@@ -1,3 +1,4 @@
+import fs from "fs";
 import path from "path";
 import WorkerUrlPlugin from "worker-url/plugin.js";
 import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
@@ -9,7 +10,10 @@ const __dirname = path.dirname(new URL(import.meta.url).pathname);
 const outputPath = path.resolve(__dirname, "public");
 const cacheId = "msxplay";
 
-const getRevision = (file) => crypto.createHash("md5").update(Buffer.from(file)).digest("hex");
+const getRevision = (file) => {
+  const buffer = fs.readFileSync(file);
+  return crypto.createHash("md5").update(buffer).digest("hex");
+}
 const getManifestEntry = (file) => {
   return {
     url: path.relative(outputPath, file),
