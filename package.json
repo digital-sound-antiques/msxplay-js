@@ -1,6 +1,6 @@
 {
   "name": "msxplay-js",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "description": "",
   "type": "module",
   "engines": {
@@ -11,7 +11,7 @@
     "eslint-config-prettier": "^8.10.0",
     "http-server": "^14.1.1",
     "lamejs": "zhuker/lamejs#582bbba6a12f981b984d8fb9e1874499fed85675",
-    "libkss-js": "^2.2.0",
+    "libkss-js": "^2.2.1",
     "mgsc-js": "^2.0.0",
     "mgsrc-js": "^2.0.1",
     "prettier": "^2.8.8",

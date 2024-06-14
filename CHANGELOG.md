@@ -1,3 +1,6 @@
+# 1.9.1 (2024/06/14)
+- Fixed the OOM issue during large VGM generation.
+
 # 1.9.0 (2024/05/25)
 - MML Editor: Disable soft tabs.
 - MML Editor: Add `Show Invisibles` option to show spaces, tabs and CR/LF codes.
