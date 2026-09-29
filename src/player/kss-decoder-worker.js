@@ -53,7 +53,7 @@ class KSSDecoderWorker extends AudioDecoderWorker {
     const maxTick = (this.sampleRate * this._maxDuration) / 1000;
     let tick = 0;
     while (tick <= maxTick) {
-      this._kssplay.calcSilent(interval);
+      this._kssplay.calcSilentAccurate(interval);
       const jumpct = this._kssplay.getMGSJumpCount();
       if (jumpct != 0) {
         break;

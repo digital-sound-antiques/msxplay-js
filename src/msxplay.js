@@ -142,7 +142,7 @@ export class MSXPlay {
     const maxTick = (this.sampleRate * this.maxPlayTime) / 1000;
     let tick = 0;
     while (tick <= maxTick) {
-      this.kssplay.calcSilent(interval);
+      this.kssplay.calcSilentAccurate(interval);
       const jumpct = this.kssplay.getMGSJumpCount();
       if (jumpct != 0) {
         break;

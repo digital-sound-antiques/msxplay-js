@@ -5,6 +5,7 @@ import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
 import WorkboxPlugin from "workbox-webpack-plugin";
 import crypto from "crypto";
 import { globSync } from "glob";
+import webpack from "webpack";
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 const outputPath = path.resolve(__dirname, "public");
@@ -66,6 +67,10 @@ export default {
     },
   },
   plugins: [
+    // libkss-js 3.x bundles an emscripten loader that dynamically imports
+    // node:module in its Node-only branch. That branch never runs in a
+    // browser, but webpack still tries to resolve the request.
+    new webpack.IgnorePlugin({ resourceRegExp: /^node:module$/ }),
     new WorkerUrlPlugin(),
     new WorkboxPlugin.GenerateSW({
       cacheId: cacheId,
